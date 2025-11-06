@@ -1,0 +1,62 @@
+<div class="register-container">
+  <!-- Côté "Welcome" -->
+  <div class="welcome-side">
+    <h2>Welcome Back!</h2>
+    <p>Already have an account?</p>
+    <button routerLink="/login" class="btn-outline">Sign In</button>
+  </div>
+
+  <!-- Côté Formulaire -->
+  <div class="form-side">
+    <h2>Create Account</h2>
+
+    <!-- Boutons de connexion sociale (juste déco) -->
+    <div class="social-login">
+      <button type="button"><i class="fab fa-facebook-f"></i></button>
+      <button type="button"><i class="fab fa-google"></i></button>
+      <button type="button"><i class="fab fa-linkedin-in"></i></button>
+    </div>
+
+    <p class="divider">or use your email for registration</p>
+
+    <!-- Formulaire d'inscription -->
+    <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+      <!-- Choix du rôle -->
+      <div class="role-select">
+        <label>
+          <input type="radio" formControlName="role" value="client" />
+          Client
+        </label>
+        <label>
+          <input type="radio" formControlName="role" value="provider" />
+          Provider
+        </label>
+      </div>
+
+      <!-- Champs communs -->
+      <input type="text" placeholder="Full Name" formControlName="name" />
+      <input type="email" placeholder="Email" formControlName="email" />
+      <input type="password" placeholder="Password" formControlName="password" />
+      <input type="text" placeholder="Phone Number" formControlName="telephone" />
+      <input type="text" placeholder="Address" formControlName="adresse" />
+
+      <!-- Champs supplémentaires si provider -->
+      <div *ngIf="registerForm.get('role')?.value === 'provider'" class="provider-fields">
+        <input type="text" placeholder="Service Category" formControlName="category" />
+        <textarea placeholder="Description" formControlName="description"></textarea>
+        <input type="number" placeholder="Experience (in years)" formControlName="experience" />
+      </div>
+
+      <!-- Upload de photo -->
+      <div class="upload-section">
+        <label for="photoUpload" class="upload-label">Upload Profile Photo</label>
+        <input id="photoUpload" type="file" (change)="onFileSelected($event)" />
+      </div>
+
+      <!-- Bouton d'envoi -->
+      <button type="submit" class="btn-primary">
+        Sign Up
+      </button>
+    </form>
+  </div>
+</div>
