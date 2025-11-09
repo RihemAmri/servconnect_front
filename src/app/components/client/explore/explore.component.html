@@ -1,1 +1,216 @@
-<p>explore works!</p>
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-background">
+    <div class="hero-pattern"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">🏆 Plateforme #1 en Tunisie</div>
+    <h1 class="hero-title">Explorez Nos Services Premium</h1>
+    <p class="hero-subtitle">Des professionnels vérifiés et qualifiés à votre service</p>
+  </div>
+</section>
+
+<!-- Main Container -->
+<div class="main-container">
+  
+  <!-- Top Filters Bar -->
+  <div class="filters-bar">
+    <div class="filters-container">
+      <!-- Categories Filter -->
+      <div class="filter-group">
+        <label class="filter-label">
+          <span class="label-icon">📂</span>
+          Catégories
+        </label>
+        <div class="filter-dropdown">
+          <select [(ngModel)]="selectedCategory" class="custom-select">
+            <option *ngFor="let category of categories" [value]="category.name">
+              {{ category.icon }} {{ category.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Rating Filter -->
+      <div class="filter-group">
+        <label class="filter-label">
+          <span class="label-icon">⭐</span>
+          Évaluation
+        </label>
+        <div class="filter-dropdown">
+          <select [(ngModel)]="selectedRating" class="custom-select">
+            <option value="all">Toutes les notes</option>
+            <option value="4.5">4.5+ Excellent</option>
+            <option value="4.0">4.0+ Très bien</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Price Filter -->
+      <div class="filter-group">
+        <label class="filter-label">
+          <span class="label-icon">💰</span>
+          Prix
+        </label>
+        <div class="filter-dropdown">
+          <select [(ngModel)]="selectedPrice" class="custom-select">
+            <option value="all">Tous les prix</option>
+            <option value="low">Économique (&lt; 40 DT)</option>
+            <option value="medium">Standard (40-60 DT)</option>
+            <option value="high">Premium (&gt; 60 DT)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Reset Button -->
+      <button 
+        class="reset-filters-btn" 
+        (click)="selectCategory('Tous'); selectedRating='all'; selectedPrice='all'"
+        *ngIf="selectedCategory !== 'Tous' || selectedRating !== 'all' || selectedPrice !== 'all'">
+        <span class="reset-icon">↻</span>
+        Réinitialiser
+      </button>
+    </div>
+  </div>
+
+  <!-- Category Pills (Quick Access) -->
+  <div class="category-pills-section">
+    <div class="pills-header">
+      <h3 class="pills-title">Accès Rapide</h3>
+      <p class="pills-subtitle">Sélectionnez une catégorie pour filtrer rapidement</p>
+    </div>
+    <div class="category-pills">
+      <button 
+        *ngFor="let category of categories" 
+        class="category-pill"
+        [class.active]="selectedCategory === category.name"
+        (click)="selectCategory(category.name)">
+        <span class="pill-icon">{{ category.icon }}</span>
+        <span class="pill-text">{{ category.name }}</span>
+        <span class="pill-check" *ngIf="selectedCategory === category.name">✓</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Results Header -->
+  <div class="results-header">
+    <div class="results-info">
+      <h2 class="results-title">
+        <span class="results-count">{{ filteredServices.length }}</span>
+        <span class="results-text">Services Disponibles</span>
+      </h2>
+      <p class="results-subtitle">Les meilleurs professionnels pour vos besoins</p>
+    </div>
+    
+    <!-- Active Filters Badges -->
+    <div class="active-filters" *ngIf="selectedCategory !== 'Tous' || selectedRating !== 'all' || selectedPrice !== 'all'">
+      <span class="filters-label">Filtres actifs:</span>
+      <div class="filters-badges">
+        <span class="filter-badge" *ngIf="selectedCategory !== 'Tous'">
+          <span class="badge-icon">📂</span>
+          {{ selectedCategory }}
+          <button class="remove-badge" (click)="selectCategory('Tous')">×</button>
+        </span>
+        <span class="filter-badge" *ngIf="selectedRating !== 'all'">
+          <span class="badge-icon">⭐</span>
+          {{ selectedRating }}+ étoiles
+          <button class="remove-badge" (click)="selectedRating='all'">×</button>
+        </span>
+        <span class="filter-badge" *ngIf="selectedPrice !== 'all'">
+          <span class="badge-icon">💰</span>
+          {{ selectedPrice === 'low' ? 'Économique' : selectedPrice === 'medium' ? 'Standard' : 'Premium' }}
+          <button class="remove-badge" (click)="selectedPrice='all'">×</button>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Services Grid -->
+  <div class="services-grid">
+    <div class="service-card" *ngFor="let service of filteredServices">
+      <!-- Card Header with Icon -->
+      <div class="card-header">
+        <div class="service-icon-large">{{ service.image }}</div>
+        <span class="verified-badge" *ngIf="service.verified">
+          <span class="verified-icon">✓</span>
+          Vérifié
+        </span>
+      </div>
+      
+      <!-- Card Body -->
+      <div class="card-body">
+        <div class="category-tag">{{ service.category }}</div>
+        
+        <h3 class="service-title">{{ service.title }}</h3>
+        
+        <div class="service-meta">
+          <span class="meta-item">
+            <span class="meta-icon">👤</span>
+            {{ service.provider }}
+          </span>
+          <span class="meta-item">
+            <span class="meta-icon">📍</span>
+            {{ service.location }}
+          </span>
+        </div>
+
+        <p class="service-description">{{ service.description }}</p>
+
+        <!-- Rating -->
+        <div class="rating-box">
+          <div class="rating-stars">
+            <span class="star-icon">⭐</span>
+            <span class="rating-value">{{ service.rating }}</span>
+            <span class="rating-max">/5.0</span>
+          </div>
+          <div class="rating-reviews">
+            <span class="reviews-count">{{ service.reviews }}</span>
+            <span class="reviews-text">avis</span>
+          </div>
+        </div>
+
+        <!-- Features -->
+        <div class="service-features">
+          <span class="feature-tag" *ngFor="let feature of service.features">
+            <span class="feature-icon">✓</span>
+            {{ feature }}
+          </span>
+        </div>
+      </div>
+      
+      <!-- Card Footer -->
+      <div class="card-footer">
+        <div class="price-section">
+          <span class="price-label">À partir de</span>
+          <div class="price-value">
+            <span class="price-amount">{{ service.price }}</span>
+            <span class="price-currency">DT</span>
+            <span class="price-unit">/h</span>
+          </div>
+        </div>
+        <button class="btn-book">
+          <span class="btn-icon">📅</span>
+          Réserver
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="filteredServices.length === 0">
+    <div class="empty-illustration">
+      <div class="empty-icon">🔍</div>
+      <div class="empty-circle"></div>
+    </div>
+    <h3 class="empty-title">Aucun service trouvé</h3>
+    <p class="empty-text">
+      Nous n'avons pas trouvé de services correspondant à vos critères.<br>
+      Essayez de modifier vos filtres pour élargir la recherche.
+    </p>
+    <button class="btn-reset" (click)="selectCategory('Tous'); selectedRating='all'; selectedPrice='all'">
+      <span class="reset-icon">↻</span>
+      Réinitialiser tous les filtres
+    </button>
+  </div>
+
+</div>
