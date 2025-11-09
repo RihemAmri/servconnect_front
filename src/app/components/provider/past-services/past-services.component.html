@@ -1,0 +1,40 @@
+<div class="services-page">
+    
+  <div class="header-row">
+    <button class="btn back" (click)="goBack()">
+      <i class="fas fa-arrow-left"></i> 
+    </button>
+    <h2><i class="fas fa-calendar-check"></i> Services terminés</h2>
+    
+  </div>
+
+  <div class="service-card" *ngFor="let service of pastServices">
+    <div class="card-content">
+      <div class="info">
+        <h3><i class="fas fa-tools"></i> {{ service.title }}</h3>
+        <p>
+          <i class="fas fa-calendar-day"></i>
+          <strong>Date :</strong> {{ service.date | date:'fullDate' }}
+        </p>
+        <p>
+          <i class="fas fa-user"></i>
+          <strong>Client :</strong> {{ service.client }}
+        </p>
+        <p *ngIf="service.duration">
+          <i class="fas fa-clock"></i>
+          <strong>Durée :</strong> {{ service.duration }}
+        </p>
+        <p *ngIf="service.location">
+          <i class="fas fa-map-marker-alt"></i>
+          <strong>Lieu :</strong> {{ service.location }}
+        </p>
+      </div>
+
+      <div class="image">
+        <img [src]="service.image" alt="Service image" />
+      </div>
+    </div>
+  </div>
+
+  
+</div>
