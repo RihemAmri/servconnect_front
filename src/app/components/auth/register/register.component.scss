@@ -1,150 +1,511 @@
+/* 🌈 Arrière-plan global */
+.page-background {
+  background: linear-gradient(135deg, #e5e9f5 0%, #f2f2f2 50%, #d0d8f0 100%);
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+/* 🌟 Container principal */
 .register-container {
+  position: relative;
+  width: 100%;
+  max-width: 950px;
+  height: 580px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  display: flex;
+  margin: 120px auto;
+}
+
+/* 🎉 Côté gauche (Welcome) */
+.welcome-side {
+  flex: 1;
+  background: #0459d8;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  padding: 2rem;
+  text-align: center;
+  border-bottom-right-radius: 90px;
+  border-top-right-radius: 90px;
+
+}
+
+.welcome-side h2 {
+  font-size: 2rem;
+  margin-bottom: 0.8rem;
+  font-weight: bold;
+}
+
+.welcome-side p {
+  font-size: 1rem;
+  margin-bottom: 1.2rem;
+  color: #dce3ff;
+}
+
+.btn-outline {
+  width: 150px;
+  padding: 10px;
+  font-size: 15px;
+  border: 2px solid white;
+  background: transparent;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.btn-outline:hover {
+  background: white;
+  color: #0459d8;
+}
+
+/* 🧾 Côté droit (Formulaire) */
+.form-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1.5rem;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ✅ Conteneur scrollable interne */
+.form-scroll {
+  overflow-y: auto;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  scroll-behavior: smooth;
+  padding-right: 8px;
+  padding-bottom: 60px; /* ✅ marge supplémentaire pour voir entièrement le bouton */
+}
+
+/* ✅ Barre de scroll personnalisée */
+.form-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.form-scroll::-webkit-scrollbar-thumb {
+  background-color: #e3e7ed;
+  border-radius: 4px;
+}
+.form-scroll::-webkit-scrollbar-track {
+  background-color: #f2f2f2;
+}
+
+.form-side h2 {
+  font-size: 1.8rem;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* 🧩 Champs du formulaire */
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+}
+
+/* ✅ Groupe de champ */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 320px;
+  margin-bottom: 10px;
+}
+
+form input,
+form textarea,
+form select {
+  width: 100%;
+  padding: 12px;
+  background: #f8f8f8;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 15px;
+  outline: none;
+  transition: 0.3s;
+}
+
+form input:focus,
+form textarea:focus,
+form select:focus {
+  border-color: #0459d8;
+  background-color: #fff;
+  box-shadow: 0 0 6px rgba(4, 89, 216, 0.2);
+}
+
+textarea {
+  resize: none;
+  height: 80px;
+}
+
+/* 🧾 Section prestataire mieux espacée */
+.provider-fields {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+/* 📎 Upload sections */
+.upload-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 320px;
+  margin-top: 10px;
+}
+
+.upload-label {
+  background: white;
+  border: 2px dashed #ccc;
+  color: #0459d8;
+  font-weight: 600;
+  padding: 10px;
+  width: 100%;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.upload-label:hover {
+  background: #e9f0ff;
+  border-color: #0459d8;
+}
+
+/* 📋 Sélecteur de rôle */
+.role-select {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  color: #0459d8;
+  font-weight: 500;
+  margin-top: 10px;
+}
+
+.role-select input {
+  margin-right: 5px;
+}
+
+/* 🔵 Bouton principal (formulaire) */
+.btn-primary {
+  width: 100%;
+  max-width: 350px; /* ✅ même taille que les inputs */
+  margin-left: 28px;
+  padding: 12px; /* ✅ même hauteur visuelle */
+  background: linear-gradient(135deg, #0459d8, #2879f2);
+  color: white;
+  border: none;
+  border-radius: 8px; /* ✅ même radius que les inputs */
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(4, 89, 216, 0.3);
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #2879f2, #0459d8);
+  box-shadow: 0 6px 15px rgba(4, 89, 216, 0.45);
+  transform: translateY(-2px);
+}
+
+/* ✅ Ajuste l’espacement en bas pour bien voir le bouton */
+.form-scroll {
+  padding-bottom: 80px;
+}
+
+
+/* 🧭 Responsive */
+@media (max-width: 900px) {
+  .register-container {
+    flex-direction: column;
+    margin-top: 50px;
+    height: auto;
+  }
+
+  .form-scroll {
+    max-height: 400px;
+  }
+}
+/* ---- Profile avatar upload ---- */
+.profile-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 280px;
+  margin-bottom: 12px;
+}
+
+.profile-label {
+  color: #0459d8;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* ✅ Cercle plus petit */
+.avatar-wrapper {
+  position: relative;
+  width: 100px; /* 🔽 réduit (avant 130px) */
+  height: 100px;
+  border-radius: 50%;
+  background: #f2f6ff;
+  border: 2px dashed #0459d8;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: linear-gradient(135deg, #007bff, #00c6ff);
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.avatar-wrapper:hover {
+  background: #e9f0ff;
+  transform: scale(1.05);
+}
+
+/* Icône caméra au centre */
+.camera-center {
+  color: #0459d8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.camera-center svg {
+  width: 28px; /* 🔽 réduit (avant 40px) */
+  height: 28px;
+}
+
+/* Image sélectionnée */
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Bouton remove */
+.remove-photo-btn {
+  margin-top: 6px;
+  background: transparent;
+  border: 1px solid #ccc;
+  color: #333;
+  padding: 5px 9px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.remove-photo-btn:hover {
+  background: #f7f7f7;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .avatar-wrapper {
+    width: 85px;
+    height: 85px;
+  }
+
+  .camera-center svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+/* 🎚️ Modern Animated Role Toggle */
+.modern-role-toggle {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 260px;
+  margin: 1.8rem auto;
+  background: #f1f4fa;
+  border-radius: 50px;
+  padding: 5px;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
   font-family: 'Poppins', sans-serif;
+  overflow: hidden;
 }
 
-.welcome-side {
+/* 🩵 Boutons radio masqués */
+.modern-role-toggle input[type='radio'] {
+  display: none;
+}
+
+/* 🏷️ Labels des choix */
+.modern-role-toggle label {
   flex: 1;
-  background: white;
-  color: #007bff;
   text-align: center;
-  padding: 4rem 2rem;
-  border-radius: 20px 0 0 20px;
-
-  h2 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-  }
-
-  p {
-    font-size: 1.1rem;
-  }
-
-  .btn-outline {
-    background: transparent;
-    border: 2px solid #007bff;
-    color: #007bff;
-    padding: 0.6rem 1.5rem;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: 0.3s;
-    margin-top: 1.5rem;
-
-    &:hover {
-      background: #007bff;
-      color: white;
-    }
-  }
+  padding: 10px 0;
+  border-radius: 50px;
+  color: #555;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  z-index: 2;
+  transition: color 0.3s ease, font-weight 0.3s ease;
 }
 
-.form-side {
-  flex: 1;
-  background: white;
-  padding: 3rem;
-  border-radius: 0 20px 20px 0;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+/* 💡 Fond animé bleu */
+.modern-role-toggle .toggle-highlight {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: calc(50% - 10px);
+  height: calc(100% - 10px);
+  background: linear-gradient(135deg, #0066ff, #00b3ff);
+  border-radius: 50px;
+  transition: all 0.35s ease;
+  z-index: 1;
+}
 
-  h2 {
-    text-align: center;
-    color: #007bff;
-    margin-bottom: 1rem;
-  }
+/* 🩵 Quand "client" est sélectionné */
+#client:checked ~ .toggle-highlight {
+  transform: translateX(0);
+}
 
-  .social-login {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
+/* 💙 Quand "provider" est sélectionné */
+#prestataire:checked ~ .toggle-highlight {
+  transform: translateX(100%);
+}
 
-    button {
-      background: #f0f0f0;
-      border: none;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      cursor: pointer;
-      transition: 0.3s;
+/* ✨ Texte actif (blanc et bold) */
+#client:checked + label[for='client'],
+#prestataire:checked + label[for='prestataire'] {
+  color: white;
+  font-weight: 600;
+}
+.text-danger {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 4px;        /* petit espace sous l’input */
+}
 
-      &:hover {
-        background: #007bff;
-        color: white;
-      }
+.form-group select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 15px;
+  background-color: #f9f9f9;
+  transition: border-color 0.3s ease;
+  outline: none;
+}
 
-      i {
-        font-size: 1rem;
-      }
-    }
-  }
+.form-group select:focus {
+  border-color: #007bff;
+  background-color: #fff;
+}
 
-  .divider {
-    text-align: center;
-    font-size: 0.9rem;
-    color: gray;
-    margin-bottom: 1rem;
-  }
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #444;
+}
 
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+.password-group {
+  position: relative;
+}
 
-    input, textarea {
-      width: 100%;
-      padding: 0.8rem;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      font-size: 1rem;
-      outline: none;
 
-      &:focus {
-        border-color: #007bff;
-      }
-    }
 
-    .upload-section {
-      display: flex;
-      flex-direction: column;
-      align-items: start;
+.password-group i {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #888;
+  transition: color 0.2s ease;
+}
 
-      .upload-label {
-        font-weight: 600;
-        color: #007bff;
-        cursor: pointer;
-      }
+.password-group i:hover {
+  color: #000;
+}
+.loading-alert {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.8);
+  padding: 30px 40px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  z-index: 9999;
+}
 
-      input[type="file"] {
-        margin-top: 0.5rem;
-      }
-    }
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(0, 0, 255, 0.3);
+  border-top: 5px solid blue;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 10px;
+}
 
-    .role-select {
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      color: #007bff;
-      font-weight: 500;
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 
-      input {
-        margin-right: 5px;
-      }
-    }
+.alert {
+  margin-top: 10px;
+  width: 100%;
+  max-width: 320px;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-    .btn-primary {
-      background: #007bff;
-      color: white;
-      border: none;
-      padding: 0.8rem;
-      border-radius: 25px;
-      cursor: pointer;
-      transition: 0.3s;
+.alert .close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
 
-      &:hover {
-        background: #005fcc;
-      }
-    }
-  }
+.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
 }

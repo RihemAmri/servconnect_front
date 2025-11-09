@@ -1,62 +1,181 @@
 <div class="register-container">
-  <!-- Côté "Welcome" -->
+ 
   <div class="welcome-side">
-    <h2>Welcome Back!</h2>
-    <p>Already have an account?</p>
-    <button routerLink="/login" class="btn-outline">Sign In</button>
+    <h2>Bienvenue à nouveau !</h2>
+    <p>Vous avez déjà un compte ?</p>
+    <button routerLink="/login" class="btn-outline">Se connecter</button>
   </div>
 
-  <!-- Côté Formulaire -->
+  <!-- 🧾 Form Side -->
   <div class="form-side">
-    <h2>Create Account</h2>
+    <div class="form-scroll">
+   <!-- 🔵 Loader (centré au milieu de la page) -->
+<div *ngIf="loading" class="loading-alert">
+  <div class="spinner"></div>
+  <p>Création du compte...</p>
+</div>
 
-    <!-- Boutons de connexion sociale (juste déco) -->
-    <div class="social-login">
-      <button type="button"><i class="fab fa-facebook-f"></i></button>
-      <button type="button"><i class="fab fa-google"></i></button>
-      <button type="button"><i class="fab fa-linkedin-in"></i></button>
+<!-- ✅ Message de succès -->
+<div *ngIf="successMessage" class="alert alert-success">
+  {{ successMessage }}
+  <button class="close" (click)="successMessage = ''">&times;</button>
+</div>
+
+<!-- ❌ Message d’erreur -->
+<div *ngIf="errorMessage" class="alert alert-danger">
+  {{ errorMessage }}
+  <button class="close" (click)="errorMessage = ''">&times;</button>
+</div>
+
+
+    <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+
+  <!-- Role toggle reste inchangé -->
+  <div class="modern-role-toggle">
+    <input type="radio" id="client" formControlName="role" value="client" checked />
+    <label for="client">Client</label>
+
+    <input type="radio" id="prestataire" formControlName="role" value="prestataire" />
+    <label for="prestataire">Prestataire</label>
+
+    <div class="toggle-highlight"></div>
+  </div>
+
+  <!-- Profile Photo -->
+  <div class="form-group profile-upload">
+    <label class="profile-label">Photo de profil</label>
+    <div class="avatar-wrapper" (click)="onAvatarClick()">
+      <div *ngIf="!photoPreview" class="camera-center">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M3 7h3l2-2h6l2 2h3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="12" cy="13" r="3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        
+      </div>
+      <img *ngIf="photoPreview" [src]="photoPreview" alt="Profile preview" class="avatar-img" />
+    </div>
+    <input #photoInput id="photoInput" type="file" accept="image/*" (change)="onPhotoSelected($event)" style="display: none;" />
+    <button type="button" *ngIf="photoPreview" class="remove-photo-btn" (click)="removePhoto()">Remove</button>
+    <small *ngIf="showError.photo" class="text-danger">
+    Photo de profil requise.
+  </small>
+  </div>
+
+  <!-- Full Name -->
+  <div class="form-group">
+    <input type="text" placeholder="Nom complet" formControlName="name" (focus)="onFocus('name')" />
+    <small *ngIf="showError.name && registerForm.controls['name'].invalid" class="text-danger">
+      Nom complet requis.
+    </small>
+  </div>
+
+  <!-- Email -->
+  <div class="form-group">
+    <input type="email" placeholder="Email" formControlName="email" (focus)="onFocus('email')" />
+    <small *ngIf="showError.email && registerForm.controls['email'].invalid" class="text-danger">
+      <span *ngIf="registerForm.controls['email'].errors?.['required']">Email est requis.</span>
+      <span *ngIf="registerForm.controls['email'].errors?.['email']">Email non valide.</span>
+    </small>
+  </div>
+
+  <!-- Password -->
+<div class="form-group password-group">
+  <input
+    [type]="passwordVisible ? 'text' : 'password'"
+    placeholder="Mot de passe"
+    formControlName="password"
+    (focus)="onFocus('password')"
+  />
+  <i
+    class="fas"
+    [ngClass]="passwordVisible ? 'fa-eye' : 'fa-eye-slash'"
+    (click)="togglePasswordVisibility()"
+  ></i>
+
+  <small
+    *ngIf="showError.password && registerForm.controls['password'].invalid"
+    class="text-danger"
+  >
+    Mot de passe requis.
+  </small>
+</div>
+
+
+  <!-- Phone Number -->
+  <div class="form-group">
+    <input type="text" placeholder="Numéro de téléphone" formControlName="telephone" (focus)="onFocus('telephone')" />
+    <small *ngIf="showError.telephone && registerForm.controls['telephone'].invalid" class="text-danger">
+      Numéro de téléphone requis.
+    </small>
+  </div>
+
+  <!-- Address -->
+  <div class="form-group">
+    <input type="text" placeholder="Adresse" formControlName="adresse" (focus)="onFocus('adresse')" />
+    <small *ngIf="showError.adresse && registerForm.controls['adresse'].invalid" class="text-danger">
+      Adresse requise.
+    </small>
+  </div>
+
+  <!-- Champs prestataire -->
+  <div *ngIf="registerForm.get('role')?.value === 'prestataire'" class="provider-fields">
+
+    <div class="form-group">
+  
+  <select id="category" formControlName="category" (focus)="onFocus('category')">
+    <option value="">-- Sélectionnez une catégorie de service --</option>
+    <option value="ménage">Ménage</option>
+    <option value="babysitting">Babysitting</option>
+    <option value="électricité">Électricité</option>
+    <option value="jardinage">Jardinage</option>
+    <option value="peinture">Peinture</option>
+    <option value="déménagement">Déménagement</option>
+    <option value="climatisation">Climatisation</option>
+    <option value="propreté">Propreté</option>
+  </select>
+
+  <small *ngIf="showError.category && registerForm.controls['category'].invalid" class="text-danger">
+    Catégorie requise.
+  </small>
+</div>
+
+
+    <div class="form-group">
+      <textarea placeholder="Description" formControlName="description" (focus)="onFocus('description')"></textarea>
+      <small *ngIf="showError.description && registerForm.controls['description'].invalid" class="text-danger">
+        Description requise.
+      </small>
     </div>
 
-    <p class="divider">or use your email for registration</p>
+    <div class="form-group">
+      <input type="number" placeholder="Expérience (en années)" formControlName="experience" (focus)="onFocus('experience')" />
+      <small *ngIf="showError.experience && registerForm.controls['experience'].invalid" class="text-danger">
+        Expérience requise.
+      </small>
+    </div>
 
-    <!-- Formulaire d'inscription -->
-    <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
-      <!-- Choix du rôle -->
-      <div class="role-select">
-        <label>
-          <input type="radio" formControlName="role" value="client" />
-          Client
-        </label>
-        <label>
-          <input type="radio" formControlName="role" value="provider" />
-          Provider
-        </label>
-      </div>
+    <!-- Uploads restent inchangés -->
+    <div class="form-group upload-section">
+      <label for="certificationsUpload" class="upload-label">Télécharger les certifications (PDF)</label>
+      <input id="certificationsUpload" type="file" multiple (change)="onCertificationsSelected($event)" accept=".pdf" />
+       <small *ngIf="showError.certifications" class="text-danger">
+    Veuillez télécharger au moins une certification.
+  </small>
+    </div>
 
-      <!-- Champs communs -->
-      <input type="text" placeholder="Full Name" formControlName="name" />
-      <input type="email" placeholder="Email" formControlName="email" />
-      <input type="password" placeholder="Password" formControlName="password" />
-      <input type="text" placeholder="Phone Number" formControlName="telephone" />
-      <input type="text" placeholder="Address" formControlName="adresse" />
+    <div class="form-group upload-section">
+      <label for="documentsUpload" class="upload-label">Télécharger les documents (PDF or Images)</label>
+      <input id="documentsUpload" type="file" multiple (change)="onDocumentsSelected($event)" accept=".pdf,.jpg,.jpeg,.png" />
+    <small *ngIf="showError.documents" class="text-danger">
+    Veuillez télécharger au moins un document.
+  </small>
+    </div>
 
-      <!-- Champs supplémentaires si provider -->
-      <div *ngIf="registerForm.get('role')?.value === 'provider'" class="provider-fields">
-        <input type="text" placeholder="Service Category" formControlName="category" />
-        <textarea placeholder="Description" formControlName="description"></textarea>
-        <input type="number" placeholder="Experience (in years)" formControlName="experience" />
-      </div>
+  </div>
 
-      <!-- Upload de photo -->
-      <div class="upload-section">
-        <label for="photoUpload" class="upload-label">Upload Profile Photo</label>
-        <input id="photoUpload" type="file" (change)="onFileSelected($event)" />
-      </div>
+  <button type="submit" class="btn-primary">S'inscrire</button>
+</form>
 
-      <!-- Bouton d'envoi -->
-      <button type="submit" class="btn-primary">
-        Sign Up
-      </button>
-    </form>
+  </div>
   </div>
 </div>
