@@ -1,0 +1,318 @@
+/* 🌈 Arrière-plan global */
+.page-background {
+  background: linear-gradient(135deg, #e5e9f5 0%, #f2f2f2 50%, #d0d8f0 100%);
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+/* 🌟 Container principal */
+.login-container {
+  position: relative;
+  width: 100%;
+  max-width: 950px;
+  min-height: 580px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  display: flex;
+  margin: 120px auto;
+}
+
+/* 🧾 Côté gauche (Formulaire) */
+.form-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.form-side h2 {
+  font-size: 1.8rem;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+/* 🧩 Formulaire */
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+/* 🎨 Style unifié pour tous les champs du formulaire et les boutons */
+form input,
+form select,
+form textarea,
+form button {
+  width: 100%;
+  max-width: 320px;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: 0.3s;
+  outline: none;
+}
+
+/* 🧊 Inputs (email, password, etc.) */
+form input,
+form select,
+form textarea {
+  background: #f8f8f8;
+  border: 1px solid #ddd;
+}
+
+form input:focus,
+form select:focus,
+form textarea:focus {
+  border-color: #0459d8;
+  background-color: #fff;
+  box-shadow: 0 0 6px rgba(4, 89, 216, 0.2);
+}
+
+/* 🔵 Boutons principaux (connexion) */
+form button,
+.btn-primary {
+  background: #0459d8;
+  color: #fff;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+form button:hover,
+.btn-primary:hover {
+  background: #2879f2;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(4, 89, 216, 0.2);
+}
+
+/* 🔗 Lien mot de passe oublié */
+.forgot-password-link {
+  width: 100%;
+  max-width: 320px;
+  text-align: right;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.forgot-password-link a {
+  color: #0459d8;
+  text-decoration: none;
+}
+
+.forgot-password-link a:hover {
+  text-decoration: underline;
+}
+
+/* 🧾 Texte du bas */
+.switch-text {
+  margin-top: 1rem;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.switch-text a {
+  color: #0459d8;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.switch-text a:hover {
+  text-decoration: underline;
+}
+
+/* 🎉 Côté droit (Welcome) */
+.welcome-side {
+  flex: 1;
+  background: #0459d8;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  padding: 2rem;
+  text-align: center;
+  border-bottom-left-radius: 90px;
+  border-top-left-radius: 90px;
+}
+
+.welcome-side h2 {
+  font-size: 2rem;
+  margin-bottom: 0.8rem;
+  font-weight: bold;
+}
+
+.welcome-side p {
+  font-size: 1rem;
+  margin-bottom: 1.2rem;
+  color: #dce3ff;
+}
+
+.btn-outline {
+  width: 150px;
+  padding: 10px;
+  font-size: 15px;
+  border: 2px solid white;
+  background: transparent;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.btn-outline:hover {
+  background: white;
+  color: #0459d8;
+}
+
+/* ⚠️ Messages d’erreur */
+.text-danger {
+  color: #e63946;
+  font-size: 0.85rem;
+  margin-top: 4px;
+  margin-left: 5px;
+  align-self: flex-start;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* ✨ Animation apparition erreur */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 📦 Groupes d’input */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 320px;
+}
+
+/* 🧭 Responsive */
+@media (max-width: 900px) {
+  .login-container {
+    flex-direction: column-reverse;
+    margin-top: 50px;
+  }
+
+  .welcome-side {
+    border-radius: 10px 10px 0 0;
+    padding: 1.5rem;
+  }
+
+  .form-side {
+    border-radius: 0 0 10px 10px;
+  }
+}
+
+.password-group {
+  position: relative;
+}
+
+
+
+.password-group i {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #888;
+  transition: color 0.2s ease;
+}
+
+.password-group i:hover {
+  color: #000;
+}
+
+/* 🔵 Overlay en plein écran pendant le chargement */
+/* 🔵 Centrer le chargement au milieu de la page */
+.loading-alert {
+  position: fixed; /* pour le placer indépendamment du reste */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* centré horizontalement et verticalement */
+  background: rgba(255, 255, 255, 0.8); /* léger fond blanc transparent */
+  padding: 30px 40px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  z-index: 9999;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(0, 0, 255, 0.3);
+  border-top: 5px solid blue;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 10px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.alert {
+  margin-top: 10px;
+   width: 100%;
+   padding: 12px;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: 0.3s;
+  outline: none;
+  max-width: 320px;
+  padding: 10px;
+  margin-left: 25px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.alert .close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
