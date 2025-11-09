@@ -1,0 +1,887 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+// ===== COLORS =====
+$primary: #025ddd;
+$primary-dark: #0047b3;
+$primary-light: #e8f2ff;
+$white: #ffffff;
+$black: #0a0a0a;
+$gray-50: #fafafa;
+$gray-100: #f5f5f5;
+$gray-200: #e5e7eb;
+$gray-300: #d1d5db;
+$gray-400: #9ca3af;
+$gray-500: #6b7280;
+$gray-600: #4b5563;
+$gray-700: #374151;
+$gray-800: #1f2937;
+$success: #10b981;
+$success-light: #d1fae5;
+$warning: #f59e0b;
+$error: #ef4444;
+
+// ===== SHADOWS =====
+$shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+$shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+$shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+$shadow-primary: 0 10px 25px rgba(2, 93, 221, 0.2);
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+// ===== PAYMENT PAGE =====
+.payment-page {
+  min-height: 100vh;
+  background: $gray-50;
+}
+
+// ===== HERO =====
+.hero-section {
+  position: relative;
+  background: linear-gradient(135deg, $primary 0%, $primary-dark 100%);
+  padding: 80px 30px 60px;
+  overflow: hidden;
+  
+  .hero-background {
+    position: absolute;
+    inset: 0;
+    
+    .hero-pattern {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.06) 0%, transparent 50%);
+      animation: heroFloat 20s ease-in-out infinite;
+    }
+  }
+  
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: $white;
+    padding: 10px 24px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 25px;
+    animation: fadeInDown 0.6s ease;
+  }
+  
+  .hero-title {
+    font-size: 3rem;
+    font-weight: 900;
+    color: $white;
+    margin-bottom: 18px;
+    letter-spacing: -2px;
+    line-height: 1.1;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    animation: fadeInUp 0.6s ease 0.1s both;
+    
+    @media (max-width: 768px) {
+      font-size: 2rem;
+    }
+  }
+  
+  .hero-subtitle {
+    font-size: 1.15rem;
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 400;
+    animation: fadeInUp 0.6s ease 0.2s both;
+  }
+}
+
+// ===== PAYMENT CONTAINER =====
+.payment-container {
+  max-width: 1400px;
+  margin: -40px auto 80px;
+  padding: 0 30px;
+  display: grid;
+  grid-template-columns: 1fr 450px;
+  gap: 30px;
+  position: relative;
+  z-index: 10;
+  
+  @media (max-width: 1200px) {
+    grid-template-columns: 1fr 400px;
+  }
+  
+  @media (max-width: 968px) {
+    grid-template-columns: 1fr;
+    padding: 0 20px;
+  }
+}
+
+.payment-main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+// ===== PAYMENT SECTION =====
+.payment-section {
+  background: $white;
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: $shadow-lg;
+  border: 1px solid $gray-200;
+  animation: fadeInUp 0.5s ease;
+  
+  @media (max-width: 768px) {
+    padding: 24px;
+  }
+}
+
+.section-header {
+  margin-bottom: 28px;
+  
+  .section-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: $black;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+  
+  .section-subtitle {
+    font-size: 0.95rem;
+    color: $gray-600;
+    font-weight: 500;
+  }
+}
+
+// ===== PAYMENT METHODS =====
+.payment-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.payment-method {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: $gray-50;
+  border: 2px solid $gray-300;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  
+  &:hover {
+    border-color: $primary;
+    background: $primary-light;
+    transform: translateX(5px);
+  }
+  
+  &.active {
+    border-color: $primary;
+    background: $primary-light;
+    box-shadow: $shadow-primary;
+    
+    .method-radio {
+      border-color: $primary;
+      background: $primary;
+    }
+  }
+  
+  .method-radio {
+    width: 28px;
+    height: 28px;
+    border: 2px solid $gray-400;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    
+    .radio-check {
+      color: $white;
+      font-weight: 900;
+      font-size: 1.1rem;
+    }
+  }
+  
+  .method-icon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+  }
+  
+  .method-info {
+    flex: 1;
+    
+    .method-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: $black;
+      margin-bottom: 4px;
+    }
+    
+    .method-description {
+      font-size: 0.85rem;
+      color: $gray-600;
+      font-weight: 500;
+    }
+  }
+  
+  .method-badge {
+    background: linear-gradient(135deg, $success, #059669);
+    color: $white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+// ===== PAYMENT FORM =====
+.payment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  
+  .form-group.full {
+    grid-column: 1 / -1;
+  }
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  
+  .form-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: $gray-700;
+    
+    .label-icon {
+      font-size: 1.1rem;
+    }
+  }
+  
+  .form-input {
+    width: 100%;
+    padding: 14px 16px;
+    background: $gray-50;
+    border: 2px solid $gray-300;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: $gray-800;
+    transition: all 0.3s ease;
+    outline: none;
+    
+    &::placeholder {
+      color: $gray-500;
+      font-weight: 500;
+    }
+    
+    &:hover {
+      border-color: $primary;
+    }
+    
+    &:focus {
+      border-color: $primary;
+      background: $white;
+      box-shadow: 0 0 0 4px rgba(2, 93, 221, 0.1);
+    }
+  }
+  
+  .card-icons {
+    position: absolute;
+    right: 16px;
+    bottom: 14px;
+    display: flex;
+    gap: 8px;
+    
+    .card-icon {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+.form-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: $gray-50;
+  border-radius: 12px;
+  
+  input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    accent-color: $primary;
+  }
+  
+  label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: $gray-700;
+    cursor: pointer;
+  }
+}
+
+// ===== INFO BOX =====
+.info-box {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+  border-radius: 16px;
+  margin-top: 20px;
+  
+  &.sobflous {
+    background: linear-gradient(135deg, #dbeafe, #f0f9ff);
+    border: 1px solid #93c5fd;
+  }
+  
+  &.cash {
+    background: linear-gradient(135deg, #fef3c7, #fef9e7);
+    border: 1px solid #fbbf24;
+  }
+  
+  .info-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+  
+  .info-content {
+    flex: 1;
+    
+    strong {
+      display: block;
+      font-size: 1rem;
+      font-weight: 700;
+      color: $black;
+      margin-bottom: 6px;
+    }
+    
+    p {
+      font-size: 0.9rem;
+      color: $gray-700;
+      line-height: 1.6;
+    }
+  }
+}
+
+// ===== D17 INFO =====
+.d17-info {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.d17-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.d17-step {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+  background: $gray-50;
+  border-radius: 16px;
+  border: 1px solid $gray-200;
+  
+  .step-number {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, $primary, $primary-dark);
+    color: $white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+  
+  .step-content {
+    flex: 1;
+    
+    h4 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: $black;
+      margin-bottom: 6px;
+    }
+    
+    p {
+      font-size: 0.9rem;
+      color: $gray-600;
+      line-height: 1.5;
+    }
+  }
+}
+
+.btn-generate {
+  width: 100%;
+  padding: 18px 32px;
+  background: linear-gradient(135deg, $primary, $primary-dark);
+  color: $white;
+  border: none;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.3s ease;
+  box-shadow: $shadow-primary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  
+  .btn-icon {
+    font-size: 1.4rem;
+  }
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(2, 93, 221, 0.3);
+  }
+}
+
+.d17-code {
+  padding: 32px;
+  background: linear-gradient(135deg, $primary-light, #f0f9ff);
+  border: 2px dashed $primary;
+  border-radius: 20px;
+  text-align: center;
+  
+  .code-label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: $gray-700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+  
+  .code-value {
+    font-size: 3rem;
+    font-weight: 900;
+    color: $primary;
+    letter-spacing: 4px;
+    margin-bottom: 12px;
+    font-family: 'Courier New', monospace;
+  }
+  
+  .code-expiry {
+    font-size: 0.85rem;
+    color: $gray-600;
+    font-weight: 600;
+  }
+}
+
+// ===== CASH CHECKLIST =====
+.cash-checklist {
+  padding: 24px;
+  background: $gray-50;
+  border-radius: 16px;
+  border: 1px solid $gray-200;
+  margin-top: 20px;
+  
+  .checklist-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: $black;
+    margin-bottom: 16px;
+  }
+  
+  .checklist-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    
+    li {
+      font-size: 0.95rem;
+      color: $gray-700;
+      font-weight: 600;
+      padding-left: 8px;
+    }
+  }
+}
+
+// ===== SIDEBAR =====
+.payment-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  
+  @media (max-width: 968px) {
+    order: -1;
+  }
+}
+
+// ===== SUMMARY CARD =====
+.summary-card {
+  background: $white;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: $shadow-lg;
+  border: 1px solid $gray-200;
+  position: sticky;
+  top: 20px;
+  
+  @media (max-width: 968px) {
+    position: static;
+  }
+}
+
+.summary-header {
+  margin-bottom: 24px;
+  
+  .summary-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: $black;
+    letter-spacing: -0.5px;
+  }
+}
+
+.service-item {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+  background: $gray-50;
+  border-radius: 16px;
+  margin-bottom: 20px;
+  
+  .service-icon {
+    font-size: 3rem;
+    flex-shrink: 0;
+  }
+  
+  .service-details {
+    flex: 1;
+    
+    .service-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: $black;
+      margin-bottom: 4px;
+    }
+    
+    .service-provider {
+      font-size: 0.9rem;
+      color: $gray-600;
+      font-weight: 500;
+    }
+  }
+}
+
+.summary-divider {
+  height: 1px;
+  background: $gray-200;
+  margin: 20px 0;
+}
+
+.summary-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+  
+  .detail-label {
+    color: $gray-600;
+    font-weight: 600;
+  }
+  
+  .detail-value {
+    color: $black;
+    font-weight: 700;
+  }
+}
+
+.price-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+  
+  &.discount {
+    color: $success;
+    font-weight: 700;
+  }
+  
+  .price-label {
+    color: $gray-700;
+    font-weight: 600;
+  }
+  
+  .price-value {
+    color: $black;
+    font-weight: 700;
+  }
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: linear-gradient(135deg, $primary-light, #f0f9ff);
+  border-radius: 16px;
+  margin-top: 8px;
+  
+  .total-label {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: $gray-800;
+  }
+  
+  .total-value {
+    font-size: 2rem;
+    font-weight: 900;
+    color: $primary;
+    letter-spacing: -1px;
+  }
+}
+
+.btn-pay {
+  width: 100%;
+  padding: 18px 32px;
+  background: linear-gradient(135deg, $primary, $primary-dark);
+  color: $white;
+  border: none;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.3s ease;
+  box-shadow: $shadow-primary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 20px;
+  
+  .btn-icon {
+    font-size: 1.4rem;
+  }
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(2, 93, 221, 0.3);
+  }
+}
+
+.security-badges {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.security-badge {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  background: $gray-50;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: $gray-700;
+  
+  .badge-icon {
+    font-size: 1.2rem;
+  }
+}
+
+// ===== PROMO CARD =====
+.promo-card {
+  background: $white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: $shadow;
+  border: 1px solid $gray-200;
+  
+  .promo-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: $black;
+    margin-bottom: 16px;
+  }
+}
+
+.promo-input-group {
+  display: flex;
+  gap: 12px;
+  
+  .promo-input {
+    flex: 1;
+    padding: 12px 16px;
+    background: $gray-50;
+    border: 2px solid $gray-300;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: $gray-800;
+    outline: none;
+    transition: all 0.3s ease;
+    
+    &:focus {
+      border-color: $primary;
+      box-shadow: 0 0 0 4px rgba(2, 93, 221, 0.1);
+    }
+  }
+  
+  .btn-apply {
+    padding: 12px 24px;
+    background: $primary;
+    color: $white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    
+    &:hover {
+      background: $primary-dark;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+.promo-success {
+  margin-top: 12px;
+  padding: 12px 16px;
+  background: $success-light;
+  color: $success;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1px solid $success;
+}
+
+// ===== TRUST INDICATORS =====
+.trust-indicators {
+  background: $white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: $shadow;
+  border: 1px solid $gray-200;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.trust-item {
+  display: flex;
+  gap: 16px;
+  
+  .trust-icon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+  }
+  
+  .trust-text {
+    flex: 1;
+    
+    strong {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: $black;
+      margin-bottom: 4px;
+    }
+    
+    p {
+      font-size: 0.85rem;
+      color: $gray-600;
+      line-height: 1.5;
+    }
+  }
+}
+
+// ===== ANIMATIONS =====
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroFloat {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-10px, -10px);
+  }
+}

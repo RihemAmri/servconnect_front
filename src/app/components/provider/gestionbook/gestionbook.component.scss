@@ -1,0 +1,156 @@
+.gestion-book-page {
+  max-width: 900px;
+  margin: 60px auto;
+  padding: 20px;
+  font-family: 'Poppins', sans-serif;
+  color: #133b5f;
+
+  h2 {
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.6rem;
+    margin-bottom: 40px;
+
+    i {
+      margin-right: 8px;
+      color: #0a1a2c;
+    }
+  }
+
+  .request-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 20px 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 6px 18px rgba(19, 59, 95, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 25px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(19, 59, 95, 0.15);
+    }
+
+    .info {
+      flex: 1;
+
+      h3 {
+        margin-bottom: 10px;
+        color: #0a1a2c;
+        font-weight: 600;
+      }
+
+      p {
+        margin: 6px 0;
+        color: #444;
+
+        i {
+          color: #133b5f;
+          margin-right: 6px;
+        }
+      }
+
+      .location {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .map-btn {
+          background: transparent;
+          border: none;
+          color: #1565c0;
+          cursor: pointer;
+          font-size: 1.1rem;
+          transition: color 0.2s;
+
+          &:hover {
+            color: #0d47a1;
+          }
+        }
+      }
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      .btn {
+        border: none;
+        border-radius: 10px;
+        padding: 10px 15px;
+        font-size: 0.95rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.3s;
+
+        &.accept {
+          background-color: #2e7d32;
+          color: white;
+
+          &:hover {
+            background-color: #1b5e20;
+          }
+        }
+
+        &.refuse {
+          background-color: #c62828;
+          color: white;
+
+          &:hover {
+            background-color: #8e0000;
+          }
+        }
+      }
+    }
+  }
+
+  /* 🗺️ Carte flottante */
+  .map-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(19, 59, 95, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+
+    .map-container {
+      position: relative;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      width: 80%;
+      max-width: 700px;
+
+      .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #c62828;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 35px;
+        height: 35px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: background 0.3s;
+
+        &:hover {
+          background: #8e0000;
+        }
+      }
+    }
+  }
+}

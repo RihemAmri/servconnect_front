@@ -1,1 +1,388 @@
-<p>paiement works!</p>
+<div class="payment-page">
+  
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-background">
+      <div class="hero-pattern"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge">🔒 Paiement 100% Sécurisé</div>
+      <h1 class="hero-title">Finaliser votre Réservation</h1>
+      <p class="hero-subtitle">Choisissez votre méthode de paiement préférée</p>
+    </div>
+  </section>
+
+  <!-- Main Container -->
+  <div class="payment-container">
+    
+    <!-- Payment Methods & Form -->
+    <div class="payment-main">
+      
+      <!-- Payment Methods -->
+      <div class="payment-section">
+        <div class="section-header">
+          <h2 class="section-title">💳 Méthode de Paiement</h2>
+          <p class="section-subtitle">Sélectionnez votre mode de paiement préféré</p>
+        </div>
+
+        <div class="payment-methods">
+          <div class="payment-method" 
+               [class.active]="selectedMethod === 'card'"
+               (click)="selectMethod('card')">
+            <div class="method-radio">
+              <span class="radio-check" *ngIf="selectedMethod === 'card'">✓</span>
+            </div>
+            <div class="method-icon">💳</div>
+            <div class="method-info">
+              <h3 class="method-title">Carte Bancaire</h3>
+              <p class="method-description">Visa, Mastercard, CIB</p>
+            </div>
+            <div class="method-badge">Populaire</div>
+          </div>
+
+          <div class="payment-method"
+               [class.active]="selectedMethod === 'sobflous'"
+               (click)="selectMethod('sobflous')">
+            <div class="method-radio">
+              <span class="radio-check" *ngIf="selectedMethod === 'sobflous'">✓</span>
+            </div>
+            <div class="method-icon">📱</div>
+            <div class="method-info">
+              <h3 class="method-title">Sobflous</h3>
+              <p class="method-description">Paiement mobile instantané</p>
+            </div>
+          </div>
+
+          <div class="payment-method"
+               [class.active]="selectedMethod === 'd17'"
+               (click)="selectMethod('d17')">
+            <div class="method-radio">
+              <span class="radio-check" *ngIf="selectedMethod === 'd17'">✓</span>
+            </div>
+            <div class="method-icon">🏪</div>
+            <div class="method-info">
+              <h3 class="method-title">D17</h3>
+              <p class="method-description">Paiement en point de vente</p>
+            </div>
+          </div>
+
+          <div class="payment-method"
+               [class.active]="selectedMethod === 'cash'"
+               (click)="selectMethod('cash')">
+            <div class="method-radio">
+              <span class="radio-check" *ngIf="selectedMethod === 'cash'">✓</span>
+            </div>
+            <div class="method-icon">💵</div>
+            <div class="method-info">
+              <h3 class="method-title">Paiement sur Place</h3>
+              <p class="method-description">Payez en espèces lors du service</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Form (Card) -->
+      <div class="payment-section" *ngIf="selectedMethod === 'card'">
+        <div class="section-header">
+          <h2 class="section-title">💳 Informations de la Carte</h2>
+          <p class="section-subtitle">Vos données sont cryptées et sécurisées</p>
+        </div>
+
+        <form class="payment-form">
+          <div class="form-row">
+            <div class="form-group full">
+              <label class="form-label">
+                <span class="label-icon">👤</span>
+                Nom sur la carte
+              </label>
+              <input type="text" 
+                     class="form-input" 
+                     placeholder="Ex: Ahmed Ben Ali"
+                     [(ngModel)]="cardName"
+                     name="cardName">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group full">
+              <label class="form-label">
+                <span class="label-icon">💳</span>
+                Numéro de carte
+              </label>
+              <input type="text" 
+                     class="form-input" 
+                     placeholder="1234 5678 9012 3456"
+                     [(ngModel)]="cardNumber"
+                     name="cardNumber"
+                     maxlength="19">
+              <div class="card-icons">
+                <span class="card-icon">💳</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">
+                <span class="label-icon">📅</span>
+                Date d'expiration
+              </label>
+              <input type="text" 
+                     class="form-input" 
+                     placeholder="MM/AA"
+                     [(ngModel)]="cardExpiry"
+                     name="cardExpiry"
+                     maxlength="5">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                <span class="label-icon">🔒</span>
+                CVV
+              </label>
+              <input type="text" 
+                     class="form-input" 
+                     placeholder="123"
+                     [(ngModel)]="cardCvv"
+                     name="cardCvv"
+                     maxlength="3">
+            </div>
+          </div>
+
+          <div class="form-checkbox">
+            <input type="checkbox" 
+                   id="saveCard" 
+                   [(ngModel)]="saveCard"
+                   name="saveCard">
+            <label for="saveCard">
+              💾 Sauvegarder cette carte pour les prochains paiements
+            </label>
+          </div>
+        </form>
+      </div>
+
+      <!-- Payment Form (Sobflous) -->
+      <div class="payment-section" *ngIf="selectedMethod === 'sobflous'">
+        <div class="section-header">
+          <h2 class="section-title">📱 Paiement Sobflous</h2>
+          <p class="section-subtitle">Entrez votre numéro de téléphone</p>
+        </div>
+
+        <form class="payment-form">
+          <div class="form-row">
+            <div class="form-group full">
+              <label class="form-label">
+                <span class="label-icon">📱</span>
+                Numéro de téléphone
+              </label>
+              <input type="tel" 
+                     class="form-input" 
+                     placeholder="+216 XX XXX XXX"
+                     [(ngModel)]="phoneNumber"
+                     name="phoneNumber">
+            </div>
+          </div>
+
+          <div class="info-box sobflous">
+            <div class="info-icon">ℹ️</div>
+            <div class="info-content">
+              <strong>Comment ça marche ?</strong>
+              <p>Vous recevrez un SMS avec un code à confirmer pour finaliser le paiement.</p>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Payment Form (D17) -->
+      <div class="payment-section" *ngIf="selectedMethod === 'd17'">
+        <div class="section-header">
+          <h2 class="section-title">🏪 Paiement D17</h2>
+          <p class="section-subtitle">Générez votre code de paiement</p>
+        </div>
+
+        <div class="d17-info">
+          <div class="d17-steps">
+            <div class="d17-step">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <h4>Cliquez sur "Générer le code"</h4>
+                <p>Un code unique sera généré pour votre paiement</p>
+              </div>
+            </div>
+            <div class="d17-step">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <h4>Rendez-vous au point de vente D17</h4>
+                <p>Trouvez le point D17 le plus proche</p>
+              </div>
+            </div>
+            <div class="d17-step">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <h4>Présentez votre code</h4>
+                <p>Payez en espèces et validez votre réservation</p>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-generate" (click)="generateD17Code()">
+            <span class="btn-icon">🎫</span>
+            <span>Générer le Code D17</span>
+          </button>
+
+          <div class="d17-code" *ngIf="d17Code">
+            <div class="code-label">Votre code de paiement :</div>
+            <div class="code-value">{{ d17Code }}</div>
+            <div class="code-expiry">Valable pendant 48 heures</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Form (Cash) -->
+      <div class="payment-section" *ngIf="selectedMethod === 'cash'">
+        <div class="section-header">
+          <h2 class="section-title">💵 Paiement sur Place</h2>
+          <p class="section-subtitle">Payez directement au prestataire</p>
+        </div>
+
+        <div class="info-box cash">
+          <div class="info-icon">💡</div>
+          <div class="info-content">
+            <strong>Information importante</strong>
+            <p>Vous payerez le montant exact en espèces au prestataire lors de la réalisation du service. Assurez-vous d'avoir le montant exact.</p>
+          </div>
+        </div>
+
+        <div class="cash-checklist">
+          <h4 class="checklist-title">✓ Avantages du paiement sur place :</h4>
+          <ul class="checklist-items">
+            <li>💵 Pas de frais supplémentaires</li>
+            <li>🤝 Paiement direct au prestataire</li>
+            <li>✅ Confirmation immédiate du service</li>
+            <li>🔄 Possibilité de négociation sur place</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Order Summary Sidebar -->
+    <div class="payment-sidebar">
+      
+      <!-- Service Summary -->
+      <div class="summary-card">
+        <div class="summary-header">
+          <h3 class="summary-title">📋 Résumé de la Commande</h3>
+        </div>
+
+        <div class="service-item">
+          <div class="service-icon">🔧</div>
+          <div class="service-details">
+            <h4 class="service-name">Réparation Plomberie</h4>
+            <p class="service-provider">Par Mohamed Trabelsi</p>
+          </div>
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <div class="summary-details">
+          <div class="detail-row">
+            <span class="detail-label">📅 Date</span>
+            <span class="detail-value">15 Nov 2025</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">⏰ Heure</span>
+            <span class="detail-value">14:00 - 16:00</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">📍 Adresse</span>
+            <span class="detail-value">Tunis, La Marsa</span>
+          </div>
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <div class="price-details">
+          <div class="price-row">
+            <span class="price-label">Prix du service</span>
+            <span class="price-value">80.000 TND</span>
+          </div>
+          <div class="price-row">
+            <span class="price-label">Frais de service</span>
+            <span class="price-value">5.000 TND</span>
+          </div>
+          <div class="price-row discount">
+            <span class="price-label">🎉 Réduction (-10%)</span>
+            <span class="price-value">-8.500 TND</span>
+          </div>
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <div class="total-row">
+          <span class="total-label">Total à payer</span>
+          <span class="total-value">76.500 TND</span>
+        </div>
+
+        <button class="btn-pay" (click)="processPayment()">
+          <span class="btn-icon">🔒</span>
+          <span>Payer Maintenant</span>
+        </button>
+
+        <div class="security-badges">
+          <div class="security-badge">
+            <span class="badge-icon">🔒</span>
+            <span>Paiement Sécurisé</span>
+          </div>
+          <div class="security-badge">
+            <span class="badge-icon">✅</span>
+            <span>Certifié SSL</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Promo Code -->
+      <div class="promo-card">
+        <h4 class="promo-title">🎁 Code Promo</h4>
+        <div class="promo-input-group">
+          <input type="text" 
+                 class="promo-input" 
+                 placeholder="Entrez votre code"
+                 [(ngModel)]="promoCode">
+          <button class="btn-apply" (click)="applyPromo()">Appliquer</button>
+        </div>
+        <p class="promo-success" *ngIf="promoApplied">
+          ✅ Code promo "FIRST10" appliqué avec succès!
+        </p>
+      </div>
+
+      <!-- Trust Indicators -->
+      <div class="trust-indicators">
+        <div class="trust-item">
+          <div class="trust-icon">🛡️</div>
+          <div class="trust-text">
+            <strong>Garantie Satisfait ou Remboursé</strong>
+            <p>Service non conforme ? Nous vous remboursons</p>
+          </div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon">⭐</div>
+          <div class="trust-text">
+            <strong>Prestataires Vérifiés</strong>
+            <p>Tous nos professionnels sont certifiés</p>
+          </div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon">📞</div>
+          <div class="trust-text">
+            <strong>Support 24/7</strong>
+            <p>Une question ? Nous sommes là pour vous</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

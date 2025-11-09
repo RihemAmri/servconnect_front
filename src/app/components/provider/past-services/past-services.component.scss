@@ -1,0 +1,135 @@
+.services-page {
+  max-width: 900px;
+  margin: 60px auto;
+  padding: 20px;
+  font-family: 'Poppins', sans-serif;
+  color: #133b5f;
+  position: relative;
+
+  .header-row {
+    position: relative;
+    text-align: center;
+    margin-bottom: 30px;
+
+    h2 {
+      display: inline-block;
+      font-weight: 600;
+      margin: 0;
+      font-size: 1.6rem;
+      i {
+        margin-right: 8px;
+      }
+    }
+
+    .btn.back {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #133b5f;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.3s;
+
+      i {
+        font-size: 0.9rem;
+      }
+
+      &:hover {
+        background-color: #0d2e4d;
+      }
+    }
+
+    @media (max-width: 768px) {
+      h2 {
+        font-size: 1.3rem;
+      }
+      .btn.back {
+        padding: 8px 15px;
+      }
+    }
+  }
+
+  .service-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 20px 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 6px 18px rgba(19, 59, 95, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(19, 59, 95, 0.15);
+    }
+
+    .card-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 25px;
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    .info {
+      flex: 1;
+      text-align: left;
+
+      h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #0a121f;
+
+        i {
+          color: #0a1a2c;
+          margin-right: 8px;
+        }
+      }
+
+      p {
+        font-size: 0.95rem;
+        margin: 5px 0;
+        color: #444;
+
+        i {
+          color: #143454;
+          margin-right: 6px;
+        }
+
+        strong {
+          color: #133b5f;
+        }
+      }
+    }
+
+    .image {
+      flex-shrink: 0;
+      width: 100px;
+      height: 100px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #e3f2fd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+    }
+  }
+}
