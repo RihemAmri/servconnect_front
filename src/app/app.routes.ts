@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+
 import { HomepageComponent } from './components/shared/homepage/homepage.component';
 import { FooterComponent } from './components/shared/footer/footer.component';
 import { MyservicesComponent } from './components/provider/myservices/myservices.component';
@@ -9,6 +10,7 @@ import { ExploreComponent } from './components/client/explore/explore.component'
 import { PaiementComponent } from './components/client/paiement/paiement.component';
 import { ReservationComponent } from './components/client/reservation/reservation.component';
 import { RegisterComponent } from './components/auth/register/register.component';
+import { LoginComponent } from './components/auth/login/login.component';
 import { UpcomingServicesComponent } from './components/provider/upcoming-services/upcoming-services.component';
 import { PastServicesComponent } from './components/provider/past-services/past-services.component';
 
@@ -26,7 +28,15 @@ export const routes: Routes = [
   { path: 'service/:id', component: ServicedetailsComponent }, // détail d’un service spécifique
   { path: 'reservation', component: ReservationComponent },
   { path: 'paiement', component: PaiementComponent },
-  {path: 'register', component: RegisterComponent},
+ { 
+  path: 'register', 
+  loadComponent: () => import('./components/auth/register/register.component').then(m => m.RegisterComponent) 
+},
+{ 
+  path: 'login', 
+  loadComponent: () => import('./components/auth/login/login.component').then(m => m.LoginComponent) 
+},
+
 
   { path: '**', redirectTo: '' }
 ];
