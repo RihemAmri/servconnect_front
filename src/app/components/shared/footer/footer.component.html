@@ -1,21 +1,102 @@
-<section class="home">
-  <div class="content">
-    <h1>Connect With The Best Service Providers In One Click</h1>
-    <p>
-      ServeConnect connects you with reliable professionals who are available
-      and near you. Find, compare, and book your services easily and securely.
-    </p>
-    <button class="btn-primary">Get Started Now</button>
+<footer class="app-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <!-- Logo & Description -->
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <span class="logo-text">ServConnect</span>
+          <span class="logo-dot"></span>
+        </div>
+        <p class="footer-description">
+          Connectez-vous aux meilleurs professionnels en un clic. Fiable,
+          rapide, local.
+        </p>
+        <div class="footer-social">
+          <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" class="social-link"><i class="fab fa-x-twitter"></i></a>
+        </div>
+      </div>
+
+      <!-- Services -->
+      <div class="footer-column">
+        <h3 class="footer-title">Services</h3>
+        <ul class="footer-links">
+          <li><a href="#">Plomberie</a></li>
+          <li><a href="#">Électricité</a></li>
+          <li><a href="#">Ménage</a></li>
+          <li><a href="#">Coiffure</a></li>
+          <li><a href="#">Cours particuliers</a></li>
+        </ul>
+      </div>
+
+      <!-- Compagnie -->
+      <div class="footer-column">
+        <h3 class="footer-title">Compagnie</h3>
+        <ul class="footer-links">
+          <li><a href="#">À propos</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Carrières</a></li>
+          <li><a href="#">Presse</a></li>
+          <li><a href="#">Partenaires</a></li>
+        </ul>
+      </div>
+
+      <!-- Support -->
+      <div class="footer-column">
+        <h3 class="footer-title">Support</h3>
+        <ul class="footer-links">
+          <li><a href="#">Centre d'aide</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Sécurité</a></li>
+          <li><a href="#">CGU</a></li>
+          <li><a href="#">Confidentialité</a></li>
+        </ul>
+      </div>
+
+      <!-- Newsletter -->
+      <div class="footer-newsletter">
+        <h3 class="footer-title">Newsletter</h3>
+        <p class="newsletter-text">
+          Recevez les meilleures offres près de chez vous.
+        </p>
+        <form class="newsletter-form" (submit)="onSubscribe($event)">
+          <input
+            type="email"
+            placeholder="votre@email.com"
+            class="newsletter-input"
+            required
+          />
+          <button type="submit" class="newsletter-btn">S'inscrire</button>
+        </form>
+        <p class="newsletter-privacy">
+          En vous inscrivant, vous acceptez notre
+          <a href="#">politique de confidentialité</a>.
+        </p>
+      </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="footer-bottom">
+      <div class="footer-copyright">
+        © 2025 <strong>ServConnect</strong>. Tous droits réservés.
+      </div>
+      <div class="footer-legal">
+        <a href="#">Mentions légales</a>
+        <a href="#">Cookies</a>
+        <a href="#">Accessibilité</a>
+      </div>
+    </div>
   </div>
 
-  <div class="image">
-    <img src="assets/connect.png" alt="ServeConnect illustration" />
-  </div>
-</section>
-
-<section class="stats">
-  <div class="stat"><h2>500+</h2><p>Registered Providers</p></div>
-  <div class="stat"><h2>1K+</h2><p>Happy Clients</p></div>
-  <div class="stat"><h2>4.8★</h2><p>Average Rating</p></div>
-  <div class="stat"><h2>24/7</h2><p>Support & Assistance</p></div>
-</section>
+  <!-- Back to Top -->
+  <button
+    class="back-to-top"
+    (click)="scrollToTop()"
+    [class.visible]="showBackToTop"
+    aria-label="Retour en haut"
+  >
+    Up
+  </button>
+</footer>

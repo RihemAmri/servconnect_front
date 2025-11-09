@@ -14,3 +14,164 @@
     </div>
   </div>
 </nav>
+<nav class="navbar" [class.scrolled]="isScrolled">
+  <div class="navbar-container">
+    <!-- Logo & Brand -->
+    <a routerLink="/" class="navbar-brand" aria-label="Retour à l'accueil">
+      <div class="logo-wrapper">
+        <svg
+          class="logo-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 9L12 3L21 9V21C21 21.5523 20.5523 22 20 22H4C3.44772 22 3 21.5523 3 21V9Z"
+            fill="url(#gradient)"
+          />
+          <path
+            d="M9 22V12H15V22"
+            stroke="white"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <defs>
+            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#025ddd" />
+              <stop offset="100%" stop-color="#0047b3" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <span class="logo-text">Serv<span class="highlight">Connect</span></span>
+      <span class="logo-badge">Pro</span>
+    </a>
+
+    <!-- Navigation Links -->
+    <ul class="nav-menu">
+      <li class="nav-item">
+        <a
+          routerLink="/"
+          class="nav-link"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <span class="nav-icon">🏠</span>
+          <span>Accueil</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/explore" class="nav-link" routerLinkActive="active">
+          <span class="nav-icon">🔍</span>
+          <span>Explorer</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/services" class="nav-link" routerLinkActive="active">
+          <span class="nav-icon">⚙️</span>
+          <span>Services</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/pricing" class="nav-link" routerLinkActive="active">
+          <span class="nav-icon">💰</span>
+          <span>Tarifs</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/contact" class="nav-link" routerLinkActive="active">
+          <span class="nav-icon">📞</span>
+          <span>Contact</span>
+        </a>
+      </li>
+    </ul>
+
+    <!-- Auth Buttons -->
+    <div class="navbar-actions">
+      <button class="btn-notification">
+        <span class="notification-icon">🔔</span>
+        <span class="notification-badge">3</span>
+      </button>
+      <button class="btn-secondary">
+        <span class="btn-icon">👤</span>
+        <span>Connexion</span>
+      </button>
+      <button class="btn-primary">
+        <span class="btn-icon">✨</span>
+        <span>S'inscrire</span>
+      </button>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" (click)="toggleMobileMenu()">
+      <span class="hamburger" [class.active]="isMobileMenuOpen">
+        <span></span>
+        <span></span>
+        <span></span>
+      </span>
+    </button>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" [class.open]="isMobileMenuOpen">
+    <ul class="mobile-nav-menu">
+      <li class="mobile-nav-item">
+        <a routerLink="/" class="mobile-nav-link" (click)="closeMobileMenu()">
+          <span class="nav-icon">🏠</span>
+          <span>Accueil</span>
+        </a>
+      </li>
+      <li class="mobile-nav-item">
+        <a
+          routerLink="/explore"
+          class="mobile-nav-link"
+          (click)="closeMobileMenu()"
+        >
+          <span class="nav-icon">🔍</span>
+          <span>Explorer</span>
+        </a>
+      </li>
+      <li class="mobile-nav-item">
+        <a
+          routerLink="/services"
+          class="mobile-nav-link"
+          (click)="closeMobileMenu()"
+        >
+          <span class="nav-icon">⚙️</span>
+          <span>Services</span>
+        </a>
+      </li>
+      <li class="mobile-nav-item">
+        <a
+          routerLink="/pricing"
+          class="mobile-nav-link"
+          (click)="closeMobileMenu()"
+        >
+          <span class="nav-icon">💰</span>
+          <span>Tarifs</span>
+        </a>
+      </li>
+      <li class="mobile-nav-item">
+        <a
+          routerLink="/contact"
+          class="mobile-nav-link"
+          (click)="closeMobileMenu()"
+        >
+          <span class="nav-icon">📞</span>
+          <span>Contact</span>
+        </a>
+      </li>
+    </ul>
+    <div class="mobile-auth-buttons">
+      <button class="btn-secondary-mobile" (click)="closeMobileMenu()">
+        <span class="btn-icon">👤</span>
+        <span>Connexion</span>
+      </button>
+      <button class="btn-primary-mobile" (click)="closeMobileMenu()">
+        <span class="btn-icon">✨</span>
+        <span>S'inscrire</span>
+      </button>
+    </div>
+  </div>
+</nav>

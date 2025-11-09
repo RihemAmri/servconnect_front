@@ -1,21 +1,147 @@
-<section class="home">
-  <div class="content">
-    <h1>Connect With The Best Service Providers In One Click</h1>
-    <p>
-      ServeConnect connects you with reliable professionals who are available
-      and near you. Find, compare, and book your services easily and securely.
-    </p>
-    <button class="btn-primary">Get Started Now</button>
+<!-- Hero Section -->
+<section class="hero" [@fadeInUp]>
+  <div class="container">
+    <!-- Hero Content -->
+    <div class="hero-content" [@fadeInUp]>
+      <h1 class="hero-title">
+        Connectez-vous aux <span class="highlight">Meilleurs</span><br />
+        Professionnels en <span class="highlight">Un Clic</span>
+      </h1>
+      <p class="hero-subtitle">
+        ServConnect vous connecte avec des professionnels fiables, disponibles
+        et près de chez vous. Trouvez, comparez et réservez vos services
+        facilement et en toute sécurité.
+      </p>
+      <div class="hero-actions">
+        <button class="btn btn-primary" (click)="scrollToServices()">
+          🚀 Commencer Maintenant
+        </button>
+        <button class="btn btn-secondary">📱 En Savoir Plus</button>
+      </div>
+      <div class="hero-badges">
+        <span class="badge">✅ Vérifiés</span>
+        <span class="badge">⭐ Notés</span>
+        <span class="badge">🚀 Rapide</span>
+      </div>
+    </div>
+
+    <!-- Lottie Animation -->
+    <div class="hero-animation">
+      <div class="animation-wrapper">
+        <ng-lottie
+          [options]="lottieOptions"
+          (animationCreated)="onAnimationCreated($event)"
+        >
+        </ng-lottie>
+      </div>
+    </div>
   </div>
 
-  <div class="image">
-    <img src="assets/connect.png" alt="ServeConnect illustration" />
+  <!-- Animated Background Elements -->
+  <div class="hero-bg-elements">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
   </div>
 </section>
 
+<!-- Stats Section -->
 <section class="stats">
-  <div class="stat"><h2>500+</h2><p>Registered Providers</p></div>
-  <div class="stat"><h2>1K+</h2><p>Happy Clients</p></div>
-  <div class="stat"><h2>4.8★</h2><p>Average Rating</p></div>
-  <div class="stat"><h2>24/7</h2><p>Support & Assistance</p></div>
+  <div class="container">
+    <div class="stats-grid" @staggerAnimation>
+      <div class="stat-card" *ngFor="let stat of stats">
+        <div class="stat-icon">{{ stat.icon }}</div>
+        <h3 class="stat-value">{{ stat.value }}</h3>
+        <p class="stat-label">{{ stat.label }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Services Section -->
+<section id="services" class="services">
+  <div class="container">
+    <div class="section-header" @fadeInUp>
+      <h2 class="section-title">Services Populaires</h2>
+      <p class="section-subtitle">
+        Découvrez nos catégories les plus demandées
+      </p>
+    </div>
+
+    <div class="services-grid" @staggerAnimation>
+      <div
+        class="service-card"
+        *ngFor="let service of services"
+        [style.border-color]="service.color"
+      >
+        <div class="service-icon" [style.background]="service.color + '20'">
+          {{ service.icon }}
+        </div>
+        <h3 class="service-name">{{ service.name }}</h3>
+        <p class="service-count">{{ service.count }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+  <div class="container">
+    <div class="section-header" @fadeInUp>
+      <h2 class="section-title">Pourquoi Choisir ServConnect ?</h2>
+      <p class="section-subtitle">
+        Une plateforme pensée pour vous faciliter la vie
+      </p>
+    </div>
+
+    <div class="features-grid" @staggerAnimation>
+      <div class="feature-card" *ngFor="let feature of features">
+        <div class="feature-icon">{{ feature.icon }}</div>
+        <h3 class="feature-title">{{ feature.title }}</h3>
+        <p class="feature-description">{{ feature.description }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials">
+  <div class="container">
+    <div class="section-header" @fadeInUp>
+      <h2 class="section-title">Ce Que Disent Nos Utilisateurs</h2>
+      <p class="section-subtitle">Des milliers de clients satisfaits</p>
+    </div>
+
+    <div class="testimonials-grid" @staggerAnimation>
+      <div class="testimonial-card" *ngFor="let testimonial of testimonials">
+        <div class="testimonial-rating">
+          <span *ngFor="let star of [1, 2, 3, 4, 5]">⭐</span>
+        </div>
+        <p class="testimonial-comment">"{{ testimonial.comment }}"</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">{{ testimonial.avatar }}</div>
+          <div class="author-info">
+            <h4>{{ testimonial.name }}</h4>
+            <p>{{ testimonial.role }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta">
+  <div class="container">
+    <div class="cta-content" @fadeInUp>
+      <h2 class="cta-title">Prêt à Trouver Votre Professionnel ?</h2>
+      <p class="cta-subtitle">
+        Rejoignez des milliers d'utilisateurs satisfaits
+      </p>
+      <div class="cta-buttons">
+        <button class="btn btn-primary btn-lg">Chercher un Pro</button>
+        <button class="btn btn-outline btn-lg">Devenir Pro</button>
+      </div>
+    </div>
+  </div>
 </section>
