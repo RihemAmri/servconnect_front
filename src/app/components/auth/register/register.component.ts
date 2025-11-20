@@ -79,7 +79,7 @@ export class RegisterComponent {
 }
 */
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule,FormArray,FormControl,AbstractControl  } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/auth.service';
 import { RouterModule } from '@angular/router';
@@ -121,7 +121,16 @@ errorMessage = '';
     category: [''],
     description: [''],
     experience: [''],
-    photo: [null]
+    photo: [null],
+    disponibilite: this.fb.array([
+    this.createDayAvailability('monday'),
+    this.createDayAvailability('tuesday'),
+    this.createDayAvailability('wednesday'),
+    this.createDayAvailability('thursday'),
+    this.createDayAvailability('friday'),
+    this.createDayAvailability('saturday'),
+    this.createDayAvailability('sunday'),
+  ])
   });
 
   // Initialisation showError
@@ -240,6 +249,40 @@ if (Object.values(this.showError).some(v => v)) return;
       formData.append('experience', formValue.experience || '');
       this.certificationsFiles.forEach(f => formData.append('certifications', f));
       this.documentsFiles.forEach(f => formData.append('documents', f));
+       // 🔹 Préparer disponibilités sous forme de JSON
+    const disponibiliteJSON = this.disponibilite.controls.map(dayCtrl => {
+  const dayValue = dayCtrl.value;
+
+  // 🔹 Si le jour n’est pas disponible, timeSlots sera un tableau vide
+  const timeSlots = dayValue.isAvailable
+    ? dayValue.timeSlots.map((slot: any) => ({
+        start: slot.start,
+        end: slot.end
+      }))
+    : [];
+
+  return {
+    day: dayValue.day,
+    isAvailable: dayValue.isAvailable,
+    timeSlots
+  };
+});
+
+    console.log("available test");
+    console.log(JSON.stringify(disponibiliteJSON, null, 2));
+    // 🔹 Ajouter la disponibilité au FormData
+    formData.append('disponibilite', JSON.stringify(disponibiliteJSON));
+
+    // 🔹 Optionnel : console.log pour debug
+    console.log('FormData complet :', {
+      nom,
+      prenom,
+      role: formValue.role,
+      photo: this.selectedPhotoFile?.name,
+      certifications: this.certificationsFiles.map(f => f.name),
+      documents: this.documentsFiles.map(f => f.name),
+      disponibilite: disponibiliteJSON
+    });
     }
 
     if (this.selectedPhotoFile) {
@@ -267,4 +310,41 @@ if (Object.values(this.showError).some(v => v)) return;
     }
   });
 }
+createDayAvailability(day: string): FormGroup {
+  return this.fb.group({
+    day: [day],
+    isAvailable: [false],
+    timeSlots: this.fb.array([]),
+  });
+}
+
+getDisponibilite() {
+  return this.registerForm.get('disponibilite') as any;
+}
+
+getTimeSlots(index: number): FormArray {
+  return (this.disponibilite.at(index).get('timeSlots') as FormArray);
+}
+
+
+addTimeSlot(dayIndex: number) {
+  this.getTimeSlots(dayIndex).push(
+    this.fb.group({
+      start: [''],
+      end: ['']
+    })
+  );
+}
+
+removeTimeSlot(dayIndex: number, slotIndex: number) {
+  this.getTimeSlots(dayIndex).removeAt(slotIndex);
+}
+get disponibilite(): FormArray {
+  return this.registerForm.get('disponibilite') as FormArray;
+}
+// Méthode utilitaire
+getControl(control: AbstractControl, controlName: string): FormControl {
+  return (control as FormGroup).get(controlName) as FormControl;
+}
+
 }

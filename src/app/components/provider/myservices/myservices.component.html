@@ -1,33 +1,37 @@
 <div class="myservices-container">
-  <!-- Colonne gauche : Agenda -->
+
+  <!-- Agenda -->
   <div class="agenda-section">
     <h2 class="title">
-      <i class="fas fa-calendar-alt"></i> Mon Agenda
+      <i class="fas fa-calendar-alt"></i>
+      Mon Agenda
     </h2>
 
-<div class="calendar-wrapper" *ngIf="calendarOptions.initialView">
-  <full-calendar [options]="calendarOptions"></full-calendar>
-</div>
+    <div class="calendar-wrapper" *ngIf="calendarOptions.initialView">
+      <full-calendar [options]="calendarOptions"></full-calendar>
+    </div>
   </div>
 
-  <!-- Colonne droite : Animation + boutons -->
+  <!-- Colonne latérale -->
   <div class="side-section">
-  <div class="image-wrapper">
-  <div id="lottie-container" #lottieContainer style="width: 300px; height: 300px;"></div>
 
+    <div class="image-wrapper">
+  <img src="agenda3.png" alt="Illustration" class="lottie-box" />
 </div>
 
 
-<div class="button-group">
-    <button class="btn secondary" (click)="goToUpcomingServices()">
-    <i class="fas fa-calendar-plus"></i> Services à venir
-  </button>
-  <button class="btn primary" (click)="goToPastServices()">
-    <i class="fas fa-calendar-check"></i> Services terminés
-  </button>
+    <div class="button-group">
+      <button class="btn btn-secondary" (click)="goToUpcomingServices()">
+        <i class="fas fa-calendar-plus"></i>
+        Services à venir
+      </button>
 
-  
-</div>
+      <button class="btn btn-primary" (click)="goToPastServices()">
+        <i class="fas fa-calendar-check"></i>
+        Services terminés
+      </button>
+    </div>
 
+  </div>
 
 </div>
