@@ -2,11 +2,13 @@ import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { trigger, transition, style, animate, stagger, query } from '@angular/animations';
 import { LottieComponent } from 'ngx-lottie';
+import { ButtonModule } from 'primeng/button';
+
 
 @Component({
   selector: 'app-homepage',
   standalone: true,
-  imports: [CommonModule, LottieComponent],
+  imports: [CommonModule, LottieComponent,ButtonModule],
   templateUrl: './homepage.component.html',
   styleUrls: ['./homepage.component.scss'],
   animations: [

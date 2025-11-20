@@ -14,7 +14,6 @@ import { LoginComponent } from './components/auth/login/login.component';
 import { UpcomingServicesComponent } from './components/provider/upcoming-services/upcoming-services.component';
 import { PastServicesComponent } from './components/provider/past-services/past-services.component';
 
-
 export const routes: Routes = [
   { path: '', component: HomepageComponent }, // page d’accueil
   {path: 'footer', component: FooterComponent}, // footer
@@ -28,6 +27,42 @@ export const routes: Routes = [
   { path: 'service/:id', component: ServicedetailsComponent }, // détail d’un service spécifique
   { path: 'reservation', component: ReservationComponent },
   { path: 'paiement', component: PaiementComponent },
+
+ {
+    path: 'admin',
+    children: [
+      {
+        path: 'users',
+        loadComponent: () => import('./components/admin/users-list/users-list.component').then(m => m.UsersListComponent)},
+       {
+        path: 'users/:id',
+        loadComponent: () => import('./components/admin/user-details/user-details.component').then(m => m.UserDetailsComponent)
+      },
+       {
+      path: 'providers',
+      loadComponent: () => import('./components/admin/providers-list/providers-list.component').then(m => m.ProvidersListComponent)
+    },
+    {
+      path: 'providers/:id',
+      loadComponent: () => import('./components/admin/provider-details/provider-details.component').then(m => m.ProviderDetailsComponent)
+      },
+    
+    
+    {
+      path: 'reservations',
+      loadComponent: () => import('./components/admin/reservations-list/reservations-list.component').then(m => m.ReservationsListComponent)
+    },
+    {
+      path: 'reservations/:id',
+      loadComponent: () => import('./components/admin/reservation-details/reservation-details.component').then(m => m.ReservationDetailsComponent)
+    }
+       
+   ]
+    
+    
+    
+  },
+
  { 
   path: 'register', 
   loadComponent: () => import('./components/auth/register/register.component').then(m => m.RegisterComponent) 

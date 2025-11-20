@@ -8,6 +8,12 @@ import player from 'lottie-web';
 
 import { routes } from './app.routes';
 
+import { providePrimeNG } from 'primeng/config';
+import Aura from '@primeng/themes/aura';
+
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { authInterceptor } from '../../src/app/interceptors/auth.interceptor'; 
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
@@ -16,6 +22,15 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(), // ✅ il faut les parenthèses ici
     provideLottieOptions({
       player: () => player // Fournit le player Lottie
-    })
+    }),
+
+    providePrimeNG({
+            theme: {
+                preset: Aura
+            }
+    }),
+    provideHttpClient(
+      withInterceptors([authInterceptor]) // Liste d'intercepteurs
+    )
   ]
 };

@@ -1,0 +1,194 @@
+<div class="min-h-screen bg-white">
+  <div class="max-w-4xl mx-auto px-6 py-6">
+    <div *ngIf="loading" class="flex items-center justify-center h-48">
+      <i class="pi pi-spin pi-spinner text-4xl text-blue-500"></i>
+    </div>
+
+    <div *ngIf="!loading && provider" class="space-y-6">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <img
+            [src]="provider.photo || 'assets/avatar-default.png'"
+            alt="photo"
+            class="w-28 h-28 rounded-full object-cover border-2 border-gray-200 shadow-sm"
+          />
+          <div>
+            <h2 class="text-2xl font-bold text-gray-900">
+              {{ provider.prenom }} {{ provider.nom }}
+            </h2>
+            <p class="text-sm text-gray-500">
+              {{ provider.metier }} • {{ provider.ville }}
+            </p>
+            <div class="mt-2 flex items-center gap-2">
+              <p-tag
+                [value]="displayStatut(provider.statut)"
+                [severity]="getStatutSeverity(provider.statut)"
+              ></p-tag>
+              <!--     <span
+                *ngIf="provider.isBoosted"
+                class="inline-flex items-center text-yellow-500 text-sm"
+              >
+                <i class="pi pi-star-fill mr-1"></i> Mis en avant
+              </span> -->
+            </div>
+            <div class="mt-2 text-sm text-gray-600">
+              <span class="font-semibold text-gray-800">{{
+                provider.noteGenerale || 0
+              }}</span>
+              <span class="text-gray-400"
+                >({{ provider.nombreAvis }} avis)</span
+              >
+              <span class="mx-2">•</span>
+              <span>{{ provider.nombreMissions }} missions</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-2">
+          <button
+            pButton
+            icon="pi pi-arrow-left"
+            class="p-button-outlined"
+            (click)="back()"
+          ></button>
+          <button
+            pButton
+            label="Valider"
+            icon="pi pi-check"
+            class="p-button-success"
+            (click)="validateProvider()"
+            *ngIf="provider.statut !== 'actif'"
+          ></button>
+          <button
+            pButton
+            label="Refuser"
+            icon="pi pi-times"
+            class="p-button-danger p-button-outlined"
+            (click)="refuseProvider()"
+          ></button>
+          <!--  <button
+            pButton
+            label="Boost"
+            icon="pi pi-star"
+            class="p-button-warning"
+            (click)="boostProvider()"
+          ></button> -->
+          <button
+            pButton
+            icon="pi pi-trash"
+            class="p-button-danger p-button-text"
+            (click)="deleteProvider()"
+          ></button>
+        </div>
+      </div>
+
+      <!-- Profil / Détails -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Profil</h3>
+        <p class="text-gray-700 mb-4">{{ provider.description }}</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <p class="text-sm text-gray-500">Expérience</p>
+            <p class="font-semibold">{{ provider.experience }} ans</p>
+          </div>
+
+          <div>
+            <p class="text-sm text-gray-500">Tarifs</p>
+            <p class="font-semibold">
+              <span *ngIf="provider.tarifHoraire"
+                >{{ provider.tarifHoraire }} TND/h</span
+              >
+              <span *ngIf="provider.tarifMission">
+                • {{ provider.tarifMission }} TND / mission</span
+              >
+            </p>
+          </div>
+
+          <div>
+            <p class="text-sm text-gray-500">Taux de réponse</p>
+            <p class="font-semibold">{{ provider.tauxReponse }}%</p>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <p class="text-sm text-gray-500">Spécialités</p>
+          <div class="flex flex-wrap gap-2 mt-2">
+            <span
+              *ngFor="let s of provider.specialites"
+              class="px-3 py-1 rounded-full bg-gray-100 text-sm"
+              >{{ s }}</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Documents -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Documents</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <p class="text-sm text-gray-500 mb-2">CIN</p>
+            <img
+              [src]="provider.cin"
+              alt="CIN"
+              class="w-full h-40 object-cover rounded-md border"
+            />
+          </div>
+
+          <div class="md:col-span-2">
+            <p class="text-sm text-gray-500 mb-2">Certificats & Diplômes</p>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <div
+                *ngFor="let d of provider.documents"
+                class="border rounded-md overflow-hidden"
+              >
+                <img
+                  [src]="d.url"
+                  alt="{{ d.nom }}"
+                  class="w-full h-32 object-cover"
+                />
+                <div class="p-2 text-sm">
+                  <div class="font-semibold">{{ d.nom }}</div>
+                  <div class="text-xs text-gray-500">{{ d.type }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Historique rapide / Statistiques -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">
+          Statistiques & historique
+        </h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div>
+            <p class="text-sm text-gray-500">Missions</p>
+            <p class="font-semibold">{{ provider.nombreMissions }}</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Avis</p>
+            <p class="font-semibold">{{ provider.nombreAvis }}</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Dernière mission</p>
+            <p class="font-semibold">
+              {{ provider.derniereMission | date : "dd/MM/yyyy" }}
+            </p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Inscription</p>
+            <p class="font-semibold">
+              {{ provider.dateInscription | date : "dd/MM/yyyy" }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p-confirmDialog></p-confirmDialog>
+  <p-toast position="top-right"></p-toast>
+</div>

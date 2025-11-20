@@ -20,6 +20,15 @@ export class AuthService {
   
 login(email: string, password: string) {
   return this.http.post(`${this.baseUrl}/login`, { email, motDePasse: password });
-}
+  }
+  
+   logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('currentUser');
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
 
 }

@@ -1,0 +1,277 @@
+<div class="min-h-screen bg-white">
+  <div class="max-w-7xl mx-auto px-6 py-6">
+    <!-- 🎯 En-tête -->
+    <div class="mb-8 mt-6">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">
+        Gestion des utilisateurs
+      </h1>
+      <p class="text-gray-600">
+        Gérez tous les clients, prestataires et admins
+      </p>
+    </div>
+
+    <!-- 🔍 Barre de recherche et filtres -->
+    <div
+      class="bg-gray-50 rounded-lg shadow-sm p-6 mb-6 border border-gray-200"
+    >
+      <div
+        class="flex flex-col md:flex-row gap-4 items-stretch md:items-center"
+      >
+        <!-- Recherche -->
+        <div class="flex-1 md:flex-[2]">
+          <div class="relative w-full">
+            <input
+              pInputText
+              type="text"
+              [(ngModel)]="searchTerm"
+              (keyup.enter)="onSearch()"
+              placeholder="Rechercher par nom, email, téléphone..."
+              class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+        </div>
+
+        <!-- Dropdown -->
+        <div class="w-full md:w-auto md:flex-1">
+          <p-dropdown
+            [options]="roles"
+            [(ngModel)]="selectedRole"
+            (onChange)="onFilterChange()"
+            optionLabel="label"
+            placeholder="Filtrer par rôle"
+            [style]="{ width: '100%' }"
+            styleClass="w-full"
+          ></p-dropdown>
+        </div>
+
+        <!-- ✅ NOUVEAU : Bouton Réinitialiser -->
+        <div class="w-full md:w-auto">
+          <button
+            pButton
+            icon="pi pi-refresh"
+            label="Réinitialiser"
+            (click)="resetFilters()"
+            class="p-button-outlined p-button-secondary w-full md:w-auto"
+          ></button>
+        </div>
+      </div>
+
+      <!-- Bouton de recherche mobile -->
+      <div class="mt-4 md:hidden">
+        <button
+          pButton
+          label="Rechercher"
+          icon="pi pi-search"
+          (click)="onSearch()"
+          class="w-full"
+        ></button>
+      </div>
+    </div>
+
+    <!-- 📊 Tableau des utilisateurs -->
+    <div
+      class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+    >
+      <p-table
+        [value]="users"
+        [paginator]="true"
+        [rows]="limit"
+        [totalRecords]="totalRecords"
+        [loading]="loading"
+        [lazy]="true"
+        (onLazyLoad)="onPageChange($event)"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} utilisateurs"
+        styleClass="p-datatable-sm"
+        [tableStyle]="{ 'min-width': '50rem' }"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 80px" class="bg-gray-50">Photo</th>
+            <th pSortableColumn="nom" class="bg-gray-50">
+              Nom <p-sortIcon field="nom"></p-sortIcon>
+            </th>
+            <th class="bg-gray-50">Email</th>
+            <th class="bg-gray-50">Téléphone</th>
+            <th class="bg-gray-50">Rôle</th>
+            <th class="bg-gray-50">Inscription</th>
+            <th style="width: 200px" class="bg-gray-50">Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-user>
+          <tr class="hover:bg-gray-50 transition-colors">
+            <td>
+              <img
+                [src]="user.photo || 'assets/avatar-default.png'"
+                [alt]="user.prenom"
+                class="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
+              />
+            </td>
+
+            <td class="font-semibold text-gray-900">
+              {{ user.prenom }} {{ user.nom }}
+              <span
+                *ngIf="user.isSuspended"
+                class="ml-2 text-xs text-red-600 font-normal"
+              >
+                (Suspendu)
+              </span>
+            </td>
+
+            <td class="text-gray-600">{{ user.email }}</td>
+
+            <td class="text-gray-600">{{ user.telephone || "—" }}</td>
+
+            <td>
+              <p-tag
+                [value]="getRoleLabel(user.role)"
+                [severity]="getRoleSeverity(user.role)"
+              ></p-tag>
+            </td>
+
+            <td class="text-gray-600 text-sm">
+              {{ user.dateInscription | date : "dd/MM/yyyy" }}
+            </td>
+
+            <td>
+              <div class="flex gap-2 justify-start">
+                <button
+                  pButton
+                  icon="pi pi-eye"
+                  class="p-button-rounded p-button-info p-button-text"
+                  (click)="viewDetails(user._id)"
+                  pTooltip="Voir détails"
+                  tooltipPosition="top"
+                ></button>
+
+                <button
+                  pButton
+                  icon="pi pi-ban"
+                  class="p-button-rounded p-button-warning p-button-text"
+                  (click)="suspendUser(user)"
+                  pTooltip="Suspendre"
+                  tooltipPosition="top"
+                  *ngIf="!user.isSuspended && user.role !== 'admin'"
+                ></button>
+
+                <button
+                  pButton
+                  icon="pi pi-trash"
+                  class="p-button-rounded p-button-danger p-button-text"
+                  (click)="deleteUser(user)"
+                  pTooltip="Supprimer"
+                  tooltipPosition="top"
+                  *ngIf="user.role !== 'admin'"
+                ></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7" class="text-center py-12">
+              <div
+                class="flex flex-col items-center justify-center text-gray-500"
+              >
+                <i class="pi pi-users text-5xl mb-3 text-gray-400"></i>
+                <p class="text-lg font-medium">Aucun utilisateur trouvé</p>
+                <p class="text-sm text-gray-400 mt-1">
+                  Essayez de modifier vos critères de recherche
+                </p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+
+<!-- 🔔 Toast pour les notifications -->
+<p-toast position="top-right"></p-toast>
+
+<!-- ❓ Dialog de confirmation -->
+<p-confirmDialog></p-confirmDialog>
+
+<!-- <div class="p-mb-4 flex items-center justify-between">
+  <div class="flex items-center gap-3">
+    <input
+      type="text"
+      pInputText
+      placeholder="Rechercher..."
+      [(ngModel)]="searchTerm"
+      (input)="onSearch()"
+    />
+    <p-dropdown
+      [options]="roles"
+      [(ngModel)]="selectedRole"
+      optionLabel="label"
+      (onChange)="onFilterChange()"
+    ></p-dropdown>
+  </div>
+  <p-toast></p-toast>
+</div>
+
+<p-table
+  [value]="users"
+  [paginator]="true"
+  [rows]="limit"
+  [totalRecords]="totalRecords"
+  [loading]="loading"
+  (onPage)="onPageChange($event)"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Photo</th>
+      <th>Nom complet</th>
+      <th>Email</th>
+      <th>Téléphone</th>
+      <th>Rôle</th>
+      <th>Date d'inscription</th>
+      <th>Actions</th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-user>
+    <tr>
+      <td>
+        <img [src]="user.photo" width="40" height="40" class="rounded-full" />
+      </td>
+      <td>{{ user.prenom }} {{ user.nom }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.telephone }}</td>
+      <td>
+        <p-tag
+          [severity]="getRoleSeverity(user.role)"
+          [value]="getRoleLabel(user.role)"
+        ></p-tag>
+      </td>
+      <td>{{ user.dateInscription | date : "dd/MM/yyyy" }}</td>
+      <td>
+        <button
+          pButton
+          icon="pi pi-eye"
+          class="p-button-text"
+          (click)="viewDetails(user._id)"
+        ></button>
+        <button
+          pButton
+          icon="pi pi-ban"
+          class="p-button-text p-button-warning"
+          (click)="suspendUser(user)"
+        ></button>
+        <button
+          pButton
+          icon="pi pi-trash"
+          class="p-button-text p-button-danger"
+          (click)="deleteUser(user)"
+        ></button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-confirmDialog></p-confirmDialog> -->
