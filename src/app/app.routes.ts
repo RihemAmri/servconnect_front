@@ -13,7 +13,9 @@ import { RegisterComponent } from './components/auth/register/register.component
 import { LoginComponent } from './components/auth/login/login.component';
 import { UpcomingServicesComponent } from './components/provider/upcoming-services/upcoming-services.component';
 import { PastServicesComponent } from './components/provider/past-services/past-services.component';
-
+import { ForgotPasswordComponent } from './components/auth/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './components/auth/reset-password/reset-password.component';
+import { ProfileComponent } from './components/shared/profile/profile.component';
 
 export const routes: Routes = [
   { path: '', component: HomepageComponent }, // page d’accueil
@@ -32,10 +34,10 @@ export const routes: Routes = [
   path: 'register', 
   loadComponent: () => import('./components/auth/register/register.component').then(m => m.RegisterComponent) 
 },
-{ 
-  path: 'login', 
-  loadComponent: () => import('./components/auth/login/login.component').then(m => m.LoginComponent) 
-},
+{ path: 'login', component: LoginComponent },
+{ path: 'forgot-password', component: ForgotPasswordComponent },
+{ path: 'reset-password/:token', component: ResetPasswordComponent },
+{path: 'profile', component: ProfileComponent},
 
 
   { path: '**', redirectTo: '' }

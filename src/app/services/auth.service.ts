@@ -98,4 +98,12 @@ export class AuthService {
   isLoggedIn(): boolean {
     return this.authStatus.value;
   }
+  forgotPassword(email: string) {
+  return this.http.post(`${this.baseUrl}/forgot-password`, { email });
+}
+
+resetPassword(token: string, motDePasse: string) {
+  return this.http.post(`${this.baseUrl}/reset-password/${token}`, { motDePasse });
+}
+
 }
