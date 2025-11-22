@@ -1,52 +1,18 @@
-<div class="gestion-book-page">
-  <h2><i class="fas fa-envelope-open-text"></i> Demandes de services reçues</h2>
+<h2>Brouillon Map</h2>
 
-  <div *ngIf="requests.length === 0" class="empty-message">
-    <i class="fas fa-inbox"></i>
-    <p>Aucune demande en attente pour le moment.</p>
-  </div>
+<input 
+  type="text" 
+  placeholder="Recherche une adresse…" 
+  #searchInput
+  style="width: 100%; padding: 10px; border-radius: 8px; margin-bottom: 10px;"
+>
 
-  <div class="request-card" *ngFor="let req of requests">
-    <div class="info">
-      <h3><i class="fas fa-user"></i> {{ req.client }}</h3>
-      <p><i class="fas fa-tools"></i> {{ req.service }}</p>
-      <p><i class="fas fa-calendar-day"></i> {{ req.date | date:'fullDate' }} à {{ req.time }}</p>
+<button class="btn-outline" (click)="search(searchInput.value)">
+  Rechercher
+</button>
 
-      <p class="location">
-        <i class="fas fa-map-marker-alt"></i> {{ req.location }}
-        <button class="map-btn" (click)="showMap(req.location)">
-          <i class="fas fa-map"></i>
-        </button>
-      </p>
+<div id="map" style="height: 350px; width: 100%; border-radius: 10px; background: #eee; margin-top: 10px;"></div>
 
-      <p><i class="fas fa-comment"></i> {{ req.comment }}</p>
-    </div>
-
-    <div class="actions">
-      <button class="btn accept" (click)="acceptRequest(req)">
-        <i class="fas fa-check"></i> Accepter
-      </button>
-      <button class="btn refuse" (click)="refuseRequest(req)">
-        <i class="fas fa-times"></i> Refuser
-      </button>
-    </div>
-  </div>
-
-  <!-- 🗺️ Fenêtre carte flottante -->
-  <div class="map-overlay" *ngIf="selectedLocation">
-    <div class="map-container">
-      <button class="close-btn" (click)="closeMap()">
-        <i class="fas fa-times"></i>
-      </button>
-      <iframe
-        [src]="mapUrl"
-        width="100%"
-        height="400"
-        style="border:0;"
-        allowfullscreen=""
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"
-      ></iframe>
-    </div>
-  </div>
-</div>
+<button class="btn-outline" (click)="locate()" style="margin-top: 15px;">
+  Ma position
+</button>

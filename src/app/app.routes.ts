@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-
+import { LoginComponent } from './components/auth/login/login.component';
 import { HomepageComponent } from './components/shared/homepage/homepage.component';
 import { FooterComponent } from './components/shared/footer/footer.component';
 import { MyservicesComponent } from './components/provider/myservices/myservices.component';
@@ -9,13 +9,13 @@ import { GestionbookComponent } from './components/provider/gestionbook/gestionb
 import { ExploreComponent } from './components/client/explore/explore.component';
 import { PaiementComponent } from './components/client/paiement/paiement.component';
 import { ReservationComponent } from './components/client/reservation/reservation.component';
-import { RegisterComponent } from './components/auth/register/register.component';
-import { LoginComponent } from './components/auth/login/login.component';
 import { UpcomingServicesComponent } from './components/provider/upcoming-services/upcoming-services.component';
 import { PastServicesComponent } from './components/provider/past-services/past-services.component';
 import { ForgotPasswordComponent } from './components/auth/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './components/auth/reset-password/reset-password.component';
 import { ProfileComponent } from './components/shared/profile/profile.component';
+import { ProviderDetailsComponent } from './components/client/provider-details/provider-details.component';
+
 
 export const routes: Routes = [
   { path: '', component: HomepageComponent }, // page d’accueil
@@ -27,8 +27,10 @@ export const routes: Routes = [
   
   // 👥 Client routes
   { path: 'explore', component: ExploreComponent },
-  { path: 'service/:id', component: ServicedetailsComponent }, // détail d’un service spécifique
+  { path: 'detailsProvider/:id', component: ProviderDetailsComponent },
+  { path: 'service/:id', component: ServicedetailsComponent }, // détail d'un service spécifique
   { path: 'reservation', component: ReservationComponent },
+  { path: 'reservation/:id', component: ReservationComponent },
   { path: 'paiement', component: PaiementComponent },
  { 
   path: 'register', 
