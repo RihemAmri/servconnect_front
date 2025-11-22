@@ -15,77 +15,65 @@ import { Router } from '@angular/router';
   templateUrl: './myservices.component.html',
   styleUrl: './myservices.component.scss'
 })
-
 export class MyservicesComponent implements OnInit, AfterViewInit {
-  @ViewChild('lottieContainer', { static: false }) lottieContainer!: ElementRef;
-  calendarOptions: CalendarOptions = {
-  plugins: [],
-  initialView: '', // valeur temporaire
-};
-  
-  isBrowser = false;
-  animation: any;
-constructor(@Inject(PLATFORM_ID) private platformId: Object, private router: Router) {
-    this.isBrowser = isPlatformBrowser(this.platformId);
-  }
-  
-  ngOnInit(): void {
-    if (this.isBrowser) {
-      this.calendarOptions = {
-        plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
-        initialView: 'timeGridWeek',
-        locale: frLocale,
-        allDaySlot: false,
-        slotMinTime: '08:00:00',
-        slotMaxTime: '20:00:00',
-        selectable: true,
-        editable: false,
-        nowIndicator: true,
-        headerToolbar: {
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay'
-        },
-        events: [
-          { title: 'Réparation - Client A', start: '2025-11-05T10:00:00', end: '2025-11-05T11:30:00', color: '#133b5fff' },
-          { title: 'Installation - Client B', start: '2025-11-07T14:00:00', end: '2025-11-07T15:30:00', color: '#42a5f5' },
-          { title: 'Consultation - Client C', start: '2025-11-10T09:30:00', end: '2025-11-10T10:30:00', color: '#46769eff' }
-        ],
-        dateClick: this.onDateClick.bind(this),
-        eventClick: this.onEventClick.bind(this)
-      };
-    }
-  
-   
-  }
- ngAfterViewInit(): void {
-    if (this.isBrowser && this.lottieContainer) {
-      this.animation = lottie.loadAnimation({
-        container: this.lottieContainer.nativeElement,
-        renderer: 'svg',
-        loop: true,
-        autoplay: true,
-        path: '/agenda.json'
-      });
-    }
-  }
-  ngAfterViewChecked(): void {
-  if (this.isBrowser && !this.animation && document.getElementById('lottie-container')) {
-    this.loadLottie();
-  }
-}
-  private loadLottie() {
-  const container = document.getElementById('lottie-container');
-  if (!container || this.animation) return;
+  @ViewChild('lottieContainer') lottieContainer!: ElementRef;
 
-  this.animation = lottie.loadAnimation({
-    container,
-    renderer: 'svg',
-    loop: true,
-    autoplay: true,
-    path: '/agenda.json'
-  });
-}
+  calendarOptions!: CalendarOptions;
+  animation: any;
+  isBrowser = false;
+
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private router: Router
+  ) {
+    this.isBrowser = isPlatformBrowser(platformId);
+  }
+
+  ngOnInit(): void {
+    if (!this.isBrowser) return;
+
+    this.calendarOptions = {
+      plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
+      initialView: 'dayGridMonth',
+      locale: frLocale,
+      allDaySlot: false,
+      nowIndicator: true,
+      selectable: true,
+      slotMinTime: '08:00:00',
+      slotMaxTime: '20:00:00',
+
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+
+      events: [
+        { title: 'Réparation - Client A', start: '2025-11-05T10:00', end: '2025-11-05T11:30', color: '#133b5fff' },
+        { title: 'Installation - Client B', start: '2025-11-07T14:00', end: '2025-11-07T15:30', color: '#42a5f5' },
+        { title: 'Consultation - Client C', start: '2025-11-10T09:30', end: '2025-11-10T10:30', color: '#46769eff' }
+      ],
+
+      dateClick: this.onDateClick.bind(this),
+      eventClick: this.onEventClick.bind(this)
+    };
+  }
+
+  ngAfterViewInit(): void {
+    if (this.isBrowser) {
+      this.loadLottie();
+    }
+  }
+
+  private loadLottie() {
+    this.animation = lottie.loadAnimation({
+      container: this.lottieContainer.nativeElement,
+      renderer: 'svg',
+      autoplay: true,
+      loop: true,
+      path: '/agenda.json'
+    });
+  }
 
   onDateClick(info: any) {
     alert(`📅 Date sélectionnée : ${info.dateStr}`);
@@ -96,10 +84,10 @@ constructor(@Inject(PLATFORM_ID) private platformId: Object, private router: Rou
   }
 
   goToPastServices() {
-  this.router.navigate(['/past-services']);
-}
+    this.router.navigate(['/past-services']);
+  }
 
   goToUpcomingServices() {
-  this.router.navigate(['/upcoming-services']);
-}
+    this.router.navigate(['/upcoming-services']);
+  }
 }

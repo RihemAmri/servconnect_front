@@ -171,6 +171,37 @@
     Veuillez télécharger au moins un document.
   </small>
     </div>
+    <!-- 📅 Disponibilités du prestataire -->
+<div class="availability-section">
+
+  <h3>Disponibilités</h3>
+
+  <div class="day" *ngFor="let day of disponibilite.controls; let i = index">
+
+
+    <label>
+     <input type="checkbox" [formControl]="getControl(day, 'isAvailable')" />
+      {{ day.get('day')?.value | titlecase }}
+    </label>
+
+    <!-- Créneaux si dispo -->
+    <div *ngIf="day.get('isAvailable')?.value">
+
+      <div class="timeslot" *ngFor="let slot of getTimeSlots(i).controls; let j = index">
+        <input type="time" [formControl]="getControl(slot, 'start')" />
+        <input type="time" [formControl]="getControl(slot, 'end')" />
+
+
+        <button type="button" (click)="removeTimeSlot(i, j)">X</button>
+      </div>
+
+      <button type="button" (click)="addTimeSlot(i)">
+        Ajouter un créneau
+      </button>
+
+    </div>
+  </div>
+</div>
 
   </div>
 
