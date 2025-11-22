@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
@@ -8,6 +10,7 @@ import { Router } from '@angular/router';
 })
 export class AuthService {
   private baseUrl = 'http://localhost:5000/api/users'; 
+  private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private authStatus = new BehaviorSubject<boolean>(false);
   private tokenTimer: any;
 
@@ -33,6 +36,7 @@ export class AuthService {
       { email, motDePasse: password }
     ).pipe(
       tap((res) => {
+        if (!this.isBrowser) return;
         const expiresIn = 24 * 60 * 60 * 1000; // 1 jour en ms
         const expirationDate = new Date(new Date().getTime() + expiresIn);
 
@@ -50,18 +54,23 @@ export class AuthService {
   // 🟢 LOGOUT
   // ==========================
   logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    localStorage.removeItem('expiration');
+    if (this.isBrowser) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('expiration');
+    }
+
     this.authStatus.next(false);
     clearTimeout(this.tokenTimer);
     this.router.navigate(['/login']);
   }
 
+
   // ==========================
   // 🟢 AUTO LOGIN
   // ==========================
   autoLogin() {
+    if (!this.isBrowser) return; // ⛔ SSR ne lit pas localStorage
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
     const expiration = localStorage.getItem('expiration');

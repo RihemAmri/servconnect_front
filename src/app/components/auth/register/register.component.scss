@@ -509,3 +509,203 @@ textarea {
   color: #155724;
   border: 1px solid #c3e6cb;
 }
+
+
+/* 📅 Disponibilités du prestataire */
+.availability-section {
+  width: 100%;
+  max-width: 350px;
+  background: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px 20px;
+  margin-top: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #444;
+    text-align: center;
+  }
+
+  .day {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    background: #ffffff;
+    border: 1px solid #dbe1ef;
+    
+    label {
+      display: flex;
+      align-items: center;
+      font-weight: 500;
+      cursor: pointer;
+      color: #333;
+      gap: 8px;
+
+      input[type='checkbox'] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+      }
+    }
+
+    .timeslot {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 5px;
+
+      input[type='time'] {
+        flex: 1;
+        padding: 6px 8px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+        background-color: #f9f9f9;
+        transition: 0.2s;
+      }
+
+      input[type='time']:focus {
+        border-color: #0459d8;
+        background-color: #fff;
+      }
+
+      button {
+        background: #ff4d4f;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 3px 8px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: 0.2s;
+      }
+
+      button:hover {
+        background: #d9363e;
+      }
+    }
+
+    /* Bouton ajouter créneau */
+    > button {
+      margin-top: 8px;
+      background: #0459d8;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    > button:hover {
+      background: #2879f2;
+    }
+  }
+}
+.timeslot-error {
+  width: 100%;
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: red;
+}
+
+/* ⚡ Responsive pour petits écrans */
+@media (max-width: 480px) {
+  .availability-section {
+    max-width: 100%;
+    padding: 12px 15px;
+
+    .day {
+      padding: 6px 8px;
+
+      .timeslot input[type='time'] {
+        font-size: 12px;
+      }
+
+      .timeslot button,
+      > button {
+        font-size: 11px;
+        padding: 4px 6px;
+      }
+    }
+  }
+}
+/* ================================
+   🔍 MAP + SEARCH STYLING
+================================ */
+/* Section map */
+.map-section {
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 5px;
+}
+.map-search-row {
+  display: flex;
+  align-items: center;
+  width: 100%;            /* 🔥 même largeur que les autres inputs */
+  gap: 6px;               /* petit espace entre input et bouton */
+}
+
+/* Champ de recherche */
+.map-search-input {
+  flex: 1;                /* 🔥 prend tout l’espace */
+  padding: 12px;
+  background: #f8f8f8;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 15px;
+}
+.map-search-input:focus {
+  border-color: #0459d8;
+  background: #fff;
+}
+
+/* 🟦 Petits boutons ronds */
+.map-icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: .3s;
+  /* ❌ À retirer */
+  /* align-self: flex-end; */
+}
+
+.map-icon-btn i {
+  font-size: 16px;
+  color: #444;
+}
+
+/* Hover */
+.map-icon-btn:hover {
+  background: #e1e1e1;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* Map styling */
+#map {
+  height: 260px !important;
+  width: 100%;
+  border-radius: 10px;
+  background: #eee;
+  border: 1px solid #dcdcdc;
+}
+.map-gps-btn {
+  align-self: flex-end; /* seulement pour le bouton GPS */
+}

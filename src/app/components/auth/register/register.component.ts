@@ -79,13 +79,14 @@ export class RegisterComponent {
 }
 */
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule,FormArray,FormControl,AbstractControl  } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/auth.service';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
-
+//import * as L from 'leaflet';
+import { MapService } from '../../../services/map.service';
 
 @Component({
   selector: 'app-register',
@@ -105,23 +106,73 @@ export class RegisterComponent {
   documentsFiles: File[] = [];
   passwordVisible = false;
   loading = false;
-successMessage = '';
-errorMessage = '';
+  successMessage = '';
+  errorMessage = '';
+  map!: L.Map; 
+  marker!: any;
 
-  
+async ngAfterViewInit() {
+  if (typeof window === 'undefined') return;
+  const L = await import('leaflet');
+  this.map = L.map('map').setView([36.8065, 10.1815], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 })
+    .addTo(this.map);
+  this.mapService.setMap(this.map);
+  /* ⭐⭐⭐ ESSENTIEL : empêche la map grise quand le CSS change ⭐⭐⭐ */
+  setTimeout(() => {
+    this.map.invalidateSize();  // <-- 🔥 redessine la map proprement
+  }, 200);
+  /* CLICK */
+  this.map.on('click', async (e: any) => {
+    const lat = e.latlng.lat;
+    const lon = e.latlng.lng;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
+    if (this.marker) this.marker.setLatLng(e.latlng);
+    else this.marker = L.marker(e.latlng).addTo(this.map);
+
+    const address = await this.mapService.reverseGeocode(lat, lon);
+    const label = address?.display_name ?? `${lat}, ${lon}`;
+
+    this.registerForm.patchValue({
+      adresse: {
+        street: label,
+        lat: lat,
+        lng: lon
+      }
+    });
+
+  });
+}
+
+
+
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router,private mapService: MapService) {
   this.registerForm = this.fb.group({
     role: ['client', Validators.required],
     name: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required],
     telephone: ['', Validators.required],
-    adresse: ['', Validators.required],
+    adresse: this.fb.group({
+      street: ['', Validators.required],
+      lat: [''],
+      lng: ['']
+    }),
+    lat: [''],
+    lon: [''],
     category: [''],
     description: [''],
     experience: [''],
-    photo: [null]
+    photo: [null],
+    disponibilite: this.fb.array([
+    this.createDayAvailability('monday'),
+    this.createDayAvailability('tuesday'),
+    this.createDayAvailability('wednesday'),
+    this.createDayAvailability('thursday'),
+    this.createDayAvailability('friday'),
+    this.createDayAvailability('saturday'),
+    this.createDayAvailability('sunday'),
+  ])
   });
 
   // Initialisation showError
@@ -218,6 +269,62 @@ if (this.registerForm.get('role')?.value === 'prestataire') {
   if (this.certificationsFiles.length === 0) this.showError['certifications'] = true;
   if (this.documentsFiles.length === 0) this.showError['documents'] = true;
 }
+//validation dispo provider
+if (this.registerForm.get('role')?.value === 'prestataire') {
+  let atLeastOneDayChecked = false;
+
+  // Clear previous errors
+  this.disponibilite.controls.forEach(dayControl => {
+    const dayGroup = dayControl as FormGroup;
+    dayGroup.setErrors(null);
+    const slots = dayGroup.get('timeSlots') as FormArray;
+    slots.controls.forEach(slotControl => (slotControl as FormGroup).setErrors(null));
+  });
+
+ this.disponibilite.controls.forEach(dayControl => {
+  const dayGroup = dayControl as FormGroup;
+  const isAvailable = dayGroup.get('isAvailable')?.value;
+  const timeSlots = dayGroup.get('timeSlots') as FormArray;
+
+  if (isAvailable) {
+    atLeastOneDayChecked = true;
+
+    // Vérifie si aucun créneau valide n'existe
+    let hasValidSlot = false;
+    timeSlots.controls.forEach(slotControl => {
+      const slot = slotControl as FormGroup;
+      const start = slot.get('start')?.value;
+      const end = slot.get('end')?.value;
+
+      if (start && end && start < end) {
+        hasValidSlot = true; // au moins un créneau valide
+      } else if (start || end) {
+        // slot partiellement rempli ou invalide → erreur sur le slot
+        slot.setErrors({ invalidTime: true });
+      }
+    });
+
+    if (!hasValidSlot) {
+      // aucun créneau valide → erreur sur le jour
+      dayGroup.setErrors({ required: true });
+    }
+  }
+});
+
+
+
+  if (!atLeastOneDayChecked) {
+    // Aucun jour coché → on met une erreur sur le FormArray lui-même
+    (this.registerForm.get('disponibilite') as FormArray).setErrors({ required: true });
+  }
+
+  // Force l'affichage des messages
+  this.disponibilite.markAllAsTouched();
+
+  // Bloque l'envoi si il y a des erreurs
+  if (this.disponibilite.invalid) return;
+}
+
 
 // Ne pas envoyer si un champ requis est manquant
 if (Object.values(this.showError).some(v => v)) return;
@@ -231,8 +338,9 @@ if (Object.values(this.showError).some(v => v)) return;
     formData.append('email', formValue.email);
     formData.append('motDePasse', formValue.password);
     formData.append('telephone', formValue.telephone || '');
-    formData.append('adresse', formValue.adresse || '');
-    formData.append('role', formValue.role);
+    formData.append("adresse[street]", formValue.adresse.street);
+    formData.append("adresse[lat]", formValue.adresse.lat);
+    formData.append("adresse[lng]", formValue.adresse.lng);    formData.append('role', formValue.role);
 
     if (formValue.role === 'prestataire') {
       formData.append('metier', formValue.category || '');
@@ -240,6 +348,40 @@ if (Object.values(this.showError).some(v => v)) return;
       formData.append('experience', formValue.experience || '');
       this.certificationsFiles.forEach(f => formData.append('certifications', f));
       this.documentsFiles.forEach(f => formData.append('documents', f));
+       // 🔹 Préparer disponibilités sous forme de JSON
+    const disponibiliteJSON = this.disponibilite.controls.map(dayCtrl => {
+  const dayValue = dayCtrl.value;
+
+  // 🔹 Si le jour n’est pas disponible, timeSlots sera un tableau vide
+  const timeSlots = dayValue.isAvailable
+    ? dayValue.timeSlots.map((slot: any) => ({
+        start: slot.start,
+        end: slot.end
+      }))
+    : [];
+
+  return {
+    day: dayValue.day,
+    isAvailable: dayValue.isAvailable,
+    timeSlots
+  };
+});
+
+    console.log("available test");
+    console.log(JSON.stringify(disponibiliteJSON, null, 2));
+    // 🔹 Ajouter la disponibilité au FormData
+    formData.append('disponibilite', JSON.stringify(disponibiliteJSON));
+
+    // 🔹 Optionnel : console.log pour debug
+    console.log('FormData complet :', {
+      nom,
+      prenom,
+      role: formValue.role,
+      photo: this.selectedPhotoFile?.name,
+      certifications: this.certificationsFiles.map(f => f.name),
+      documents: this.documentsFiles.map(f => f.name),
+      disponibilite: disponibiliteJSON
+    });
     }
 
     if (this.selectedPhotoFile) {
@@ -267,4 +409,77 @@ if (Object.values(this.showError).some(v => v)) return;
     }
   });
 }
+createDayAvailability(day: string): FormGroup {
+  return this.fb.group({
+    day: [day],
+    isAvailable: [false],
+    timeSlots: this.fb.array([]),
+  });
+}
+
+getDisponibilite() {
+  return this.registerForm.get('disponibilite') as any;
+}
+
+getTimeSlots(index: number): FormArray {
+  return (this.disponibilite.at(index).get('timeSlots') as FormArray);
+}
+
+
+addTimeSlot(dayIndex: number) {
+  this.getTimeSlots(dayIndex).push(
+    this.fb.group({
+      start: [''],
+      end: ['']
+    })
+  );
+}
+
+removeTimeSlot(dayIndex: number, slotIndex: number) {
+  this.getTimeSlots(dayIndex).removeAt(slotIndex);
+}
+get disponibilite(): FormArray {
+  return this.registerForm.get('disponibilite') as FormArray;
+}
+// Méthode utilitaire
+getControl(control: AbstractControl, controlName: string): FormControl {
+  return (control as FormGroup).get(controlName) as FormControl;
+}
+
+async locate() {
+  const pos = await this.mapService.locateUser();
+  if (!pos) return;
+
+  const { lat, lon } = pos;
+
+  await this.mapService.placeMarker(lat, lon);
+  this.mapService.setView(lat, lon, 15);
+
+  const address = await this.mapService.reverseGeocode(lat, lon);
+  const label = address?.display_name ?? `${lat}, ${lon}`;
+
+this.registerForm.patchValue({
+  adresse: {
+    street: label,
+    lat: lat,
+    lng: lon
+  }
+});
+
+}
+
+ async search(query: string) {
+  if (!query) return;
+
+  const result = await this.mapService.searchAndMark(query);
+  if (!result) return;
+
+  this.registerForm.patchValue({
+    adresse: result.label,
+    lat: result.y,
+    lon: result.x
+  });
+}
+
+
 }

@@ -1,7 +1,10 @@
-import { Component } from '@angular/core';
+/*import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';*/
+import { Component, AfterViewInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MapService } from '../../../services/map.service';
 
 @Component({
   selector: 'app-gestionbook',
@@ -10,57 +13,46 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   styleUrl: './gestionbook.component.scss'
 })
 export class GestionbookComponent {
-      requests = [
-    {
-      client: 'Client A',
-      service: 'Nettoyage à domicile',
-      date: '2025-11-10',
-      time: '10:00',
-      location: 'Ariana, Tunisie',
-      comment: 'Besoin urgent pour nettoyage complet.',
-      status: 'pending'
-    },
-    {
-      client: 'Client B',
-      service: 'Réparation plomberie',
-      date: '2025-11-11',
-      time: '15:00',
-      location: 'La Marsa, Tunisie',
-      comment: 'Petite fuite dans la cuisine.',
-      status: 'pending'
-    }
-  ];
-  selectedLocation: string | null = null;
-  mapUrl: SafeResourceUrl | null = null;
 
-  constructor(private router: Router, private sanitizer: DomSanitizer) {}
-  showMap(location: string) {
-    const url = `https://www.google.com/maps?q=${encodeURIComponent(location)}&output=embed`;
-    this.mapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-    this.selectedLocation = location;
+  constructor(private mapService: MapService) {}
+
+async ngAfterViewInit() {
+  //await this.mapService.initMap('map');
+
+  // ⏳ attendre que la map soit réellement construite
+  await new Promise(res => setTimeout(res, 300));
+
+  this.mapService.enableClickListener(async (lat, lon) => {
+    console.log("📍 Position cliquée :", lat, lon);
+
+    await this.mapService.placeMarker(lat, lon);
+
+    const address = await this.mapService.reverseGeocode(lat, lon);
+    console.log("🏠 Adresse cliquée :", address?.display_name);
+  });
+}
+
+
+
+   locate() {
+  this.mapService.locateUser().then(async pos => {
+    await this.mapService.placeMarker(pos.lat, pos.lon);
+    this.mapService.setView(pos.lat, pos.lon, 15); // ✅ Appel correct
+    const address = await this.mapService.reverseGeocode(pos.lat, pos.lon);
+    console.log("Adresse trouvée :", address?.display_name);
+  });
+}
+
+  async search(query: string) {
+  const result = await this.mapService.searchAndMark(query);
+
+  if (result) {
+    console.log("📌 Résultat trouvé :", result);
+    console.log("Lat:", result.y, "Lon:", result.x);
+    console.log("Adresse:", result.label);
+  } else {
+    console.log("❌ Aucun résultat");
   }
+}
 
-  closeMap() {
-    this.selectedLocation = null;
-    this.mapUrl = null;
-  }
-  acceptRequest(req: any) {
-    req.status = 'accepted';
-
-    // ✅ Simulation : ajout dans le calendrier
-    const storedServices = JSON.parse(localStorage.getItem('acceptedServices') || '[]');
-    storedServices.push(req);
-    localStorage.setItem('acceptedServices', JSON.stringify(storedServices));
-
-    // ✅ Suppression de la demande de la liste
-    this.requests = this.requests.filter(r => r !== req);
-
-    alert(`Service accepté : ${req.service} (${req.client})`);
-  }
-
-  refuseRequest(req: any) {
-    req.status = 'refused';
-    this.requests = this.requests.filter(r => r !== req);
-    alert(`Service refusé : ${req.service} (${req.client})`);
-  }
 }
