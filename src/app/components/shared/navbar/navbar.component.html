@@ -1,19 +1,3 @@
-<nav class="navbar">
-  <div class="container">
-    <div class="logo">Camply.</div>
-    <ul class="nav-links">
-      <li><a href="#" class="active">Home</a></li>
-      <li><a href="#">Services</a></li>
-      <li><a href="#">Pricing</a></li>
-      <li><a href="#">Contact</a></li>
-      <li><a href="#">Shop</a></li>
-    </ul>
-    <div class="auth-buttons">
-      <button class="login">Login</button>
-      <button class="register">Register</button>
-    </div>
-  </div>
-</nav>
 <nav class="navbar" [class.scrolled]="isScrolled">
   <div class="navbar-container">
     <!-- Logo & Brand -->
@@ -48,7 +32,7 @@
       <span class="logo-badge">Pro</span>
     </a>
 
-    <!-- Navigation Links -->
+    <!-- Menu Desktop -->
     <ul class="nav-menu">
       <li class="nav-item">
         <a
@@ -57,60 +41,91 @@
           routerLinkActive="active"
           [routerLinkActiveOptions]="{ exact: true }"
         >
-          <span class="nav-icon">🏠</span>
-          <span>Accueil</span>
+          <i class="pi pi-home nav-icon"></i> <span>Accueil</span>
         </a>
       </li>
+
       <li class="nav-item">
         <a routerLink="/explore" class="nav-link" routerLinkActive="active">
-          <span class="nav-icon">🔍</span>
-          <span>Explorer</span>
+          <i class="pi pi-search nav-icon"></i> <span>Explorer</span>
         </a>
       </li>
+
       <li class="nav-item">
         <a routerLink="/services" class="nav-link" routerLinkActive="active">
-          <span class="nav-icon">⚙️</span>
-          <span>Services</span>
+          <i class="pi pi-cog nav-icon"></i> <span>Services</span>
         </a>
       </li>
+
       <li class="nav-item">
         <a routerLink="/pricing" class="nav-link" routerLinkActive="active">
-          <span class="nav-icon">💰</span>
-          <span>Tarifs</span>
+          <i class="pi pi-dollar nav-icon"></i> <span>Tarifs</span>
         </a>
       </li>
+
       <li class="nav-item">
         <a routerLink="/contact" class="nav-link" routerLinkActive="active">
-          <span class="nav-icon">📞</span>
-          <span>Contact</span>
+          <i class="pi pi-phone nav-icon"></i> <span>Contact</span>
+        </a>
+      </li>
+
+      <!-- Provider -->
+      <li *ngIf="isLoggedIn && userRole === 'provider'" class="nav-item">
+        <a routerLink="/my-services" class="nav-link">
+          <i class="pi pi-briefcase nav-icon"></i> <span>Mes services</span>
+        </a>
+      </li>
+
+      <li *ngIf="isLoggedIn && userRole === 'provider'" class="nav-item">
+        <a routerLink="/upcoming-services" class="nav-link">
+          <i class="pi pi-calendar nav-icon"></i> <span>Réservations</span>
+        </a>
+      </li>
+
+      <!-- Admin -->
+      <li *ngIf="isLoggedIn && userRole === 'admin'" class="nav-item">
+        <a routerLink="/admin" class="nav-link">
+          <i class="pi pi-shield nav-icon"></i> <span>Dashboard Admin</span>
         </a>
       </li>
     </ul>
 
-    <!-- Auth Buttons -->
+    <!-- Right buttons: dynamic -->
     <div class="navbar-actions">
-      <button class="btn-notification">
-        <span class="notification-icon">🔔</span>
-        <span class="notification-badge">3</span>
+      <!-- Notifications -->
+      <button class="btn-notification" *ngIf="isLoggedIn">
+        <i class="pi pi-bell"></i>
+        <span class="notification-badge">{{ notificationsCount }}</span>
       </button>
-      <button class="btn-secondary" routerLink="/login">
-        <span class="btn-icon">👤</span>
-        <span>Connexion</span>
-      </button>
-      <button class="btn-primary" routerLink="/register">
-        <span class="btn-icon">✨</span>
-        <span>S'inscrire</span>
+
+      <!-- Non connecté -->
+      <ng-container *ngIf="!isLoggedIn">
+        <button class="btn-secondary" routerLink="/login">
+          <i class="pi pi-user"></i> Connexion
+        </button>
+        <button class="btn-primary" routerLink="/register">
+          <i class="pi pi-sparkles"></i> S'inscrire
+        </button>
+      </ng-container>
+
+      <!-- Connecté -->
+      <ng-container *ngIf="isLoggedIn">
+        <div class="user-profile">
+          <i class="pi pi-user"></i>
+          <span>{{ userName }}</span>
+        </div>
+        <button class="btn-logout" (click)="logout()">
+          <i class="pi pi-sign-out"></i> Déconnexion
+        </button>
+      </ng-container>
+
+      <!-- Mobile toggle -->
+      <button class="mobile-menu-toggle" (click)="toggleMobileMenu()">
+        <span class="hamburger" [class.active]="isMobileMenuOpen">
+          <span></span><span></span><span></span>
+        </span>
       </button>
     </div>
-
-    <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-toggle" (click)="toggleMobileMenu()">
-      <span class="hamburger" [class.active]="isMobileMenuOpen">
-        <span></span>
-        <span></span>
-        <span></span>
-      </span>
-    </button>
   </div>
 
   <!-- Mobile Menu -->
@@ -118,60 +133,87 @@
     <ul class="mobile-nav-menu">
       <li class="mobile-nav-item">
         <a routerLink="/" class="mobile-nav-link" (click)="closeMobileMenu()">
-          <span class="nav-icon">🏠</span>
-          <span>Accueil</span>
+          <i class="pi pi-home"></i> Accueil
         </a>
       </li>
+
       <li class="mobile-nav-item">
         <a
           routerLink="/explore"
           class="mobile-nav-link"
           (click)="closeMobileMenu()"
         >
-          <span class="nav-icon">🔍</span>
-          <span>Explorer</span>
+          <i class="pi pi-search"></i> Explorer
         </a>
       </li>
+
       <li class="mobile-nav-item">
         <a
           routerLink="/services"
           class="mobile-nav-link"
           (click)="closeMobileMenu()"
         >
-          <span class="nav-icon">⚙️</span>
-          <span>Services</span>
+          <i class="pi pi-cog"></i> Services
         </a>
       </li>
+
       <li class="mobile-nav-item">
         <a
           routerLink="/pricing"
           class="mobile-nav-link"
           (click)="closeMobileMenu()"
         >
-          <span class="nav-icon">💰</span>
-          <span>Tarifs</span>
+          <i class="pi pi-dollar"></i> Tarifs
         </a>
       </li>
+
       <li class="mobile-nav-item">
         <a
           routerLink="/contact"
           class="mobile-nav-link"
           (click)="closeMobileMenu()"
         >
-          <span class="nav-icon">📞</span>
-          <span>Contact</span>
+          <i class="pi pi-phone"></i> Contact
         </a>
       </li>
+
+      <!-- Provider -->
+      <li *ngIf="isLoggedIn && userRole === 'provider'" class="mobile-nav-item">
+        <a routerLink="/my-services" class="mobile-nav-link">
+          <i class="pi pi-briefcase"></i> Mes services
+        </a>
+      </li>
+
+      <!-- Actions Mobile -->
+      <div class="mobile-auth-buttons">
+        <!-- Not logged -->
+        <ng-container *ngIf="!isLoggedIn">
+          <button
+            class="btn-secondary-mobile"
+            routerLink="/login"
+            (click)="closeMobileMenu()"
+          >
+            <i class="pi pi-user"></i> Connexion
+          </button>
+          <button
+            class="btn-primary-mobile"
+            routerLink="/register"
+            (click)="closeMobileMenu()"
+          >
+            <i class="pi pi-sparkles"></i> S'inscrire
+          </button>
+        </ng-container>
+
+        <!-- Logged -->
+        <ng-container *ngIf="isLoggedIn">
+          <p class="mobile-user-info">
+            <i class="pi pi-user"></i> {{ userName }}
+          </p>
+          <button class="btn-logout-mobile" (click)="logout()">
+            <i class="pi pi-sign-out"></i> Déconnexion
+          </button>
+        </ng-container>
+      </div>
     </ul>
-    <div class="mobile-auth-buttons">
-      <button class="btn-secondary-mobile" (click)="closeMobileMenu()">
-        <span class="btn-icon">👤</span>
-        <span>Connexion</span>
-      </button>
-      <button class="btn-primary-mobile" (click)="closeMobileMenu()">
-        <span class="btn-icon">✨</span>
-        <span>S'inscrire</span>
-      </button>
-    </div>
   </div>
 </nav>

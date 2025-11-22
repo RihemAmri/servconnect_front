@@ -1,0 +1,31 @@
+<div class="unauthorized-container">
+  <div class="content-box">
+    <span class="icon-403">🛑 403</span>
+
+    <h1>Accès Refusé</h1>
+    <p class="message">
+      Désolé, vous n'avez pas la permission nécessaire pour accéder à cette
+      page. Veuillez vérifier vos privilèges ou contacter l'administrateur.
+    </p>
+
+    <div class="actions">
+      <button class="primary-btn" (click)="goHome()">
+        <i class="fa fa-home"></i> Retourner à l'accueil
+      </button>
+
+      <button class="secondary-btn" *ngIf="!isLogged" (click)="goLogin()">
+        Se Connecter
+      </button>
+
+      <button class="secondary-btn" *ngIf="isLogged" (click)="logout()">
+        Déconnexion
+      </button>
+    </div>
+
+    <div class="debug" *ngIf="isLogged">
+      <small
+        >Session active. Rôle détecté : **{{ role || "Utilisateur" }}**</small
+      >
+    </div>
+  </div>
+</div>

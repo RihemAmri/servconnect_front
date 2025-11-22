@@ -1,0 +1,101 @@
+/* unauthorised.component.scss */
+
+.unauthorized-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    /* Prend toute la hauteur de la vue */
+    background-color: #f8f9fa;
+    /* Arrière-plan très clair */
+    font-family: Arial, sans-serif;
+}
+
+.content-box {
+    background-color: #ffffff;
+    padding: 40px 50px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    /* Ombre légère pour effet de carte */
+    text-align: center;
+    max-width: 450px;
+    width: 90%;
+}
+
+.icon-403 {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #dc3545;
+    /* Couleur rouge vif */
+}
+
+h1 {
+    font-size: 2.2rem;
+    color: #343a40;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.message {
+    font-size: 1rem;
+    color: #6c757d;
+    line-height: 1.5;
+    margin-bottom: 30px;
+}
+
+.actions {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    /* Empile les boutons sur mobile */
+    gap: 10px;
+    /* Espace entre les boutons */
+}
+
+/* Style des boutons */
+.primary-btn,
+.secondary-btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.primary-btn {
+    background-color: #007bff;
+    /* Bleu principal */
+    color: white;
+}
+
+.primary-btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-1px);
+}
+
+.secondary-btn {
+    background-color: #e9ecef;
+    /* Gris clair pour les actions secondaires */
+    color: #495057;
+}
+
+.secondary-btn:hover {
+    background-color: #dae0e5;
+    transform: translateY(-1px);
+}
+
+/* Style du bloc de débogage */
+.debug {
+    margin-top: 25px;
+    padding: 10px;
+    background-color: #f1f1f1;
+    border-radius: 8px;
+    border-left: 4px solid #ffc107;
+    /* Bande jaune pour info/debug */
+    color: #343a40;
+    font-size: 0.85rem;
+}
