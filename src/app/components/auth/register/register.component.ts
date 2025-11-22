@@ -269,6 +269,7 @@ if (this.registerForm.get('role')?.value === 'prestataire') {
   if (this.certificationsFiles.length === 0) this.showError['certifications'] = true;
   if (this.documentsFiles.length === 0) this.showError['documents'] = true;
 }
+//validation dispo provider
 if (this.registerForm.get('role')?.value === 'prestataire') {
   let atLeastOneDayChecked = false;
 
