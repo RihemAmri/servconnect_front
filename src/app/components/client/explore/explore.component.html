@@ -96,100 +96,182 @@
   <div class="results-header">
     <div class="results-info">
       <h2 class="results-title">
-        <span class="results-count">{{ filteredServices.length }}</span>
         <span class="results-text">Services Disponibles</span>
       </h2>
       <p class="results-subtitle">Les meilleurs professionnels pour vos besoins</p>
     </div>
     
-    <!-- Active Filters Badges -->
-    <div class="active-filters" *ngIf="selectedCategory !== 'Tous' || selectedRating !== 'all' || selectedPrice !== 'all'">
-      <span class="filters-label">Filtres actifs:</span>
-      <div class="filters-badges">
-        <span class="filter-badge" *ngIf="selectedCategory !== 'Tous'">
-          <span class="badge-icon">📂</span>
-          {{ selectedCategory }}
-          <button class="remove-badge" (click)="selectCategory('Tous')">×</button>
-        </span>
-        <span class="filter-badge" *ngIf="selectedRating !== 'all'">
-          <span class="badge-icon">⭐</span>
-          {{ selectedRating }}+ étoiles
-          <button class="remove-badge" (click)="selectedRating='all'">×</button>
-        </span>
-        <span class="filter-badge" *ngIf="selectedPrice !== 'all'">
-          <span class="badge-icon">💰</span>
-          {{ selectedPrice === 'low' ? 'Économique' : selectedPrice === 'medium' ? 'Standard' : 'Premium' }}
-          <button class="remove-badge" (click)="selectedPrice='all'">×</button>
-        </span>
-      </div>
+    <!-- View Toggle -->
+    <div class="view-toggle">
+      <button class="toggle-btn" [class.active]="!showMap" (click)="showMap = false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7"/>
+          <rect x="14" y="3" width="7" height="7"/>
+          <rect x="14" y="14" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/>
+        </svg>
+        Grille
+      </button>
+      <button class="toggle-btn" [class.active]="showMap" (click)="toggleMap()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+        Carte
+      </button>
     </div>
   </div>
 
-  <!-- Services Grid -->
-  <div class="services-grid">
-    <div class="service-card" *ngFor="let service of filteredServices">
-      <!-- Card Header with Icon -->
-      <div class="card-header">
-        <div class="service-icon-large">{{ service.image }}</div>
-        <span class="verified-badge" *ngIf="service.verified">
-          <span class="verified-icon">✓</span>
-          Vérifié
-        </span>
+  <!-- Map View -->
+  <div class="map-section" *ngIf="showMap && !loading">
+    <div class="map-header">
+      <h3>📍 Tous les prestataires sur la carte</h3>
+      <p>Cliquez sur un marqueur pour voir les détails</p>
+    </div>
+    <div id="explore-map" class="explore-map-container"></div>
+    <div class="map-legend">
+      <span class="legend-item"><span class="marker blue"></span> Plomberie, Climatisation</span>
+      <span class="legend-item"><span class="marker green"></span> Ménage, Jardinage</span>
+      <span class="legend-item"><span class="marker orange"></span> Peinture</span>
+      <span class="legend-item"><span class="marker red"></span> Déménagement</span>
+    </div>
+  </div>
+
+  <!-- Active Filters Badges -->
+  <div class="active-filters" *ngIf="!showMap && (selectedCategory !== 'Tous' || selectedRating !== 'all' || selectedPrice !== 'all')">
+    <span class="filters-label">Filtres actifs:</span>
+    <div class="filters-badges">
+      <span class="filter-badge" *ngIf="selectedCategory !== 'Tous'">
+        <span class="badge-icon">📂</span>
+        {{ selectedCategory }}
+        <button class="remove-badge" (click)="selectCategory('Tous')">×</button>
+      </span>
+      <span class="filter-badge" *ngIf="selectedRating !== 'all'">
+        <span class="badge-icon">⭐</span>
+        {{ selectedRating }}+ étoiles
+        <button class="remove-badge" (click)="selectedRating='all'">×</button>
+      </span>
+      <span class="filter-badge" *ngIf="selectedPrice !== 'all'">
+        <span class="badge-icon">💰</span>
+        {{ selectedPrice === 'low' ? 'Économique' : selectedPrice === 'medium' ? 'Standard' : 'Premium' }}
+        <button class="remove-badge" (click)="selectedPrice='all'">×</button>
+      </span>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="loading">
+    <div class="loading-spinner"></div>
+    <p>Chargement des prestataires...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-container" *ngIf="error && !loading">
+    <div class="error-icon">⚠️</div>
+    <h3>Erreur de chargement</h3>
+    <p>{{ error }}</p>
+    <button class="retry-btn" (click)="loadProviders()">Réessayer</button>
+  </div>
+
+  <!-- Providers Grid -->
+  <div class="services-grid" *ngIf="!loading && !error && !showMap">
+    <div class="service-card" *ngFor="let provider of filteredProviders">
+      <!-- Premium Photo Header -->
+      <div class="photo-header">
+        <div class="provider-photo-container">
+          <img 
+            [src]="getProviderPhoto(provider)" 
+            [alt]="provider.user.nom + ' ' + provider.user.prenom"
+            class="provider-photo"
+            (error)="$any($event.target).src = 'https://ui-avatars.com/api/?name=' + provider.user.nom + '+' + provider.user.prenom + '&background=025ddd&color=fff&size=400&bold=true'"
+          />
+          <div class="photo-overlay">
+            <div class="overlay-gradient"></div>
+            <div class="photo-badges">
+              <span class="verified-badge-premium" *ngIf="provider.isVerified">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M10 0l2.5 5.5L18 6.5l-4.5 4L14.5 16 10 13l-4.5 3 1-5.5L2 6.5l5.5-1z"/>
+                </svg>
+                Vérifié
+              </span>
+              <span class="category-badge-premium">{{ provider.metier }}</span>
+            </div>
+          </div>
+        </div>
       </div>
       
       <!-- Card Body -->
       <div class="card-body">
-        <div class="category-tag">{{ service.category }}</div>
+        <div class="provider-info-header">
+          <h3 class="provider-name">{{ provider.user.nom }} {{ provider.user.prenom }}</h3>
+          <div class="rating-inline">
+            <span class="star-icon-inline">⭐</span>
+            <span class="rating-value-inline">{{ provider.noteGenerale }}</span>
+          </div>
+        </div>
         
-        <h3 class="service-title">{{ service.title }}</h3>
-        
-        <div class="service-meta">
-          <span class="meta-item">
-            <span class="meta-icon">👤</span>
-            {{ service.provider }}
+        <div class="service-meta-premium">
+          <span class="meta-item-premium">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            {{ provider.experience || 0 }} ans
           </span>
-          <span class="meta-item">
-            <span class="meta-icon">📍</span>
-            {{ service.location }}
+          <span class="meta-item-premium">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            {{ getAddressString(provider) }}
           </span>
         </div>
 
-        <p class="service-description">{{ service.description }}</p>
+        <p class="service-description-premium">
+          {{ provider.description || 'Professionnel expérimenté et qualifié dans le domaine. Services de haute qualité garantis.' }}
+        </p>
 
-        <!-- Rating -->
-        <div class="rating-box">
-          <div class="rating-stars">
-            <span class="star-icon">⭐</span>
-            <span class="rating-value">{{ service.rating }}</span>
-            <span class="rating-max">/5.0</span>
-          </div>
-          <div class="rating-reviews">
-            <span class="reviews-count">{{ service.reviews }}</span>
-            <span class="reviews-text">avis</span>
-          </div>
+        <!-- Small Map for Provider Location -->
+        <div class="card-map-container" *ngIf="hasValidCoordinates(provider)">
+          <div [id]="'map-' + provider._id" class="card-map"></div>
         </div>
 
-        <!-- Features -->
-        <div class="service-features">
-          <span class="feature-tag" *ngFor="let feature of service.features">
-            <span class="feature-icon">✓</span>
-            {{ feature }}
-          </span>
+        <!-- Stats Row -->
+        <div class="stats-row">
+          <div class="stat-item">
+            <span class="stat-icon">📋</span>
+            <div class="stat-content">
+              <span class="stat-number">{{ provider.nombreAvis }}</span>
+              <span class="stat-label">Avis</span>
+            </div>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-icon">✅</span>
+            <div class="stat-content">
+              <span class="stat-number">{{ (provider.experience || 0) * 20 || 10 }}+</span>
+              <span class="stat-label">Services</span>
+            </div>
+          </div>
         </div>
       </div>
       
-      <!-- Card Footer -->
-      <div class="card-footer">
-        <div class="price-section">
-          <span class="price-label">À partir de</span>
-          <div class="price-value">
-            <span class="price-amount">{{ service.price }}</span>
-            <span class="price-currency">DT</span>
-            <span class="price-unit">/h</span>
-          </div>
-        </div>
-        <button class="btn-book">
-          <span class="btn-icon">📅</span>
+      <!-- Card Footer with Two Options -->
+      <div class="card-footer-premium">
+        <button class="btn-profile-premium" (click)="viewProviderProfile(provider._id)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          Voir Profil
+        </button>
+        <button class="btn-book-premium" (click)="bookProvider(provider._id)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
           Réserver
         </button>
       </div>
@@ -197,7 +279,7 @@
   </div>
 
   <!-- Empty State -->
-  <div class="empty-state" *ngIf="filteredServices.length === 0">
+  <div class="empty-state" *ngIf="filteredProviders.length === 0 && !loading">
     <div class="empty-illustration">
       <div class="empty-icon">🔍</div>
       <div class="empty-circle"></div>

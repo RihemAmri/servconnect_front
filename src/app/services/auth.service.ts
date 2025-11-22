@@ -8,7 +8,6 @@ import { Router } from '@angular/router';
 })
 export class AuthService {
   private baseUrl = 'http://localhost:5000/api/users'; 
-
   private authStatus = new BehaviorSubject<boolean>(false);
   private tokenTimer: any;
 
