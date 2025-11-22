@@ -1,0 +1,144 @@
+<div class="center-wrapper">
+  <div class="profile-container">
+
+    <!-- ================= LEFT SIDEBAR ================= -->
+    <div class="sidebar">
+
+      <div class="avatar-wrapper">
+        <img 
+          [src]="user?.photo || 'https://via.placeholder.com/150'" 
+          alt="profile"
+          [class.clickable]="isEditing"
+          (click)="isEditing ? openPhotoInput() : null"
+        >
+        <input id="photoInput" type="file" accept="image/*" style="display:none" (change)="onPhotoSelected($event)">
+        <button class="edit-photo" (click)="toggleEdit()">✏️</button>
+      </div>
+
+      <h2 class="name">{{ user.nom }} {{ user.prenom }}</h2>
+      <p class="role">{{ user.role }}</p>
+
+      <div class="rating-box">
+        <p>{{ user.noteGenerale }}/5</p>
+        <div class="stars">
+          <ng-container *ngFor="let star of [].constructor(5); let i = index">
+            <span [class.filled]="i < user.noteGenerale">★</span>
+          </ng-container>
+        </div>
+        <small>{{ user.nombreAvis }} avis</small>
+      </div>
+    </div>
+
+    <!-- ================= RIGHT SIDE CONTENT ================= -->
+    <div class="content">
+
+      <h1>Informations personnelles</h1>
+
+      <form [formGroup]="profileForm" class="info-form" [class.edit]="isEditing">
+
+        <div class="grid-2">
+          <div>
+            <label>Nom</label>
+            <input formControlName="nom" [readonly]="!isEditing">
+          </div>
+          <div>
+            <label>Prénom</label>
+            <input formControlName="prenom" [readonly]="!isEditing">
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div>
+            <label>Email</label>
+            <input formControlName="email" [readonly]="!isEditing">
+          </div>
+          <div>
+            <label>Téléphone</label>
+            <input formControlName="telephone" [readonly]="!isEditing">
+          </div>
+        </div>
+
+        <div>
+          <label>Adresse</label>
+          <input formControlName="adresse" [readonly]="!isEditing">
+        </div>
+
+        <div>
+          <label>Date d'inscription</label>
+          <input [value]="user.dateInscription | date:'dd MMM yyyy'" readonly>
+        </div>
+
+        <!-- ================= CHAMPS PRESTATAIRE ================= -->
+        <ng-container *ngIf="user.role === 'prestataire' && provider">
+
+          <h2 class="section-title">Informations Prestataire</h2>
+
+          <div>
+            <label>Métier</label>
+            <input formControlName="metier" [readonly]="!isEditing">
+          </div>
+
+          <div>
+            <label>Expérience</label>
+            <input formControlName="experience" type="number" [readonly]="!isEditing">
+          </div>
+
+          <div>
+            <label>Description</label>
+            <textarea formControlName="description" rows="4" [readonly]="!isEditing"></textarea>
+          </div>
+
+          <!-- CERTIFICATIONS -->
+          <!-- Certifications -->
+<h2 class="section-title">Certifications</h2>
+<div class="lottie-zone">
+  <div *ngFor="let cert of provider.certifications; let i = index" class="lottie-item" (click)="openFile(cert)">
+    <ng-lottie [options]="certificateLottie"></ng-lottie>
+    <p>Certification {{ i + 1 }}</p>
+    <!-- <button *ngIf="isEditing" class="delete-btn" (click)="removeItem('certifications', i)">Supprimer</button>-->
+  </div>
+
+  <button *ngIf="isEditing" class="add-btn" (click)="addItem('certifications')">+ Ajouter certification</button>
+
+  <!-- input hors du *ngIf -->
+  <input id="certInput" type="file" style="display:none" (change)="onFileSelected($event, 'certifications')" multiple>
+</div>
+
+<!-- Documents -->
+<h2 class="section-title">Documents</h2>
+<div class="lottie-zone">
+  <div *ngFor="let doc of provider.documents; let i = index" class="lottie-item" (click)="openFile(doc)">
+    <ng-lottie [options]="documentLottie"></ng-lottie>
+    <p>Document {{ i + 1 }}</p>
+   <!-- <button *ngIf="isEditing" class="delete-btn" (click)="removeItem('documents', i)">Supprimer</button>-->
+  </div>
+
+  <button *ngIf="isEditing" class="add-btn" (click)="addItem('documents')">+ Ajouter document</button>
+
+  <!-- input hors du *ngIf -->
+  <input id="docInput" type="file" style="display:none" (change)="onFileSelected($event, 'documents')" multiple>
+</div>
+
+
+        </ng-container>
+
+      </form>
+
+      <!-- Inputs cachés -->
+      <input id="certInput" type="file" style="display:none" (change)="onFileSelected($event, 'certifications')" multiple>
+      <input id="docInput" type="file" style="display:none" (change)="onFileSelected($event, 'documents')" multiple>
+
+      <!-- BUTTONS -->
+      <div class="buttons">
+        <button class="edit-profile" *ngIf="!isEditing" (click)="toggleEdit()">Modifier Profil</button>
+
+        <div class="edit-actions" *ngIf="isEditing">
+          <button class="cancel" (click)="toggleEdit()">Annuler</button>
+          <button class="save" (click)="save()">Enregistrer</button>
+          <button class="password">Modifier Mot de Passe</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

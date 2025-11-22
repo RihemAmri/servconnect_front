@@ -1,1 +1,467 @@
-<p>reservation works!</p>
+<!-- Loading State -->
+<div class="loading-overlay" *ngIf="loading">
+  <div class="loading-spinner"></div>
+  <p>Chargement...</p>
+</div>
+
+<!-- Main Container -->
+<div class="reservation-container" *ngIf="!loading && provider">
+  
+  <!-- Header with Provider Info -->
+  <div class="reservation-header">
+    <div class="header-gradient"></div>
+    <div class="header-content">
+      <button class="back-button" (click)="router.navigate(['/explore'])">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Retour
+      </button>
+      
+      <div class="provider-card-header">
+        <div class="provider-avatar">
+          <img [src]="getProviderPhoto()" [alt]="provider?.user?.nom || 'Provider'">
+        </div>
+        <div class="provider-info">
+          <h1 class="provider-name">{{ provider?.user?.prenom }} {{ provider?.user?.nom }}</h1>
+          <p class="provider-service">{{ provider?.metier }}</p>
+          <div class="provider-rating">
+            <span class="star">⭐</span>
+            <span class="rating-value">{{ provider?.noteGenerale || 0 }}</span>
+            <span class="rating-count">({{ provider?.nombreAvis || 0 }} avis)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Steps -->
+  <div class="steps-container">
+    <div class="steps-wrapper">
+      <div class="step" 
+           [class.active]="currentStep === 1"
+           [class.completed]="currentStep > 1"
+           (click)="goToStep(1)">
+        <div class="step-icon">
+          <svg *ngIf="currentStep > 1" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span *ngIf="currentStep <= 1">1</span>
+        </div>
+        <div class="step-label">
+          <span class="step-title">Date & Heure</span>
+          <span class="step-subtitle">Choisissez votre créneau</span>
+        </div>
+      </div>
+
+      <div class="step-connector" [class.active]="currentStep > 1"></div>
+
+      <div class="step" 
+           [class.active]="currentStep === 2"
+           [class.completed]="currentStep > 2"
+           (click)="goToStep(2)">
+        <div class="step-icon">
+          <svg *ngIf="currentStep > 2" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span *ngIf="currentStep <= 2">2</span>
+        </div>
+        <div class="step-label">
+          <span class="step-title">Description</span>
+          <span class="step-subtitle">Détails du besoin</span>
+        </div>
+      </div>
+
+      <div class="step-connector" [class.active]="currentStep > 2"></div>
+
+      <div class="step" 
+           [class.active]="currentStep === 3"
+           [class.completed]="currentStep > 3"
+           (click)="goToStep(3)">
+        <div class="step-icon">
+          <svg *ngIf="currentStep > 3" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span *ngIf="currentStep <= 3">3</span>
+        </div>
+        <div class="step-label">
+          <span class="step-title">Localisation</span>
+          <span class="step-subtitle">Où intervenir ?</span>
+        </div>
+      </div>
+
+      <div class="step-connector" [class.active]="currentStep > 3"></div>
+
+      <div class="step" 
+           [class.active]="currentStep === 4"
+           [class.completed]="currentStep > 4">
+        <div class="step-icon">
+          <svg *ngIf="currentStep > 4" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span *ngIf="currentStep <= 4">4</span>
+        </div>
+        <div class="step-label">
+          <span class="step-title">Confirmation</span>
+          <span class="step-subtitle">Vérifiez les détails</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Content -->
+  <div class="form-container">
+    <form [formGroup]="reservationForm">
+      
+      <!-- STEP 1: Date & Time -->
+      <div class="step-content" *ngIf="currentStep === 1">
+        <div class="step-header">
+          <div class="step-icon-large">📆</div>
+          <h2>Quand souhaitez-vous le service ?</h2>
+          <p>Sélectionnez la date et l'heure qui vous conviennent</p>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+              Date souhaitée
+              <span class="required">*</span>
+            </label>
+            <input 
+              type="date" 
+              formControlName="date"
+              [min]="getMinDate()"
+              class="form-input"
+              placeholder="JJ/MM/AAAA">
+            <span class="form-hint">Choisissez une date à partir d'aujourd'hui</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              Heure souhaitée
+              <span class="required">*</span>
+            </label>
+            <select formControlName="time" class="form-select">
+              <option value="">Sélectionnez une heure</option>
+              <option *ngFor="let slot of availableTimeSlots" [value]="slot">{{ slot }}</option>
+            </select>
+            <span class="form-hint">Créneau horaire préféré</span>
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="12" y1="18" x2="12" y2="12"/>
+                <line x1="9" y1="15" x2="15" y2="15"/>
+              </svg>
+              Type de service
+              <span class="required">*</span>
+            </label>
+            <input 
+              type="text" 
+              formControlName="serviceType"
+              class="form-input"
+              readonly>
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              Urgence du service
+            </label>
+            <div class="urgency-options">
+              <label class="urgency-option">
+                <input type="radio" formControlName="urgency" value="low">
+                <div class="urgency-card">
+                  <span class="urgency-icon">🟢</span>
+                  <span class="urgency-label">Normale</span>
+                  <span class="urgency-desc">Pas urgent</span>
+                </div>
+              </label>
+              <label class="urgency-option">
+                <input type="radio" formControlName="urgency" value="normal" checked>
+                <div class="urgency-card">
+                  <span class="urgency-icon">🟡</span>
+                  <span class="urgency-label">Standard</span>
+                  <span class="urgency-desc">Quelques jours</span>
+                </div>
+              </label>
+              <label class="urgency-option">
+                <input type="radio" formControlName="urgency" value="high">
+                <div class="urgency-card">
+                  <span class="urgency-icon">🔴</span>
+                  <span class="urgency-label">Urgente</span>
+                  <span class="urgency-desc">Dès que possible</span>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Description -->
+      <div class="step-content" *ngIf="currentStep === 2">
+        <div class="step-header">
+          <div class="step-icon-large">📝</div>
+          <h2>Décrivez votre besoin</h2>
+          <p>Plus vous donnez de détails, mieux le prestataire pourra vous aider</p>
+        </div>
+
+        <div class="form-group full-width">
+          <label class="form-label">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            Description du problème / besoin
+            <span class="required">*</span>
+          </label>
+          <textarea 
+            formControlName="description"
+            class="form-textarea"
+            rows="8"
+            placeholder="Exemple : Fuite d'eau sous l'évier de la cuisine. L'eau coule en continu depuis hier soir. Il semble que ce soit au niveau du tuyau de raccordement..."></textarea>
+          <div class="char-counter">
+            <span [class.valid]="reservationForm.get('description')?.value?.length >= 10">
+              {{ reservationForm.get('description')?.value?.length || 0 }} / 500 caractères
+            </span>
+            <span class="minimum-text" *ngIf="(reservationForm.get('description')?.value?.length || 0) < 10">
+              (minimum 10 caractères)
+            </span>
+          </div>
+        </div>
+
+        <div class="form-group full-width">
+          <label class="form-label">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            Photos du problème (optionnel)
+          </label>
+          <div class="file-upload-zone" (click)="fileInput.click()">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            <p class="upload-text">Cliquez pour ajouter des photos</p>
+            <p class="upload-hint">PNG, JPG jusqu'à 5MB (max 5 photos)</p>
+          </div>
+          <input 
+            #fileInput
+            type="file" 
+            accept="image/*"
+            multiple
+            (change)="onFileSelect($event)"
+            style="display: none">
+          
+          <!-- File Previews -->
+          <div class="file-previews" *ngIf="selectedFiles.length > 0">
+            <div class="preview-item" *ngFor="let url of previewUrls; let i = index">
+              <img [src]="url" alt="Preview">
+              <button type="button" class="remove-preview" (click)="removeFile(i)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Location -->
+      <div class="step-content" *ngIf="currentStep === 3">
+        <div class="step-header">
+          <div class="step-icon-large">📍</div>
+          <h2>Où se trouve le problème ?</h2>
+          <p>Cliquez sur la carte pour indiquer l'adresse exacte</p>
+        </div>
+
+        <div class="map-section">
+          <div class="map-instructions">
+            <div class="instruction-item">
+              <span class="instruction-icon">🔵</span>
+              <span>Position du prestataire</span>
+            </div>
+            <div class="instruction-item">
+              <span class="instruction-icon">🔴</span>
+              <span>Votre emplacement (cliquez sur la carte)</span>
+            </div>
+          </div>
+          
+          <div id="reservation-map" class="reservation-map"></div>
+
+          <div class="selected-location" *ngIf="selectedLocation">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            <div class="location-info">
+              <strong>Emplacement sélectionné</strong>
+              <span>{{ selectedLocation.address }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4: Confirmation -->
+      <div class="step-content" *ngIf="currentStep === 4">
+        <div class="step-header">
+          <div class="step-icon-large">✅</div>
+          <h2>Vérifiez votre demande</h2>
+          <p>Assurez-vous que toutes les informations sont correctes</p>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-section">
+            <h3 class="summary-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+              Date et Heure
+            </h3>
+            <div class="summary-content">
+              <div class="summary-item">
+                <span class="label">Date :</span>
+                <span class="value">{{ reservationForm.get('date')?.value }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="label">Heure :</span>
+                <span class="value">{{ reservationForm.get('time')?.value }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="label">Service :</span>
+                <span class="value">{{ reservationForm.get('serviceType')?.value }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="label">Urgence :</span>
+                <span class="value urgency-badge" [class]="reservationForm.get('urgency')?.value">
+                  {{ reservationForm.get('urgency')?.value === 'high' ? '🔴 Urgente' : 
+                     reservationForm.get('urgency')?.value === 'normal' ? '🟡 Standard' : '🟢 Normale' }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="summary-section">
+            <h3 class="summary-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              Description
+            </h3>
+            <div class="summary-content">
+              <p class="description-text">{{ reservationForm.get('description')?.value }}</p>
+            </div>
+          </div>
+
+          <div class="summary-section" *ngIf="selectedFiles.length > 0">
+            <h3 class="summary-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+              Photos jointes
+            </h3>
+            <div class="summary-content">
+              <div class="summary-photos">
+                <img *ngFor="let url of previewUrls" [src]="url" alt="Photo">
+              </div>
+            </div>
+          </div>
+
+          <div class="summary-section" *ngIf="selectedLocation">
+            <h3 class="summary-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              Localisation
+            </h3>
+            <div class="summary-content">
+              <p>{{ selectedLocation.address }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-banner">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          <div class="banner-content">
+            <strong>Note importante</strong>
+            <p>Le prestataire examinera votre demande et vous proposera un devis. Aucun paiement ne sera effectué pour le moment.</p>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <!-- Navigation Buttons -->
+    <div class="form-actions">
+      <button 
+        type="button" 
+        class="btn-secondary"
+        *ngIf="currentStep > 1"
+        (click)="prevStep()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Précédent
+      </button>
+
+      <button 
+        type="button" 
+        class="btn-primary"
+        *ngIf="currentStep < totalSteps"
+        (click)="nextStep()"
+        [disabled]="!validateCurrentStep()">
+        Suivant
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+
+      <button 
+        type="button" 
+        class="btn-submit"
+        *ngIf="currentStep === totalSteps"
+        (click)="submitReservation()"
+        [disabled]="!reservationForm.valid || !selectedLocation || submitting">
+        <span *ngIf="!submitting">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+          </svg>
+          Envoyer la demande
+        </span>
+        <span *ngIf="submitting" class="submitting">
+          <div class="spinner-small"></div>
+          Envoi en cours...
+        </span>
+      </button>
+    </div>
+  </div>
+</div>

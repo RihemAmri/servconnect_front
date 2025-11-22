@@ -1,3 +1,4 @@
+<div class="page-background">
 <div class="register-container">
  
   <div class="welcome-side">
@@ -108,14 +109,45 @@
       Numéro de téléphone requis.
     </small>
   </div>
+<!-- Address -->
+<div class="form-group" formGroupName="adresse">
+  <input
+    type="text"
+    placeholder="Adresse"
+    formControlName="street"
+    (focus)="onFocus('adresse')"
+  />
 
-  <!-- Address -->
-  <div class="form-group">
-    <input type="text" placeholder="Adresse" formControlName="adresse" (focus)="onFocus('adresse')" />
-    <small *ngIf="showError.adresse && registerForm.controls['adresse'].invalid" class="text-danger">
-      Adresse requise.
-    </small>
+  <small *ngIf="showError.adresse && registerForm.get('adresse.street')?.invalid" class="text-danger">
+    Adresse requise.
+  </small>
+</div>
+
+  
+    <!-- 🌍 MAP + bouton GPS -->
+
+<div class="map-section">
+
+  <div class="map-search-row">
+    <input 
+      type="text" 
+      placeholder="Recherche une adresse…" 
+      #searchInput 
+      class="map-search-input"
+    >
+
+    <button type="button" class="map-icon-btn" (click)="search(searchInput.value)" title="Rechercher">
+      <i class="fas fa-search"></i>
+    </button>
   </div>
+
+  <div id="map"></div>
+
+  <button type="button" class="map-icon-btn map-gps-btn" (click)="locate()" title="Ma position">
+  <i class="fas fa-location-crosshairs"></i>
+</button>
+
+</div>
 
   <!-- Champs prestataire -->
   <div *ngIf="registerForm.get('role')?.value === 'prestataire'" class="provider-fields">
@@ -174,32 +206,42 @@
 <div class="availability-section">
 
   <h3>Disponibilités</h3>
-
+   <div *ngIf="disponibilite.errors?.['required']" class="text-danger mb-2">
+    Veuillez sélectionner au moins un jour de disponibilité.
+  </div>
   <div class="day" *ngFor="let day of disponibilite.controls; let i = index">
+  <small *ngIf="day.errors?.['required']" class="text-danger">
+    Au moins un créneau est requis pour ce jour.
+  </small>
 
+  <label>
+    <input type="checkbox" [formControl]="getControl(day, 'isAvailable')" />
+    {{ day.get('day')?.value | titlecase }}
+  </label>
 
-    <label>
-     <input type="checkbox" [formControl]="getControl(day, 'isAvailable')" />
-      {{ day.get('day')?.value | titlecase }}
-    </label>
+  <!-- Créneaux si dispo -->
+  <div *ngIf="day.get('isAvailable')?.value">
 
-    <!-- Créneaux si dispo -->
-    <div *ngIf="day.get('isAvailable')?.value">
-
-      <div class="timeslot" *ngFor="let slot of getTimeSlots(i).controls; let j = index">
+    <!-- Tous les créneaux du jour -->
+    <div *ngFor="let slot of getTimeSlots(i).controls; let j = index" class="timeslot-wrapper">
+      <div class="timeslot">
         <input type="time" [formControl]="getControl(slot, 'start')" />
         <input type="time" [formControl]="getControl(slot, 'end')" />
-
-
         <button type="button" (click)="removeTimeSlot(i, j)">X</button>
       </div>
-
-      <button type="button" (click)="addTimeSlot(i)">
-        Ajouter un créneau
-      </button>
-
+      <small *ngIf="slot.errors?.['invalidTime']" class="text-danger timeslot-error">
+        Créneau invalide.
+      </small>
     </div>
+
+    <!-- Bouton Ajouter un créneau -->
+    <button type="button" (click)="addTimeSlot(i)">
+      Ajouter un créneau
+    </button>
+
   </div>
+</div>
+
 </div>
 
   </div>
@@ -209,4 +251,5 @@
 
   </div>
   </div>
+</div>
 </div>

@@ -4,7 +4,7 @@ import { appConfig } from './app/app.config';
 
 import { provideRouter } from '@angular/router';
 import { routes } from './app/app.routes';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 
 // Combine appConfig avec les autres providers
 bootstrapApplication(AppComponent, {
@@ -12,7 +12,7 @@ bootstrapApplication(AppComponent, {
   providers: [
     ...(appConfig.providers || []),
     provideRouter(routes),
-    provideHttpClient(),
+    provideHttpClient(withFetch()),
   ],
 }).catch(err => console.error(err));
 

@@ -1,12 +1,13 @@
 /*  Arrière-plan global */
 .page-background {
-  background: linear-gradient(135deg, #e5e9f5 0%, #f2f2f2 50%, #d0d8f0 100%);
-  min-height: 100vh;
+background: linear-gradient(135deg, #e5e9f5 0%, #f2f2f2 50%, #d0d8f0 100%);
+  height: 100%;
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 0;
+  padding: 140px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
 }
 
 /* 🌟 Container principal */
@@ -283,14 +284,14 @@ form button:hover,
 .alert {
   margin-top: 10px;
    width: 100%;
-   padding: 12px;
+   padding: 10px;
   border-radius: 8px;
   font-size: 15px;
   transition: 0.3s;
   outline: none;
   max-width: 320px;
   padding: 10px;
-  margin-left: 25px;
+  
   margin-bottom: 10px;
   border-radius: 5px;
   display: flex;

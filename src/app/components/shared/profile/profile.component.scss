@@ -1,0 +1,230 @@
+.profile-container {
+  display: flex;
+  width: 100%;
+  padding: 20px;
+  gap: 25px;
+}
+
+/* ========== SIDEBAR ========== */
+.sidebar {
+  width: 280px;
+  background: #f5f8ff;
+  border-radius: 22px;
+  padding: 25px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+}
+
+.avatar-wrapper {
+  position: relative;
+
+  img {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .edit-photo {
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    background: #0048ff;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+  }
+}
+
+.name {
+  margin-top: 12px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.role {
+  color: #888;
+  margin-bottom: 10px;
+}
+
+/* ⭐ Rating */
+.rating-box {
+  background: white;
+  padding: 10px;
+  border-radius: 12px;
+  margin: 10px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+
+  .stars span {
+    font-size: 20px;
+    color: #ccc;
+
+    &.filled {
+      color: #0048ff;
+    }
+  }
+}
+
+.menu button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  border-radius: 12px;
+  border: none;
+  background: #e3edff;
+  font-weight: 500;
+  cursor: pointer;
+
+  &.active {
+    background: #0048ff;
+    color: white;
+  }
+}
+
+/* ========== CONTENT ========== */
+.content {
+  flex: 1;
+  background: #ffffff;
+  padding: 35px;
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+h1 {
+  margin-bottom: 25px;
+}
+
+/* FORM */
+.info-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  input,
+  textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 14px;
+    border: 1px solid #e0e0e0;
+    background: #f8f8f8;
+
+    &[readonly] {
+      background: #f0f0f0;
+      cursor: not-allowed;
+    }
+  }
+
+  &.edit input,
+  &.edit textarea {
+    background: white;
+    border-color: #0048ff;
+  }
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* LOTTIE ZONE */
+.lottie-zone {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+
+  .lottie-item {
+    background: #f5f7ff;
+    border-radius: 16px;
+    padding: 15px;
+    width: 140px;
+    text-align: center;
+    position: relative;
+
+    .delete-btn {
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 12px;
+      margin-top: 6px;
+      cursor: pointer;
+    }
+  }
+
+  .add-btn {
+    border: 2px dashed #0048ff;
+    background: transparent;
+    padding: 14px;
+    width: 140px;
+    border-radius: 16px;
+    cursor: pointer;
+  }
+}
+
+/* BUTTONS */
+.buttons {
+  margin-top: 25px;
+}
+
+.edit-profile {
+  padding: 12px 20px;
+  background: #0048ff;
+  color: white;
+  border: none;
+  border-radius: 12px;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 15px;
+
+  .cancel {
+    background: transparent;
+    border: 2px solid #aaa;
+    border-radius: 12px;
+    padding: 12px 18px;
+  }
+
+  .save {
+    background: #0048ff;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 20px;
+  }
+
+  .password {
+    background: #276ef1;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 20px;
+  }
+}
+
+.center-wrapper {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 30px 20px;
+}
+
+.docs {
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+.avatar-wrapper img.clickable {
+  cursor: pointer;
+  opacity: 0.9;
+}
+
+.avatar-wrapper img.clickable:hover {
+  opacity: 0.7;
+}
