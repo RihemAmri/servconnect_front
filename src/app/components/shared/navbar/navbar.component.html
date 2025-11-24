@@ -105,6 +105,13 @@
               </a>
             </li>
             <li>
+              <!-- Dans votre menu de navigation prestataire -->
+              <a routerLink="/provider/my-documents" class="nav-link">
+                <i class="pi pi-file"></i>
+                <span>Mes Documents</span>
+              </a>
+            </li>
+            <li>
               <a
                 routerLink="/pricing"
                 class="dropdown-item"
@@ -194,85 +201,97 @@
       </ng-container>
     </ul>
 
-    <!-- ACTIONS DROITE -->
     <div class="navbar-actions">
-      <!-- Notifications -->
-      <button class="btn-notification" *ngIf="isLoggedIn" title="Notifications">
-        <i class="pi pi-bell"></i>
-        <span class="notification-badge" *ngIf="notificationsCount > 0">{{
-          notificationsCount
-        }}</span>
-      </button>
-
-      <!-- Pas connecté -->
-      <ng-container *ngIf="!isLoggedIn">
-        <button class="btn-secondary" routerLink="/login">
-          <i class="pi pi-user"></i> Connexion
-        </button>
-        <button class="btn-primary" routerLink="/register">
-          <i class="pi pi-sparkles"></i> S'inscrire
-        </button>
+      <ng-container *ngIf="!isClientInitialized; else initializedContent">
+        <div class="placeholder-actions"></div>
       </ng-container>
 
-      <!-- Connecté -->
-      <ng-container *ngIf="isLoggedIn">
-        <div class="user-menu">
-          <button class="user-profile" (click)="toggleUserMenu()">
-            <div class="user-avatar">
-              <i class="pi pi-user"></i>
-            </div>
-            <span class="user-name">{{ userName }}</span>
-            <i
-              class="pi pi-chevron-down dropdown-icon"
-              [class.rotate]="isUserMenuOpen"
-            ></i>
+      <ng-template #initializedContent>
+        <button
+          class="btn-notification"
+          *ngIf="isLoggedIn"
+          title="Notifications"
+          (click)="navigateAndClose('/notifications')"
+        >
+          <i class="pi pi-bell"></i>
+          <span class="notification-badge" *ngIf="notificationsCount > 0">{{
+            notificationsCount
+          }}</span>
+        </button>
+
+        <ng-container *ngIf="!isLoggedIn">
+          <button class="btn-secondary" routerLink="/login">
+            <i class="pi pi-user"></i> Connexion
           </button>
+          <button class="btn-primary" routerLink="/register">
+            <i class="pi pi-sparkles"></i> S'inscrire
+          </button>
+        </ng-container>
 
-          <!-- Dropdown User Menu -->
-          <div class="user-dropdown" [class.show]="isUserMenuOpen">
-            <div class="user-dropdown-header">
-              <div class="user-avatar-large">
-                <i class="pi pi-user"></i>
+        <ng-container *ngIf="isLoggedIn">
+          <div class="user-menu">
+            <button class="user-profile" (click)="toggleUserMenu()">
+              <div
+                class="user-avatar"
+                [style.background-color]="getAvatarColor()"
+                [title]="userRole | titlecase"
+              >
+                {{ getUserInitial() }}
               </div>
-              <div class="user-info">
-                <p class="user-fullname">{{ userName }}</p>
-                <p class="user-role">{{ userRole | titlecase }}</p>
-              </div>
-            </div>
-
-            <div class="user-dropdown-divider"></div>
-
-            <ul class="user-dropdown-menu">
-              <li>
-                <a
-                  routerLink="/profile"
-                  class="user-dropdown-item"
-                  (click)="closeUserMenu()"
-                >
-                  <i class="pi pi-user"></i> Mon profil
-                </a>
-              </li>
-              <li>
-                <a
-                  routerLink="/settings"
-                  class="user-dropdown-item"
-                  (click)="closeUserMenu()"
-                >
-                  <i class="pi pi-cog"></i> Paramètres
-                </a>
-              </li>
-            </ul>
-
-            <div class="user-dropdown-divider"></div>
-
-            <button class="btn-logout-dropdown" (click)="logout()">
-              <i class="pi pi-sign-out"></i> Déconnexion
+              <span class="user-name">{{ userName }}</span>
+              <i
+                class="pi pi-chevron-down dropdown-icon"
+                [class.rotate]="isUserMenuOpen"
+              ></i>
             </button>
-          </div>
-        </div>
-      </ng-container>
 
-      <!-- Mobile toggle -->
+            <div class="user-dropdown" [class.show]="isUserMenuOpen">
+              <div class="user-dropdown-header">
+                <div
+                  class="user-avatar-large"
+                  [style.background-color]="getAvatarColor()"
+                >
+                  {{ getUserInitial() }}
+                </div>
+                <div class="user-info">
+                  <p class="user-fullname">{{ userName }}</p>
+                  <p class="user-role">{{ userRole | titlecase }}</p>
+                </div>
+              </div>
+
+              <div class="user-dropdown-divider"></div>
+
+              <ul class="user-dropdown-menu">
+                <li>
+                  <a
+                    routerLink="/profile"
+                    class="user-dropdown-item"
+                    (click)="closeUserMenu()"
+                  >
+                    <i class="pi pi-user"></i> Mon profil
+                  </a>
+                </li>
+                <li>
+                  <a
+                    routerLink="/settings"
+                    class="user-dropdown-item"
+                    (click)="closeUserMenu()"
+                  >
+                    <i class="pi pi-cog"></i> Paramètres
+                  </a>
+                </li>
+              </ul>
+
+              <div class="user-dropdown-divider"></div>
+
+              <button class="btn-logout-dropdown" (click)="logout()">
+                <i class="pi pi-sign-out"></i> Déconnexion
+              </button>
+            </div>
+          </div>
+        </ng-container>
+      </ng-template>
+
       <button
         class="mobile-menu-toggle"
         (click)="toggleMobileMenu()"

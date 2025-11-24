@@ -86,6 +86,8 @@ export class ProviderDetailsComponent implements OnInit, AfterViewInit, OnDestro
         this.loadProviderDetails();
       }
     });
+    window.scrollTo({ top: 0 });
+  this.loadProviderDetails();
   }
 
   ngAfterViewInit() {

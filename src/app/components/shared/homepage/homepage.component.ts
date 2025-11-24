@@ -125,6 +125,7 @@ export class HomepageComponent implements OnInit {
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
+      window.scrollTo({ top: 0 });
       this.animateCounters();
     }
   }

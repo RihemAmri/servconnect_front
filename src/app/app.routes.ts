@@ -27,6 +27,7 @@ import { ResetPasswordComponent } from './components/auth/reset-password/reset-p
 // Guards
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
+import { ResubmitDocsComponent } from './components/provider/resubmit-docs/resubmit-docs.component';
 
 export const routes: Routes = [
   /** PUBLIC ROUTES **/
@@ -79,6 +80,12 @@ export const routes: Routes = [
     component: GestionbookComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['prestataire'] }
+  },
+  {
+    path: 'provider/my-documents',
+    component:ResubmitDocsComponent ,
+    canActivate: [AuthGuard],
+    data: { role: 'prestataire' }
   },
 
   /** CLIENT ROUTES **/

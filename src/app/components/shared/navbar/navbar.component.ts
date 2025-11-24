@@ -36,6 +36,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private auth = inject(AuthService);
   private router = inject(Router);
 
+  isClientInitialized = false;
+
   ngOnInit(): void {
     // Auto login
     this.auth.autoLogin();
@@ -73,6 +75,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
     // Vérifier si on est dans le navigateur avant d'accéder à window/document
     if (isPlatformBrowser(this.platformId)) {
+      this.isClientInitialized = true;
       // Scroll listener
       this.subs.push(
         fromEvent(window, 'scroll').subscribe(() => {

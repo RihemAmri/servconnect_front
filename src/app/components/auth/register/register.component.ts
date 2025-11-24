@@ -257,7 +257,7 @@ this.showError['documents'] = false;
  // cache le message quand l'utilisateur clique
   }
   
-  onRegister() {
+/*   onRegister() {
     Object.keys(this.registerForm.controls).forEach(key => {
     this.showError[key] = this.registerForm.controls[key].invalid;
   });
@@ -408,6 +408,315 @@ if (Object.values(this.showError).some(v => v)) return;
       console.error('Erreur:', err);
     }
   });
+} */
+  
+
+  onRegister() {
+  console.log('🚀 ==========================================');
+  console.log('🚀 DÉBUT DE L\'INSCRIPTION');
+  console.log('🚀 ==========================================');
+  
+  // ========================================
+  // 1️⃣ VALIDATION DES CHAMPS DU FORMULAIRE
+  // ========================================
+  console.log('📝 Étape 1/8 : Validation des champs...');
+  Object.keys(this.registerForm.controls).forEach(key => {
+    this.showError[key] = this.registerForm.controls[key].invalid;
+    if (this.registerForm.controls[key].invalid) {
+      console.log(`  ❌ ${key} est invalide`);
+    }
+  });
+
+  // ========================================
+  // 2️⃣ VALIDATION DES UPLOADS
+  // ========================================
+  console.log('📝 Étape 2/8 : Validation des uploads...');
+  
+  if (!this.selectedPhotoFile) {
+    this.showError['photo'] = true;
+    console.log('  ❌ Photo manquante');
+  } else {
+    console.log(`  ✅ Photo: ${this.selectedPhotoFile.name} (${(this.selectedPhotoFile.size / 1024).toFixed(2)} KB)`);
+  }
+
+  if (this.registerForm.get('role')?.value === 'prestataire') {
+    if (this.certificationsFiles.length === 0) {
+      this.showError['certifications'] = true;
+      console.log('  ❌ Certifications manquantes');
+    } else {
+      console.log(`  ✅ ${this.certificationsFiles.length} certification(s):`);
+      this.certificationsFiles.forEach((f, i) => {
+        console.log(`     ${i + 1}. ${f.name} (${(f.size / 1024).toFixed(2)} KB)`);
+      });
+    }
+
+    if (this.documentsFiles.length === 0) {
+      this.showError['documents'] = true;
+      console.log('  ❌ Documents manquants');
+    } else {
+      console.log(`  ✅ ${this.documentsFiles.length} document(s):`);
+      this.documentsFiles.forEach((f, i) => {
+        console.log(`     ${i + 1}. ${f.name} (${(f.size / 1024).toFixed(2)} KB)`);
+      });
+    }
+  }
+
+  // ========================================
+  // 3️⃣ VALIDATION DISPONIBILITÉS PROVIDER
+  // ========================================
+  if (this.registerForm.get('role')?.value === 'prestataire') {
+    console.log('📝 Étape 3/8 : Validation des disponibilités...');
+    let atLeastOneDayChecked = false;
+
+    // Clear previous errors
+    this.disponibilite.controls.forEach(dayControl => {
+      const dayGroup = dayControl as FormGroup;
+      dayGroup.setErrors(null);
+      const slots = dayGroup.get('timeSlots') as FormArray;
+      slots.controls.forEach(slotControl => (slotControl as FormGroup).setErrors(null));
+    });
+
+    this.disponibilite.controls.forEach(dayControl => {
+      const dayGroup = dayControl as FormGroup;
+      const dayName = dayGroup.get('day')?.value;
+      const isAvailable = dayGroup.get('isAvailable')?.value;
+      const timeSlots = dayGroup.get('timeSlots') as FormArray;
+
+      if (isAvailable) {
+        atLeastOneDayChecked = true;
+        console.log(`  ✅ ${dayName} disponible`);
+
+        // Vérifie si aucun créneau valide n'existe
+        let hasValidSlot = false;
+        timeSlots.controls.forEach((slotControl, slotIndex) => {
+          const slot = slotControl as FormGroup;
+          const start = slot.get('start')?.value;
+          const end = slot.get('end')?.value;
+
+          if (start && end && start < end) {
+            hasValidSlot = true;
+            console.log(`     ✅ Créneau ${slotIndex + 1}: ${start} → ${end}`);
+          } else if (start || end) {
+            // slot partiellement rempli ou invalide → erreur sur le slot
+            slot.setErrors({ invalidTime: true });
+            console.log(`     ❌ Créneau ${slotIndex + 1} invalide: ${start} → ${end}`);
+          }
+        });
+
+        if (!hasValidSlot) {
+          // aucun créneau valide → erreur sur le jour
+          dayGroup.setErrors({ required: true });
+          console.log(`     ❌ ${dayName}: Aucun créneau valide`);
+        }
+      }
+    });
+
+    if (!atLeastOneDayChecked) {
+      // Aucun jour coché → on met une erreur sur le FormArray lui-même
+      (this.registerForm.get('disponibilite') as FormArray).setErrors({ required: true });
+      console.log('  ❌ Aucun jour de disponibilité sélectionné');
+    }
+
+    // Force l'affichage des messages
+    this.disponibilite.markAllAsTouched();
+
+    // Bloque l'envoi si il y a des erreurs
+    if (this.disponibilite.invalid) {
+      console.log('❌ ARRÊT: Disponibilités invalides');
+      console.log('🚀 ==========================================');
+      return;
+    }
+  } else {
+    console.log('📝 Étape 3/8 : Ignorée (rôle client)');
+  }
+
+  // ========================================
+  // 4️⃣ VÉRIFICATION FINALE DES ERREURS
+  // ========================================
+  console.log('📝 Étape 4/8 : Vérification finale...');
+  
+  // Ne pas envoyer si un champ requis est manquant
+  if (Object.values(this.showError).some(v => v)) {
+    console.log('❌ ARRÊT: Des erreurs de validation existent');
+    console.log('❌ Erreurs détectées:', 
+      Object.keys(this.showError).filter(k => this.showError[k]));
+    console.log('🚀 ==========================================');
+    return;
+  }
+
+  console.log('  ✅ Toutes les validations sont passées');
+
+  // ========================================
+  // 5️⃣ CONSTRUCTION DU FORMDATA
+  // ========================================
+  console.log('📝 Étape 5/8 : Construction du FormData...');
+  
+  const formValue = this.registerForm.value;
+  const [nom, prenom = ''] = formValue.name.split(' ');
+  const formData = new FormData();
+
+  // Données de base
+  formData.append('nom', nom);
+  formData.append('prenom', prenom);
+  formData.append('email', formValue.email);
+  formData.append('motDePasse', formValue.password);
+  formData.append('telephone', formValue.telephone || '');
+  formData.append('role', formValue.role);
+
+  console.log(`  ✅ Données de base: ${nom} ${prenom} (${formValue.role})`);
+
+  // ✅ Adresse en format object
+  formData.append("adresse[street]", formValue.adresse.street || '');
+  formData.append("adresse[lat]", formValue.adresse.lat?.toString() || '0');
+  formData.append("adresse[lng]", formValue.adresse.lng?.toString() || '0');
+  
+  console.log(`  ✅ Adresse: ${formValue.adresse.street}`);
+
+  // ✅ Ajouter la photo
+  if (this.selectedPhotoFile) {
+    formData.append('photo', this.selectedPhotoFile);
+    console.log(`  ✅ Photo: ${this.selectedPhotoFile.name}`);
+  }
+
+  // ========================================
+  // 6️⃣ DONNÉES SPÉCIFIQUES PRESTATAIRE
+  // ========================================
+  if (formValue.role === 'prestataire') {
+    console.log('📝 Étape 6/8 : Ajout des données prestataire...');
+    
+    formData.append('metier', formValue.category || '');
+    formData.append('description', formValue.description || '');
+    formData.append('experience', formValue.experience?.toString() || '0');
+    
+    console.log(`  ✅ Métier: ${formValue.category}`);
+    console.log(`  ✅ Expérience: ${formValue.experience} ans`);
+    
+    // ✅ Ajouter les certificats
+    console.log(`  📄 Ajout de ${this.certificationsFiles.length} certification(s)...`);
+    this.certificationsFiles.forEach((f, index) => {
+      formData.append('certifications', f);
+      console.log(`     ${index + 1}. ${f.name} (${f.type}, ${(f.size / 1024).toFixed(2)} KB)`);
+    });
+    
+    // ✅ Ajouter les documents
+    console.log(`  📄 Ajout de ${this.documentsFiles.length} document(s)...`);
+    this.documentsFiles.forEach((f, index) => {
+      formData.append('documents', f);
+      console.log(`     ${index + 1}. ${f.name} (${f.type}, ${(f.size / 1024).toFixed(2)} KB)`);
+    });
+
+    // ✅ Ajouter disponibilité
+    const disponibiliteJSON = this.disponibilite.controls.map(dayCtrl => {
+      const dayValue = dayCtrl.value;
+      const timeSlots = dayValue.isAvailable
+        ? dayValue.timeSlots.map((slot: any) => ({
+            start: slot.start,
+            end: slot.end
+          }))
+        : [];
+
+      return {
+        day: dayValue.day,
+        isAvailable: dayValue.isAvailable,
+        timeSlots
+      };
+    });
+
+    formData.append('disponibilite', JSON.stringify(disponibiliteJSON));
+    
+    const joursDisponibles = disponibiliteJSON.filter(d => d.isAvailable).length;
+    console.log(`  ✅ Disponibilité: ${joursDisponibles} jour(s)`);
+  } else {
+    console.log('📝 Étape 6/8 : Ignorée (rôle client)');
+  }
+
+  // ========================================
+  // 7️⃣ DEBUG COMPLET DU FORMDATA
+  // ========================================
+  console.log('📝 Étape 7/8 : Contenu du FormData...');
+  console.log('📦 ==========================================');
+  let fileCount = 0;
+  formData.forEach((value, key) => {
+    if (value instanceof File) {
+      fileCount++;
+      console.log(`  ${key}: [FILE] ${value.name} (${(value.size / 1024).toFixed(2)} KB)`);
+    } else if (key === 'motDePasse') {
+      console.log(`  ${key}: ********`);
+    } else if (typeof value === 'string' && value.length > 100) {
+      console.log(`  ${key}: [${value.length} caractères]`);
+    } else {
+      console.log(`  ${key}: ${value}`);
+    }
+  });
+  console.log(`📦 Total: ${fileCount} fichier(s)`);
+  console.log('📦 ==========================================');
+
+  // ========================================
+  // 8️⃣ ENVOI DE LA REQUÊTE
+  // ========================================
+  console.log('📝 Étape 8/8 : Envoi de la requête...');
+  
+  this.loading = true;
+  this.successMessage = '';
+  this.errorMessage = '';
+
+  const endpoint = formValue.role === 'prestataire' ? 'registerProvider' : 'registerClient';
+  console.log(`🌐 Appel: authService.${endpoint}()`);
+
+  // ✅ Appel du service
+  const request = formValue.role === 'prestataire'
+    ? this.authService.registerProvider(formData)
+    : this.authService.registerClient(formData);
+
+  const startTime = Date.now();
+
+  request.subscribe({
+    next: (res) => {
+      const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+      this.loading = false;
+      
+      console.log('✅ ==========================================');
+      console.log(`✅ INSCRIPTION RÉUSSIE (${duration}s)`);
+      console.log('✅ ==========================================');
+      console.log('✅ Réponse serveur:', res);
+      
+      this.successMessage = '✅ Inscription réussie ! Redirection vers la page de connexion...';
+      
+      setTimeout(() => {
+        console.log('🔄 Redirection vers /login...');
+        this.router.navigate(['/login']);
+      }, 1500);
+    },
+    error: (err) => {
+      const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+      this.loading = false;
+      
+      console.log('❌ ==========================================');
+      console.log(`❌ ERREUR D'INSCRIPTION (${duration}s)`);
+      console.log('❌ ==========================================');
+      console.log('❌ Status HTTP:', err.status);
+      console.log('❌ Message:', err.error?.message || err.message);
+      console.log('❌ Erreur complète:', err);
+      
+      // Gestion d'erreur améliorée
+      if (err.error?.message) {
+        this.errorMessage = `❌ ${err.error.message}`;
+      } else if (err.status === 0) {
+        this.errorMessage = '❌ Impossible de contacter le serveur. Vérifiez votre connexion.';
+        console.log('💡 Conseil: Vérifiez que le backend tourne sur http://localhost:5000');
+      } else if (err.status === 413) {
+        this.errorMessage = '❌ Fichiers trop volumineux. Maximum 5 MB par fichier.';
+      } else if (err.status === 400) {
+        this.errorMessage = `❌ Données invalides: ${err.error?.message || 'Vérifiez vos informations'}`;
+      } else {
+        this.errorMessage = '❌ Erreur lors de l\'inscription. Veuillez réessayer.';
+      }
+      
+      console.log('❌ ==========================================');
+    }
+  });
+
+  console.log('🚀 Requête envoyée, en attente de la réponse...');
 }
 createDayAvailability(day: string): FormGroup {
   return this.fb.group({

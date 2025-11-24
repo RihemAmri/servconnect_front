@@ -1,0 +1,227 @@
+<div class="min-h-screen bg-gray-50 pt-20">
+  <div class="max-w-5xl mx-auto px-6 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">
+        Mes documents de vérification
+      </h1>
+      <p class="text-gray-600">
+        Gérez vos documents pour valider votre compte prestataire
+      </p>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="flex items-center justify-center h-48">
+      <i class="pi pi-spin pi-spinner text-4xl text-blue-500"></i>
+    </div>
+
+    <div *ngIf="!loading" class="space-y-6">
+      <!-- Statut du compte -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-semibold text-gray-900 mb-2">
+              Statut de votre compte
+            </h2>
+            <div class="flex items-center gap-2">
+              <p-tag
+                [value]="isVerified ? 'Vérifié' : 'En attente de vérification'"
+                [severity]="isVerified ? 'success' : 'warn'"
+              ></p-tag>
+            </div>
+          </div>
+
+          <!-- Badge vérifié -->
+          <div *ngIf="isVerified" class="text-green-500">
+            <i class="pi pi-check-circle text-5xl"></i>
+          </div>
+        </div>
+
+        <!-- Statistiques -->
+        <div class="grid grid-cols-4 gap-4 mt-6 pt-6 border-t">
+          <div class="text-center">
+            <p class="text-2xl font-bold text-blue-600">{{ stats.total }}</p>
+            <p class="text-sm text-gray-600">Total</p>
+          </div>
+          <div class="text-center">
+            <p class="text-2xl font-bold text-yellow-600">
+              {{ stats.pending }}
+            </p>
+            <p class="text-sm text-gray-600">En attente</p>
+          </div>
+          <div class="text-center">
+            <p class="text-2xl font-bold text-green-600">
+              {{ stats.verified }}
+            </p>
+            <p class="text-sm text-gray-600">Vérifiés</p>
+          </div>
+          <div class="text-center">
+            <p class="text-2xl font-bold text-red-600">{{ stats.rejected }}</p>
+            <p class="text-sm text-gray-600">Rejetés</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Liste des documents -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">
+          Documents soumis
+        </h2>
+
+        <div
+          *ngIf="documents.length === 0"
+          class="text-center py-8 text-gray-500"
+        >
+          <i class="pi pi-file text-4xl mb-3"></i>
+          <p>Aucun document soumis</p>
+        </div>
+
+        <div class="space-y-4">
+          <div
+            *ngFor="let doc of documents"
+            class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+          >
+            <div class="flex items-start justify-between gap-4">
+              <div class="flex-1">
+                <div class="flex items-center gap-3 mb-2">
+                  <h3 class="font-semibold text-gray-900">
+                    {{ getDocumentTypeLabel(doc.documentType) }}
+                  </h3>
+                  <p-tag
+                    [value]="getStatusLabel(doc.status)"
+                    [severity]="getStatusSeverity(doc.status)"
+                  ></p-tag>
+                </div>
+
+                <p class="text-sm text-gray-600 mb-2">
+                  <i class="pi pi-calendar mr-1"></i>
+                  Uploadé le {{ doc.uploadedAt | date : "dd/MM/yyyy à HH:mm" }}
+                </p>
+
+                <!-- Motif de refus -->
+                <div
+                  *ngIf="doc.status === 'rejected' && doc.rejectionReason"
+                  class="mt-3 p-3 bg-red-50 border border-red-200 rounded-md"
+                >
+                  <p class="text-sm text-red-800">
+                    <i class="pi pi-exclamation-triangle mr-2"></i>
+                    <strong>Motif du refus :</strong> {{ doc.rejectionReason }}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                pButton
+                icon="pi pi-eye"
+                class="p-button-outlined p-button-sm"
+                (click)="openDocument(doc.path)"
+                pTooltip="Voir le document"
+              ></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulaire de re-soumission (si documents rejetés) -->
+      <div
+        *ngIf="stats.rejected > 0"
+        class="bg-amber-50 border-2 border-amber-200 rounded-lg p-6"
+      >
+        <div class="flex items-start gap-3 mb-4">
+          <i class="pi pi-info-circle text-amber-600 text-2xl"></i>
+          <div>
+            <h3 class="font-semibold text-amber-900 mb-1">Documents rejetés</h3>
+            <p class="text-sm text-amber-800">
+              Certains de vos documents ont été rejetés. Veuillez soumettre de
+              nouveaux documents pour débloquer votre compte.
+            </p>
+          </div>
+        </div>
+
+        <!-- Upload certifications -->
+        <div class="space-y-4 mt-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Nouveaux certificats (optionnel)
+            </label>
+            <input
+              #certificationsInput
+              type="file"
+              multiple
+              accept=".pdf,.jpg,.jpeg,.png"
+              (change)="onCertificationsSelected($event)"
+              class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            />
+            <div *ngIf="certificationsFiles.length > 0" class="mt-2 space-y-1">
+              <div
+                *ngFor="let file of certificationsFiles; let i = index"
+                class="flex items-center justify-between text-sm bg-gray-50 p-2 rounded"
+              >
+                <span
+                  >{{ file.name }} ({{
+                    (file.size / 1024).toFixed(2)
+                  }}
+                  KB)</span
+                >
+                <button
+                  pButton
+                  icon="pi pi-times"
+                  class="p-button-text p-button-sm p-button-danger"
+                  (click)="removeCertification(i)"
+                ></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upload documents -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Nouveaux documents (optionnel)
+            </label>
+            <input
+              #documentsInput
+              type="file"
+              multiple
+              accept=".pdf,.jpg,.jpeg,.png"
+              (change)="onDocumentsSelected($event)"
+              class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            />
+            <div *ngIf="documentsFiles.length > 0" class="mt-2 space-y-1">
+              <div
+                *ngFor="let file of documentsFiles; let i = index"
+                class="flex items-center justify-between text-sm bg-gray-50 p-2 rounded"
+              >
+                <span
+                  >{{ file.name }} ({{
+                    (file.size / 1024).toFixed(2)
+                  }}
+                  KB)</span
+                >
+                <button
+                  pButton
+                  icon="pi pi-times"
+                  class="p-button-text p-button-sm p-button-danger"
+                  (click)="removeDocument(i)"
+                ></button>
+              </div>
+            </div>
+          </div>
+
+          <button
+            pButton
+            label="Soumettre les nouveaux documents"
+            icon="pi pi-upload"
+            class="p-button-success w-full"
+            [loading]="uploading"
+            [disabled]="
+              certificationsFiles.length === 0 && documentsFiles.length === 0
+            "
+            (click)="resubmitDocuments()"
+          ></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p-toast position="top-right"></p-toast>
+</div>

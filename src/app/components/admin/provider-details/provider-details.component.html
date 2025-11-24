@@ -1,194 +1,382 @@
-<div class="min-h-screen bg-white">
-  <div class="max-w-4xl mx-auto px-6 py-6">
+<div class="min-h-screen bg-gray-50 pt-20">
+  <div class="max-w-6xl mx-auto px-6 py-6">
+    <!-- Loading -->
     <div *ngIf="loading" class="flex items-center justify-center h-48">
       <i class="pi pi-spin pi-spinner text-4xl text-blue-500"></i>
     </div>
 
+    <!-- Message si pas de provider -->
+    <div *ngIf="!loading && !provider" class="text-center py-12">
+      <i class="pi pi-exclamation-triangle text-5xl text-red-500 mb-4"></i>
+      <p class="text-xl text-gray-700">Prestataire introuvable</p>
+      <button
+        pButton
+        label="Retour"
+        icon="pi pi-arrow-left"
+        class="p-button-outlined mt-4"
+        (click)="back()"
+      ></button>
+    </div>
+
+    <!-- Contenu -->
     <div *ngIf="!loading && provider" class="space-y-6">
-      <div class="flex items-start justify-between gap-4">
-        <div class="flex items-center gap-4">
-          <img
-            [src]="provider.photo || 'assets/avatar-default.png'"
-            alt="photo"
-            class="w-28 h-28 rounded-full object-cover border-2 border-gray-200 shadow-sm"
-          />
-          <div>
-            <h2 class="text-2xl font-bold text-gray-900">
-              {{ provider.prenom }} {{ provider.nom }}
-            </h2>
-            <p class="text-sm text-gray-500">
-              {{ provider.metier }} • {{ provider.ville }}
-            </p>
-            <div class="mt-2 flex items-center gap-2">
-              <p-tag
-                [value]="displayStatut(provider.statut)"
-                [severity]="getStatutSeverity(provider.statut)"
-              ></p-tag>
-              <!--     <span
-                *ngIf="provider.isBoosted"
-                class="inline-flex items-center text-yellow-500 text-sm"
-              >
-                <i class="pi pi-star-fill mr-1"></i> Mis en avant
-              </span> -->
-            </div>
-            <div class="mt-2 text-sm text-gray-600">
-              <span class="font-semibold text-gray-800">{{
-                provider.noteGenerale || 0
-              }}</span>
-              <span class="text-gray-400"
-                >({{ provider.nombreAvis }} avis)</span
-              >
-              <span class="mx-2">•</span>
-              <span>{{ provider.nombreMissions }} missions</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="flex items-start gap-2">
-          <button
-            pButton
-            icon="pi pi-arrow-left"
-            class="p-button-outlined"
-            (click)="back()"
-          ></button>
-          <button
-            pButton
-            label="Valider"
-            icon="pi pi-check"
-            class="p-button-success"
-            (click)="validateProvider()"
-            *ngIf="provider.statut !== 'actif'"
-          ></button>
-          <button
-            pButton
-            label="Refuser"
-            icon="pi pi-times"
-            class="p-button-danger p-button-outlined"
-            (click)="refuseProvider()"
-          ></button>
-          <!--  <button
-            pButton
-            label="Boost"
-            icon="pi pi-star"
-            class="p-button-warning"
-            (click)="boostProvider()"
-          ></button> -->
-          <button
-            pButton
-            icon="pi pi-trash"
-            class="p-button-danger p-button-text"
-            (click)="deleteProvider()"
-          ></button>
-        </div>
-      </div>
-
-      <!-- Profil / Détails -->
+      <!-- En-tête -->
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">Profil</h3>
-        <p class="text-gray-700 mb-4">{{ provider.description }}</p>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <p class="text-sm text-gray-500">Expérience</p>
-            <p class="font-semibold">{{ provider.experience }} ans</p>
-          </div>
-
-          <div>
-            <p class="text-sm text-gray-500">Tarifs</p>
-            <p class="font-semibold">
-              <span *ngIf="provider.tarifHoraire"
-                >{{ provider.tarifHoraire }} TND/h</span
-              >
-              <span *ngIf="provider.tarifMission">
-                • {{ provider.tarifMission }} TND / mission</span
-              >
-            </p>
-          </div>
-
-          <div>
-            <p class="text-sm text-gray-500">Taux de réponse</p>
-            <p class="font-semibold">{{ provider.tauxReponse }}%</p>
-          </div>
-        </div>
-
-        <div class="mt-4">
-          <p class="text-sm text-gray-500">Spécialités</p>
-          <div class="flex flex-wrap gap-2 mt-2">
-            <span
-              *ngFor="let s of provider.specialites"
-              class="px-3 py-1 rounded-full bg-gray-100 text-sm"
-              >{{ s }}</span
-            >
-          </div>
-        </div>
-      </div>
-
-      <!-- Documents -->
-      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">Documents</h3>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <p class="text-sm text-gray-500 mb-2">CIN</p>
-            <img
-              [src]="provider.cin"
-              alt="CIN"
-              class="w-full h-40 object-cover rounded-md border"
-            />
-          </div>
-
-          <div class="md:col-span-2">
-            <p class="text-sm text-gray-500 mb-2">Certificats & Diplômes</p>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div
+          class="flex flex-col md:flex-row items-start justify-between gap-4"
+        >
+          <div class="flex items-center gap-4">
+            <!-- Photo avec badge vérifié -->
+            <div class="relative">
+              <img
+                [src]="provider.photo || 'assets/avatar-default.png'"
+                alt="photo"
+                class="w-24 h-24 rounded-full object-cover border-2 border-gray-200 shadow-sm"
+              />
+              <!-- ✅ BADGE VÉRIFIÉ -->
               <div
-                *ngFor="let d of provider.documents"
-                class="border rounded-md overflow-hidden"
+                *ngIf="provider.statut === 'actif'"
+                class="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-1.5 border-2 border-white shadow-lg"
+                pTooltip="Compte vérifié"
+                tooltipPosition="top"
               >
-                <img
-                  [src]="d.url"
-                  alt="{{ d.nom }}"
-                  class="w-full h-32 object-cover"
-                />
-                <div class="p-2 text-sm">
-                  <div class="font-semibold">{{ d.nom }}</div>
-                  <div class="text-xs text-gray-500">{{ d.type }}</div>
-                </div>
+                <i class="pi pi-check text-white text-sm font-bold"></i>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="text-2xl font-bold text-gray-900">
+                  {{ provider.prenom }} {{ provider.nom }}
+                </h2>
+                <!-- ✅ BADGE VÉRIFIÉ TEXTE (optionnel) -->
+                <span
+                  *ngIf="provider.statut === 'actif'"
+                  class="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium"
+                >
+                  <i class="pi pi-verified"></i>
+                  Vérifié
+                </span>
+              </div>
+
+              <p class="text-sm text-gray-500 mt-1">
+                {{ provider.metier }} • {{ provider.ville }}
+              </p>
+
+              <div class="mt-2 flex items-center gap-2">
+                <p-tag
+                  [value]="displayStatut(provider.statut)"
+                  [severity]="getStatutSeverity(provider.statut)"
+                ></p-tag>
+              </div>
+
+              <div class="mt-2 text-sm text-gray-600">
+                <span class="font-semibold">{{ provider.email }}</span>
+                <span class="mx-2">•</span>
+                <span>{{ provider.telephone }}</span>
               </div>
             </div>
           </div>
+
+          <div class="flex flex-wrap items-start gap-2">
+            <button
+              pButton
+              icon="pi pi-arrow-left"
+              class="p-button-outlined"
+              pTooltip="Retour"
+              tooltipPosition="bottom"
+              (click)="back()"
+            ></button>
+            <button
+              pButton
+              label="Valider"
+              icon="pi pi-check"
+              class="p-button-success"
+              (click)="validateProvider()"
+              *ngIf="provider.statut !== 'actif'"
+            ></button>
+            <button
+              pButton
+              label="Refuser"
+              icon="pi pi-times"
+              class="p-button-danger p-button-outlined"
+              (click)="openRejectDialog()"
+            ></button>
+            <button
+              pButton
+              icon="pi pi-trash"
+              class="p-button-danger p-button-text"
+              pTooltip="Supprimer"
+              tooltipPosition="bottom"
+              (click)="deleteProvider()"
+            ></button>
+          </div>
         </div>
       </div>
 
-      <!-- Historique rapide / Statistiques -->
-      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">
-          Statistiques & historique
-        </h3>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div>
-            <p class="text-sm text-gray-500">Missions</p>
-            <p class="font-semibold">{{ provider.nombreMissions }}</p>
-          </div>
-          <div>
-            <p class="text-sm text-gray-500">Avis</p>
-            <p class="font-semibold">{{ provider.nombreAvis }}</p>
-          </div>
-          <div>
-            <p class="text-sm text-gray-500">Dernière mission</p>
-            <p class="font-semibold">
-              {{ provider.derniereMission | date : "dd/MM/yyyy" }}
-            </p>
-          </div>
-          <div>
-            <p class="text-sm text-gray-500">Inscription</p>
-            <p class="font-semibold">
-              {{ provider.dateInscription | date : "dd/MM/yyyy" }}
-            </p>
-          </div>
-        </div>
+      <!-- Tabs -->
+      <div
+        class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+      >
+        <!-- ✅ Ajout de #tabView et [(activeIndex)] -->
+        <p-tabView
+          #tabView
+          [(activeIndex)]="activeTabIndex"
+          (onChange)="onTabChange($event)"
+        >
+          <!-- 📋 Informations générales -->
+          <p-tabPanel header="Informations générales" leftIcon="pi pi-user">
+            <div class="p-6 space-y-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label class="text-sm font-medium text-gray-700 block mb-1"
+                    >Métier</label
+                  >
+                  <p class="text-gray-900">
+                    {{ provider.metier || "Non renseigné" }}
+                  </p>
+                </div>
+                <div>
+                  <label class="text-sm font-medium text-gray-700 block mb-1"
+                    >Expérience</label
+                  >
+                  <p class="text-gray-900">
+                    <span *ngIf="provider.experience"
+                      >{{ provider.experience }} ans</span
+                    >
+                    <span *ngIf="!provider.experience" class="text-gray-400"
+                      >Non renseigné</span
+                    >
+                  </p>
+                </div>
+                <div class="md:col-span-2">
+                  <label class="text-sm font-medium text-gray-700 block mb-1"
+                    >Description</label
+                  >
+                  <p class="text-gray-700">
+                    <span *ngIf="provider.description">{{
+                      provider.description
+                    }}</span>
+                    <span *ngIf="!provider.description" class="text-gray-400"
+                      >Aucune description</span
+                    >
+                  </p>
+                </div>
+                <div class="md:col-span-2">
+                  <label class="text-sm font-medium text-gray-700 block mb-1"
+                    >Adresse</label
+                  >
+                  <p class="text-gray-700">
+                    <i class="pi pi-map-marker mr-2 text-gray-400"></i>
+                    {{ provider.adresse?.street || "Non renseigné" }}
+                  </p>
+                </div>
+
+                <!-- Certifications -->
+                <div
+                  class="md:col-span-2"
+                  *ngIf="
+                    provider.certifications &&
+                    provider.certifications.length > 0
+                  "
+                >
+                  <label class="text-sm font-medium text-gray-700 block mb-2"
+                    >Certifications</label
+                  >
+                  <div class="flex flex-wrap gap-2">
+                    <span
+                      *ngFor="let cert of provider.certifications"
+                      class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800"
+                    >
+                      <i class="pi pi-file mr-1"></i>
+                      Certification
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </p-tabPanel>
+
+          <!-- 📄 Documents de vérification -->
+          <p-tabPanel header="Documents" leftIcon="pi pi-file">
+            <div class="p-6 space-y-4">
+              <div
+                *ngFor="let doc of provider.verificationDocuments"
+                class="bg-gray-50 border border-gray-200 rounded-lg p-4"
+              >
+                <div
+                  class="flex flex-col md:flex-row items-start justify-between gap-4"
+                >
+                  <div class="flex-1 w-full">
+                    <div class="flex items-center gap-3 mb-3">
+                      <h4 class="font-semibold text-gray-900">
+                        {{ getDocumentTypeLabel(doc.documentType) }}
+                      </h4>
+                      <p-tag
+                        [value]="getDocumentStatusLabel(doc.status)"
+                        [severity]="getDocumentStatusSeverity(doc.status)"
+                      ></p-tag>
+                    </div>
+
+                    <!-- Image du document -->
+                    <div class="mb-3">
+                      <img
+                        [src]="doc.path"
+                        [alt]="doc.documentType"
+                        class="max-w-full md:max-w-md h-auto rounded-md border border-gray-300 cursor-pointer hover:opacity-90 transition-opacity"
+                        (click)="openImage(doc.path)"
+                      />
+                    </div>
+
+                    <p class="text-sm text-gray-500">
+                      <i class="pi pi-calendar mr-1"></i>
+                      Uploadé le
+                      {{ doc.uploadedAt | date : "dd/MM/yyyy à HH:mm" }}
+                    </p>
+
+                    <!-- Motif de refus -->
+                    <div
+                      *ngIf="doc.status === 'rejected' && doc.rejectionReason"
+                      class="mt-3 p-3 bg-red-50 border border-red-200 rounded-md"
+                    >
+                      <p class="text-sm text-red-800">
+                        <strong
+                          ><i class="pi pi-exclamation-triangle mr-1"></i>Motif
+                          du refus :</strong
+                        >
+                        {{ doc.rejectionReason }}
+                      </p>
+                    </div>
+                  </div>
+
+                  <!-- Actions -->
+                  <div
+                    class="flex md:flex-col gap-2 w-full md:w-auto"
+                    *ngIf="doc.status === 'pending'"
+                  >
+                    <button
+                      pButton
+                      label="Valider"
+                      icon="pi pi-check"
+                      class="p-button-success p-button-sm flex-1 md:flex-none"
+                      (click)="validateDocument(doc._id!)"
+                    ></button>
+                    <button
+                      pButton
+                      label="Rejeter"
+                      icon="pi pi-times"
+                      class="p-button-danger p-button-outlined p-button-sm flex-1 md:flex-none"
+                      (click)="openRejectDialog(doc._id)"
+                    ></button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Aucun document -->
+              <div
+                *ngIf="
+                  !provider.verificationDocuments ||
+                  provider.verificationDocuments.length === 0
+                "
+                class="text-center py-12 text-gray-500"
+              >
+                <i class="pi pi-file text-5xl mb-3 text-gray-300"></i>
+                <p class="text-lg font-medium">Aucun document uploadé</p>
+                <p class="text-sm text-gray-400 mt-1">
+                  Le prestataire n'a pas encore téléchargé de documents de
+                  vérification
+                </p>
+              </div>
+            </div>
+          </p-tabPanel>
+
+          <!-- 📊 Statistiques -->
+          <p-tabPanel header="Statistiques" leftIcon="pi pi-chart-line">
+            <div class="p-6">
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div
+                  class="text-center p-6 bg-blue-50 rounded-lg border border-blue-200"
+                >
+                  <i class="pi pi-briefcase text-3xl text-blue-600 mb-2"></i>
+                  <p class="text-sm text-blue-600 mb-1">Missions</p>
+                  <p class="text-3xl font-bold text-blue-700">
+                    {{ provider.nombreMissions || 0 }}
+                  </p>
+                </div>
+                <div
+                  class="text-center p-6 bg-yellow-50 rounded-lg border border-yellow-200"
+                >
+                  <i class="pi pi-star text-3xl text-yellow-600 mb-2"></i>
+                  <p class="text-sm text-yellow-600 mb-1">Note moyenne</p>
+                  <p class="text-3xl font-bold text-yellow-700">
+                    {{ provider.noteGenerale || 0 }}
+                  </p>
+                </div>
+                <div
+                  class="text-center p-6 bg-green-50 rounded-lg border border-green-200"
+                >
+                  <i class="pi pi-comment text-3xl text-green-600 mb-2"></i>
+                  <p class="text-sm text-green-600 mb-1">Avis</p>
+                  <p class="text-3xl font-bold text-green-700">
+                    {{ provider.nombreAvis || 0 }}
+                  </p>
+                </div>
+                <div
+                  class="text-center p-6 bg-purple-50 rounded-lg border border-purple-200"
+                >
+                  <i class="pi pi-calendar text-3xl text-purple-600 mb-2"></i>
+                  <p class="text-sm text-purple-600 mb-1">Inscription</p>
+                  <p class="text-sm font-bold text-purple-700">
+                    {{ provider.dateInscription | date : "dd/MM/yyyy" }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </p-tabPanel>
+        </p-tabView>
       </div>
     </div>
   </div>
+
+  <!-- Dialog de rejet -->
+  <p-dialog
+    [(visible)]="showRejectDialog"
+    [modal]="true"
+    [style]="{ width: '500px' }"
+    [draggable]="false"
+    [resizable]="false"
+    header="Motif du refus"
+  >
+    <div class="flex flex-column gap-3 py-3">
+      <label for="motif" class="font-medium text-gray-700">
+        Veuillez indiquer la raison du refus :
+      </label>
+      <textarea
+        id="motif"
+        [(ngModel)]="rejectMotif"
+        rows="5"
+        class="w-full"
+        placeholder="Ex: Document illisible, informations non conformes, document expiré..."
+      ></textarea>
+    </div>
+    <ng-template pTemplate="footer">
+      <button
+        pButton
+        label="Annuler"
+        icon="pi pi-times"
+        class="p-button-text"
+        (click)="showRejectDialog = false"
+      ></button>
+      <button
+        pButton
+        label="Confirmer le refus"
+        icon="pi pi-check"
+        class="p-button-danger"
+        (click)="confirmReject()"
+      ></button>
+    </ng-template>
+  </p-dialog>
+
   <p-confirmDialog></p-confirmDialog>
   <p-toast position="top-right"></p-toast>
 </div>
