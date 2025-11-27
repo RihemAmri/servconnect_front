@@ -20,15 +20,15 @@
       
       <div class="provider-card-header">
         <div class="provider-avatar">
-          <img [src]="getProviderPhoto()" [alt]="provider?.user?.nom || 'Provider'">
+          <img [src]="getProviderPhoto()" [alt]="provider.user?.nom || 'Provider'">
         </div>
         <div class="provider-info">
-          <h1 class="provider-name">{{ provider?.user?.prenom }} {{ provider?.user?.nom }}</h1>
-          <p class="provider-service">{{ provider?.metier }}</p>
+          <h1 class="provider-name">{{ provider.user?.prenom }} {{ provider.user?.nom }}</h1>
+          <p class="provider-service">{{ provider.metier }}</p>
           <div class="provider-rating">
             <span class="star">⭐</span>
-            <span class="rating-value">{{ provider?.noteGenerale || 0 }}</span>
-            <span class="rating-count">({{ provider?.nombreAvis || 0 }} avis)</span>
+            <span class="rating-value">{{ provider.noteGenerale || 0 }}</span>
+            <span class="rating-count">({{ provider.nombreAvis || 0 }} avis)</span>
           </div>
         </div>
       </div>
@@ -117,100 +117,71 @@
       <div class="step-content" *ngIf="currentStep === 1">
         <div class="step-header">
           <div class="step-icon-large">📆</div>
-          <h2>Quand souhaitez-vous le service ?</h2>
-          <p>Sélectionnez la date et l'heure qui vous conviennent</p>
+          <h2>Choisissez votre rendez-vous</h2>
+          <p>Sélectionnez la date et l'heure parmi les disponibilités du prestataire</p>
         </div>
 
-        <div class="form-grid">
-          <div class="form-group">
-            <label class="form-label">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                <line x1="16" y1="2" x2="16" y2="6"/>
-                <line x1="8" y1="2" x2="8" y2="6"/>
-                <line x1="3" y1="10" x2="21" y2="10"/>
+        <!-- Premium Calendar -->
+        <div class="premium-calendar">
+          <!-- Calendar Header -->
+          <div class="calendar-header">
+            <button type="button" class="month-nav" (click)="previousMonth()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 18l-6-6 6-6"/>
               </svg>
-              Date souhaitée
-              <span class="required">*</span>
-            </label>
-            <input 
-              type="date" 
-              formControlName="date"
-              [min]="getMinDate()"
-              class="form-input"
-              placeholder="JJ/MM/AAAA">
-            <span class="form-hint">Choisissez une date à partir d'aujourd'hui</span>
+            </button>
+            <h3 class="month-title">{{ getMonthName() }}</h3>
+            <button type="button" class="month-nav" (click)="nextMonth()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 18l6-6-6-6"/>
+              </svg>
+            </button>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-                <polyline points="12 6 12 12 16 14"/>
-              </svg>
-              Heure souhaitée
-              <span class="required">*</span>
-            </label>
-            <select formControlName="time" class="form-select">
-              <option value="">Sélectionnez une heure</option>
-              <option *ngFor="let slot of availableTimeSlots" [value]="slot">{{ slot }}</option>
-            </select>
-            <span class="form-hint">Créneau horaire préféré</span>
+          <!-- Weekday Headers -->
+          <div class="weekday-headers">
+            <div class="weekday">Dim</div>
+            <div class="weekday">Lun</div>
+            <div class="weekday">Mar</div>
+            <div class="weekday">Mer</div>
+            <div class="weekday">Jeu</div>
+            <div class="weekday">Ven</div>
+            <div class="weekday">Sam</div>
           </div>
 
-          <div class="form-group full-width">
-            <label class="form-label">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="12" y1="18" x2="12" y2="12"/>
-                <line x1="9" y1="15" x2="15" y2="15"/>
-              </svg>
-              Type de service
-              <span class="required">*</span>
-            </label>
-            <input 
-              type="text" 
-              formControlName="serviceType"
-              class="form-input"
-              readonly>
-          </div>
-
-          <div class="form-group full-width">
-            <label class="form-label">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="8" x2="12" y2="12"/>
-                <line x1="12" y1="16" x2="12.01" y2="16"/>
-              </svg>
-              Urgence du service
-            </label>
-            <div class="urgency-options">
-              <label class="urgency-option">
-                <input type="radio" formControlName="urgency" value="low">
-                <div class="urgency-card">
-                  <span class="urgency-icon">🟢</span>
-                  <span class="urgency-label">Normale</span>
-                  <span class="urgency-desc">Pas urgent</span>
-                </div>
-              </label>
-              <label class="urgency-option">
-                <input type="radio" formControlName="urgency" value="normal" checked>
-                <div class="urgency-card">
-                  <span class="urgency-icon">🟡</span>
-                  <span class="urgency-label">Standard</span>
-                  <span class="urgency-desc">Quelques jours</span>
-                </div>
-              </label>
-              <label class="urgency-option">
-                <input type="radio" formControlName="urgency" value="high">
-                <div class="urgency-card">
-                  <span class="urgency-icon">🔴</span>
-                  <span class="urgency-label">Urgente</span>
-                  <span class="urgency-desc">Dès que possible</span>
-                </div>
-              </label>
+          <!-- Calendar Days -->
+          <div class="calendar-grid">
+            <div 
+              *ngFor="let calDay of calendarDays" 
+              class="calendar-day"
+              [class.empty]="!calDay.day"
+              [class.available]="calDay.isAvailable"
+              [class.unavailable]="!calDay.isAvailable && calDay.day"
+              [class.selected]="calDay.date && selectedDate === formatDate(calDay.date)"
+              (click)="selectDate(calDay)">
+              <span class="day-number" *ngIf="calDay.day">{{ calDay.day }}</span>
             </div>
+          </div>
+        </div>
+
+        <!-- Time Slots -->
+        <div class="time-slots-section" *ngIf="selectedDate">
+          <h4 class="time-slots-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            Créneaux horaires disponibles
+          </h4>
+          <div class="time-slots-grid">
+            <button 
+              *ngFor="let time of availableTimeSlots" 
+              type="button"
+              class="time-slot"
+              [class.selected]="reservationForm.get('selectedTime')?.value === time"
+              (click)="selectTime(time)">
+              {{ time }}
+            </button>
           </div>
         </div>
       </div>
@@ -221,6 +192,39 @@
           <div class="step-icon-large">📝</div>
           <h2>Décrivez votre besoin</h2>
           <p>Plus vous donnez de détails, mieux le prestataire pourra vous aider</p>
+        </div>
+
+        <!-- Service Info Card -->
+        <div class="service-info-card" *ngIf="selectedDate && reservationForm.get('selectedTime')?.value">
+          <div class="service-info-header">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 11l3 3L22 4"/>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+            </svg>
+            <strong>Récapitulatif du rendez-vous</strong>
+          </div>
+          <div class="service-info-content">
+            <div class="info-row">
+              <span class="info-icon">👤</span>
+              <span class="info-label">Prestataire:</span>
+              <span class="info-value">{{ provider.user?.prenom }} {{ provider.user?.nom }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-icon">🔧</span>
+              <span class="info-label">Service:</span>
+              <span class="info-value service-tag">{{ reservationForm.get('serviceType')?.value }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-icon">📅</span>
+              <span class="info-label">Date:</span>
+              <span class="info-value">{{ formatDisplayDate(selectedDate) }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-icon">🕐</span>
+              <span class="info-label">Heure:</span>
+              <span class="info-value">{{ reservationForm.get('selectedTime')?.value }}</span>
+            </div>
+          </div>
         </div>
 
         <div class="form-group full-width">
@@ -292,32 +296,52 @@
         <div class="step-header">
           <div class="step-icon-large">📍</div>
           <h2>Où se trouve le problème ?</h2>
-          <p>Cliquez sur la carte pour indiquer l'adresse exacte</p>
+          <p>Cliquez sur la carte pour indiquer l'emplacement précis de l'intervention</p>
         </div>
 
         <div class="map-section">
           <div class="map-instructions">
-            <div class="instruction-item">
-              <span class="instruction-icon">🔵</span>
-              <span>Position du prestataire</span>
-            </div>
-            <div class="instruction-item">
-              <span class="instruction-icon">🔴</span>
-              <span>Votre emplacement (cliquez sur la carte)</span>
+            <div class="instruction-card">
+              <div class="instruction-item">
+                <span class="instruction-icon provider-marker">🔵</span>
+                <div class="instruction-text">
+                  <strong>Marqueur Bleu</strong>
+                  <span>Position du prestataire {{ provider.user?.prenom }}</span>
+                </div>
+              </div>
+              <div class="instruction-item">
+                <span class="instruction-icon client-marker">🔴</span>
+                <div class="instruction-text">
+                  <strong>Marqueur Rouge</strong>
+                  <span>Votre emplacement (cliquez sur la carte pour le placer)</span>
+                </div>
+              </div>
             </div>
           </div>
           
           <div id="reservation-map" class="reservation-map"></div>
 
-          <div class="selected-location" *ngIf="selectedLocation">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-              <circle cx="12" cy="10" r="3"/>
-            </svg>
-            <div class="location-info">
-              <strong>Emplacement sélectionné</strong>
-              <span>{{ selectedLocation.address }}</span>
+          <div class="selected-location-card" *ngIf="selectedLocation">
+            <div class="location-header">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <strong>Emplacement de l'intervention confirmé</strong>
             </div>
+            <div class="location-info">
+              <p class="location-address">📍 {{ selectedLocation.address }}</p>
+              <p class="location-coords">Coordonnées GPS: {{ selectedLocation.lat.toFixed(6) }}, {{ selectedLocation.lng.toFixed(6) }}</p>
+            </div>
+          </div>
+
+          <div class="location-help" *ngIf="!selectedLocation">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            <span>Cliquez n'importe où sur la carte pour définir l'emplacement exact de l'intervention</span>
           </div>
         </div>
       </div>
@@ -331,6 +355,32 @@
         </div>
 
         <div class="summary-card">
+          <!-- Provider Info Section -->
+          <div class="summary-section provider-summary">
+            <h3 class="summary-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+              Prestataire
+            </h3>
+            <div class="summary-content">
+              <div class="provider-summary-card">
+                <img [src]="getProviderPhoto()" [alt]="provider.user?.nom" class="provider-summary-avatar">
+                <div class="provider-summary-info">
+                  <h4>{{ provider.user?.prenom }} {{ provider.user?.nom }}</h4>
+                  <p class="provider-profession">{{ provider.metier }}</p>
+                  <div class="provider-stats">
+                    <span class="stat">⭐ {{ provider.noteGenerale || 0 }}</span>
+                    <span class="stat">📝 {{ provider.nombreAvis || 0 }} avis</span>
+                    <span class="stat" *ngIf="provider.experience">🎯 {{ provider.experience }} ans d'expérience</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Date & Time Section -->
           <div class="summary-section">
             <h3 class="summary-title">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -339,43 +389,38 @@
                 <line x1="8" y1="2" x2="8" y2="6"/>
                 <line x1="3" y1="10" x2="21" y2="10"/>
               </svg>
-              Date et Heure
+              Rendez-vous
             </h3>
             <div class="summary-content">
               <div class="summary-item">
-                <span class="label">Date :</span>
-                <span class="value">{{ reservationForm.get('date')?.value }}</span>
+                <span class="label">📅 Date :</span>
+                <span class="value">{{ formatDisplayDate(selectedDate) }}</span>
               </div>
               <div class="summary-item">
-                <span class="label">Heure :</span>
-                <span class="value">{{ reservationForm.get('time')?.value }}</span>
+                <span class="label">🕐 Heure :</span>
+                <span class="value">{{ reservationForm.get('selectedTime')?.value }}</span>
               </div>
               <div class="summary-item">
-                <span class="label">Service :</span>
-                <span class="value">{{ reservationForm.get('serviceType')?.value }}</span>
-              </div>
-              <div class="summary-item">
-                <span class="label">Urgence :</span>
-                <span class="value urgency-badge" [class]="reservationForm.get('urgency')?.value">
-                  {{ reservationForm.get('urgency')?.value === 'high' ? '🔴 Urgente' : 
-                     reservationForm.get('urgency')?.value === 'normal' ? '🟡 Standard' : '🟢 Normale' }}
-                </span>
+                <span class="label">� Service :</span>
+                <span class="value service-badge">{{ reservationForm.get('serviceType')?.value }}</span>
               </div>
             </div>
           </div>
 
+          <!-- Description Section -->
           <div class="summary-section">
             <h3 class="summary-title">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
               </svg>
-              Description
+              Description du besoin
             </h3>
             <div class="summary-content">
               <p class="description-text">{{ reservationForm.get('description')?.value }}</p>
             </div>
           </div>
 
+          <!-- Photos Section -->
           <div class="summary-section" *ngIf="selectedFiles.length > 0">
             <h3 class="summary-title">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -383,7 +428,7 @@
                 <circle cx="8.5" cy="8.5" r="1.5"/>
                 <polyline points="21 15 16 10 5 21"/>
               </svg>
-              Photos jointes
+              Photos jointes ({{ selectedFiles.length }})
             </h3>
             <div class="summary-content">
               <div class="summary-photos">
@@ -392,16 +437,23 @@
             </div>
           </div>
 
+          <!-- Location Section -->
           <div class="summary-section" *ngIf="selectedLocation">
             <h3 class="summary-title">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                 <circle cx="12" cy="10" r="3"/>
               </svg>
-              Localisation
+              Localisation de l'intervention
             </h3>
             <div class="summary-content">
-              <p>{{ selectedLocation.address }}</p>
+              <div class="location-display">
+                <div class="location-icon">📍</div>
+                <div class="location-details">
+                  <p class="location-address">{{ selectedLocation.address }}</p>
+                  <p class="location-coords">Coordonnées: {{ selectedLocation.lat.toFixed(6) }}, {{ selectedLocation.lng.toFixed(6) }}</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

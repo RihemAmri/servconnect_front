@@ -1,37 +1,119 @@
 <div class="myservices-container">
 
-  <!-- Agenda -->
-  <div class="agenda-section">
-    <h2 class="title">
-      <i class="fas fa-calendar-alt"></i>
-      Mon Agenda
-    </h2>
-
-    <div class="calendar-wrapper" *ngIf="calendarOptions.initialView">
-      <full-calendar [options]="calendarOptions"></full-calendar>
-    </div>
-  </div>
-
-  <!-- Colonne latérale -->
-  <div class="side-section">
-
-    <div class="image-wrapper">
-  <img src="agenda3.png" alt="Illustration" class="lottie-box" />
-</div>
-
-
-    <div class="button-group">
-      <button class="btn btn-secondary" (click)="goToUpcomingServices()">
-        <i class="fas fa-calendar-plus"></i>
-        Services à venir
-      </button>
-
-      <button class="btn btn-primary" (click)="goToPastServices()">
+  <!-- Header avec statistiques -->
+  <!-- <div class="stats-header">
+    <div class="stat-card">
+      <div class="stat-icon bg-blue">
         <i class="fas fa-calendar-check"></i>
-        Services terminés
-      </button>
+      </div>
+      <div class="stat-content">
+        <h3>12</h3>
+        <p>Services ce mois</p>
+      </div>
     </div>
 
+    <div class="stat-card">
+      <div class="stat-icon bg-green">
+        <i class="fas fa-clock"></i>
+      </div>
+      <div class="stat-content">
+        <h3>5</h3>
+        <p>À venir</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon bg-purple">
+        <i class="fas fa-star"></i>
+      </div>
+      <div class="stat-content">
+        <h3>4.8</h3>
+        <p>Note moyenne</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon bg-orange">
+        <i class="fas fa-euro-sign"></i>
+      </div>
+      <div class="stat-content">
+        <h3>2,450 dn</h3>
+        <p>Revenus du mois</p>
+      </div>
+    </div>
+  </div> -->
+
+  <!-- Section principale avec agenda et sidebar -->
+  <div class="main-content">
+    <!-- Agenda -->
+    <div class="agenda-section">
+      <div class="section-header">
+        <div class="header-left">
+          <div class="icon-box">
+            <i class="fas fa-calendar-alt"></i>
+          </div>
+          <div>
+            <h2 class="title">Mon Agenda</h2>
+            <p class="subtitle">Gérez vos disponibilités et rendez-vous</p>
+          </div>
+        </div>
+        <button class="btn-add-event">
+          <i class="fas fa-plus"></i>
+          Nouveau
+        </button>
+      </div>
+
+      <div class="calendar-wrapper" *ngIf="calendarOptions.initialView">
+        <full-calendar [options]="calendarOptions"></full-calendar>
+      </div>
+    </div>
+
+    <!-- Sidebar avec actions rapides -->
+    <div class="side-section">
+      <div class="image-wrapper">
+        <img src="agenda3.png" alt="Illustration" class="lottie-box" />
+      </div>
+
+      <div class="quick-actions">
+        <h3 class="actions-title">
+          <i class="fas fa-bolt"></i>
+          Actions rapides
+        </h3>
+
+        <button class="action-btn upcoming" (click)="goToUpcomingServices()">
+          <div class="btn-icon">
+            <i class="fas fa-calendar-plus"></i>
+          </div>
+          <div class="btn-content">
+            <h4>Services à venir</h4>
+            <p>Voir vos prochains rendez-vous</p>
+          </div>
+          <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <button class="action-btn completed" (click)="goToPastServices()">
+          <div class="btn-icon">
+            <i class="fas fa-calendar-check"></i>
+          </div>
+          <div class="btn-content">
+            <h4>Services terminés</h4>
+            <p>Historique de vos prestations</p>
+          </div>
+          <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <!-- <button class="action-btn stats">
+          <div class="btn-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="btn-content">
+            <h4>Statistiques</h4>
+            <p>Analysez vos performances</p>
+          </div>
+          <i class="fas fa-chevron-right"></i>
+        </button> -->
+      </div>
+    </div>
   </div>
 
 </div>

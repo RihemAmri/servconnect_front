@@ -1,144 +1,393 @@
-<div class="center-wrapper">
-  <div class="profile-container">
-
-    <!-- ================= LEFT SIDEBAR ================= -->
-    <div class="sidebar">
-
-      <div class="avatar-wrapper">
-        <img 
-          [src]="user?.photo || 'https://via.placeholder.com/150'" 
-          alt="profile"
-          [class.clickable]="isEditing"
-          (click)="isEditing ? openPhotoInput() : null"
-        >
-        <input id="photoInput" type="file" accept="image/*" style="display:none" (change)="onPhotoSelected($event)">
-        <button class="edit-photo" (click)="toggleEdit()">✏️</button>
+<!-- PREMIUM PROFILE - FULL WIDTH DESIGN -->
+<div class="profile-wrapper-premium">
+  
+  <!-- HERO HEADER -->
+  <section class="profile-hero">
+    <div class="hero-gradient-bg">
+      <div class="hero-pattern"></div>
+    </div>
+    
+    <div class="hero-container">
+      <!-- Avatar Section -->
+      <div class="avatar-section-premium">
+        <div class="avatar-ring" (click)="isEditing && photoFileInput.click()">
+          <img 
+            [src]="getUserPhoto()" 
+            [alt]="user?.nom + ' ' + user?.prenom"
+            class="avatar-premium"
+            [class.editable]="isEditing"
+          />
+          <div class="avatar-status"></div>
+        </div>
+        
+        <button class="edit-avatar-btn" *ngIf="isEditing" (click)="photoFileInput.click()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+        </button>
+        <input #photoFileInput type="file" accept="image/*" style="display:none" (change)="onPhotoSelected($event)">
       </div>
 
-      <h2 class="name">{{ user.nom }} {{ user.prenom }}</h2>
-      <p class="role">{{ user.role }}</p>
-
-      <div class="rating-box">
-        <p>{{ user.noteGenerale }}/5</p>
-        <div class="stars">
-          <ng-container *ngFor="let star of [].constructor(5); let i = index">
-            <span [class.filled]="i < user.noteGenerale">★</span>
-          </ng-container>
+      <!-- User Info Section -->
+      <div class="user-info-premium">
+        <div class="user-meta">
+          <span class="role-badge" [class.provider]="user?.role === 'prestataire'" [class.client]="user?.role === 'client'">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path *ngIf="user?.role === 'prestataire'" d="M20 7h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zM10 4h4v3h-4V4z"/>
+              <path *ngIf="user?.role === 'client'" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+            {{ user?.role === 'prestataire' ? 'Prestataire' : 'Client' }}
+          </span>
+          
+          <span class="join-date">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            Membre depuis {{ user?.dateInscription | date:'MMM yyyy' }}
+          </span>
         </div>
-        <small>{{ user.nombreAvis }} avis</small>
+
+        <h1 class="user-name-premium">{{ user?.prenom }} {{ user?.nom }}</h1>
+        
+        <div class="user-stats-bar">
+          <div class="stat-item">
+            <div class="stat-icon-wrapper">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+              </svg>
+            </div>
+            <div class="stat-content">
+              <span class="stat-value">{{ user?.noteGenerale || 0 }}/5</span>
+              <span class="stat-label">Note</span>
+            </div>
+          </div>
+
+          <div class="stat-divider"></div>
+
+          <div class="stat-item">
+            <div class="stat-icon-wrapper">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+              </svg>
+            </div>
+            <div class="stat-content">
+              <span class="stat-value">{{ user?.nombreAvis || 0 }}</span>
+              <span class="stat-label">Avis</span>
+            </div>
+          </div>
+
+          <div class="stat-divider" *ngIf="user?.role === 'prestataire' && provider"></div>
+
+          <div class="stat-item" *ngIf="user?.role === 'prestataire' && provider">
+            <div class="stat-icon-wrapper">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+              </svg>
+            </div>
+            <div class="stat-content">
+              <span class="stat-value">{{ provider?.experience || 0 }} ans</span>
+              <span class="stat-label">Expérience</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <button class="btn-edit-premium" *ngIf="!isEditing" (click)="toggleEdit()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            Modifier le profil
+          </button>
+
+          <div class="edit-actions-premium" *ngIf="isEditing">
+            <button class="btn-cancel" (click)="toggleEdit()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+              Annuler
+            </button>
+            <button class="btn-save" (click)="save()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              Enregistrer
+            </button>
+          </div>
+        </div>
       </div>
     </div>
+  </section>
 
-    <!-- ================= RIGHT SIDE CONTENT ================= -->
-    <div class="content">
-
-      <h1>Informations personnelles</h1>
-
-      <form [formGroup]="profileForm" class="info-form" [class.edit]="isEditing">
-
-        <div class="grid-2">
-          <div>
-            <label>Nom</label>
-            <input formControlName="nom" [readonly]="!isEditing">
+  <!-- MAIN CONTENT -->
+  <div class="profile-content-wrapper">
+    <form [formGroup]="profileForm" class="profile-form-premium">
+      
+      <!-- PERSONAL INFORMATION SECTION -->
+      <section class="section-premium info-section">
+        <div class="section-header-premium">
+          <div class="section-icon-wrapper">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
           </div>
-          <div>
-            <label>Prénom</label>
-            <input formControlName="prenom" [readonly]="!isEditing">
-          </div>
-        </div>
-
-        <div class="grid-2">
-          <div>
-            <label>Email</label>
-            <input formControlName="email" [readonly]="!isEditing">
-          </div>
-          <div>
-            <label>Téléphone</label>
-            <input formControlName="telephone" [readonly]="!isEditing">
+          <div class="section-title-group">
+            <h2>Informations personnelles</h2>
+            <p>Gérez vos informations de compte</p>
           </div>
         </div>
 
-        <div>
-          <label>Adresse</label>
-          <input formControlName="adresse" [readonly]="!isEditing">
-        </div>
-
-        <div>
-          <label>Date d'inscription</label>
-          <input [value]="user.dateInscription | date:'dd MMM yyyy'" readonly>
-        </div>
-
-        <!-- ================= CHAMPS PRESTATAIRE ================= -->
-        <ng-container *ngIf="user.role === 'prestataire' && provider">
-
-          <h2 class="section-title">Informations Prestataire</h2>
-
-          <div>
-            <label>Métier</label>
-            <input formControlName="metier" [readonly]="!isEditing">
+        <div class="form-grid-premium">
+          <div class="form-group-premium">
+            <label class="form-label-premium">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+              Nom
+            </label>
+            <input 
+              formControlName="nom" 
+              [readonly]="!isEditing"
+              class="form-input-premium"
+              placeholder="Votre nom"
+            />
           </div>
 
-          <div>
-            <label>Expérience</label>
-            <input formControlName="experience" type="number" [readonly]="!isEditing">
+          <div class="form-group-premium">
+            <label class="form-label-premium">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+              Prénom
+            </label>
+            <input 
+              formControlName="prenom" 
+              [readonly]="!isEditing"
+              class="form-input-premium"
+              placeholder="Votre prénom"
+            />
           </div>
 
-          <div>
-            <label>Description</label>
-            <textarea formControlName="description" rows="4" [readonly]="!isEditing"></textarea>
+          <div class="form-group-premium">
+            <label class="form-label-premium">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+              Email
+            </label>
+            <input 
+              formControlName="email" 
+              [readonly]="!isEditing"
+              class="form-input-premium"
+              type="email"
+              placeholder="votre.email@example.com"
+            />
           </div>
 
-          <!-- CERTIFICATIONS -->
-          <!-- Certifications -->
-<h2 class="section-title">Certifications</h2>
-<div class="lottie-zone">
-  <div *ngFor="let cert of provider.certifications; let i = index" class="lottie-item" (click)="openFile(cert)">
-    <ng-lottie [options]="certificateLottie"></ng-lottie>
-    <p>Certification {{ i + 1 }}</p>
-    <!-- <button *ngIf="isEditing" class="delete-btn" (click)="removeItem('certifications', i)">Supprimer</button>-->
-  </div>
+          <div class="form-group-premium">
+            <label class="form-label-premium">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+              Téléphone
+            </label>
+            <input 
+              formControlName="telephone" 
+              [readonly]="!isEditing"
+              class="form-input-premium"
+              type="tel"
+              placeholder="+216 XX XXX XXX"
+            />
+          </div>
 
-  <button *ngIf="isEditing" class="add-btn" (click)="addItem('certifications')">+ Ajouter certification</button>
-
-  <!-- input hors du *ngIf -->
-  <input id="certInput" type="file" style="display:none" (change)="onFileSelected($event, 'certifications')" multiple>
-</div>
-
-<!-- Documents -->
-<h2 class="section-title">Documents</h2>
-<div class="lottie-zone">
-  <div *ngFor="let doc of provider.documents; let i = index" class="lottie-item" (click)="openFile(doc)">
-    <ng-lottie [options]="documentLottie"></ng-lottie>
-    <p>Document {{ i + 1 }}</p>
-   <!-- <button *ngIf="isEditing" class="delete-btn" (click)="removeItem('documents', i)">Supprimer</button>-->
-  </div>
-
-  <button *ngIf="isEditing" class="add-btn" (click)="addItem('documents')">+ Ajouter document</button>
-
-  <!-- input hors du *ngIf -->
-  <input id="docInput" type="file" style="display:none" (change)="onFileSelected($event, 'documents')" multiple>
-</div>
-
-
-        </ng-container>
-
-      </form>
-
-      <!-- Inputs cachés -->
-      <input id="certInput" type="file" style="display:none" (change)="onFileSelected($event, 'certifications')" multiple>
-      <input id="docInput" type="file" style="display:none" (change)="onFileSelected($event, 'documents')" multiple>
-
-      <!-- BUTTONS -->
-      <div class="buttons">
-        <button class="edit-profile" *ngIf="!isEditing" (click)="toggleEdit()">Modifier Profil</button>
-
-        <div class="edit-actions" *ngIf="isEditing">
-          <button class="cancel" (click)="toggleEdit()">Annuler</button>
-          <button class="save" (click)="save()">Enregistrer</button>
-          <button class="password">Modifier Mot de Passe</button>
+          <div class="form-group-premium full-width">
+            <label class="form-label-premium">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              Adresse complète
+            </label>
+            <input 
+              formControlName="adresse" 
+              [readonly]="!isEditing"
+              class="form-input-premium"
+              placeholder="Rue, Ville, Code postal"
+            />
+          </div>
         </div>
-      </div>
+      </section>
 
-    </div>
+      <!-- PROVIDER SECTION (If role = prestataire) -->
+      <section class="section-premium provider-section" *ngIf="user?.role === 'prestataire' && provider">
+        <div class="section-header-premium">
+          <div class="section-icon-wrapper provider">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+            </svg>
+          </div>
+          <div class="section-title-group">
+            <h2>Informations Prestataire</h2>
+            <p>Détails de votre activité professionnelle</p>
+          </div>
+        </div>
+
+        <div class="form-grid-premium">
+          <div class="form-group-premium">
+            <label class="form-label-premium">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+              </svg>
+              Métier
+            </label>
+            <input 
+              formControlName="metier" 
+              [readonly]="!isEditing"
+              class="form-input-premium"
+              placeholder="Ex: Plombier, Électricien..."
+            />
+          </div>
+
+          <div class="form-group-premium">
+            <label class="form-label-premium">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              Années d'expérience
+            </label>
+            <input 
+              formControlName="experience" 
+              [readonly]="!isEditing"
+              class="form-input-premium"
+              type="number"
+              placeholder="Ex: 5"
+            />
+          </div>
+
+          <div class="form-group-premium full-width">
+            <label class="form-label-premium">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+              </svg>
+              Description professionnelle
+            </label>
+            <textarea 
+              formControlName="description" 
+              [readonly]="!isEditing"
+              class="form-textarea-premium"
+              rows="4"
+              placeholder="Décrivez votre expertise, vos services, votre approche..."
+            ></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- CERTIFICATIONS SECTION (Provider only) -->
+      <section class="section-premium certifications-section" *ngIf="user?.role === 'prestataire' && provider">
+        <div class="section-header-premium">
+          <div class="section-icon-wrapper success">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </div>
+          <div class="section-title-group">
+            <h2>Certifications</h2>
+            <p>Vos certificats et qualifications professionnelles</p>
+          </div>
+        </div>
+
+        <div class="documents-grid-premium">
+          <div class="document-card-premium" *ngFor="let cert of provider.certifications; let i = index" (click)="openFile(cert)">
+            <div class="document-icon">
+              <ng-lottie [options]="certificateLottie"></ng-lottie>
+            </div>
+            <div class="document-info">
+              <h4>Certification {{ i + 1 }}</h4>
+              <p>Cliquez pour voir</p>
+            </div>
+            <button class="document-delete-btn" *ngIf="isEditing" (click)="removeItem('certifications', i); $event.stopPropagation()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+              </svg>
+            </button>
+          </div>
+
+          <button class="add-document-btn-premium" *ngIf="isEditing" (click)="certFileInput.click()">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            <span>Ajouter une certification</span>
+          </button>
+        </div>
+        <input #certFileInput type="file" style="display:none" (change)="onCertFileSelected($event)" multiple>
+      </section>
+
+      <!-- DOCUMENTS SECTION (Provider only) -->
+      <section class="section-premium documents-section" *ngIf="user?.role === 'prestataire' && provider">
+        <div class="section-header-premium">
+          <div class="section-icon-wrapper warning">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </div>
+          <div class="section-title-group">
+            <h2>Documents</h2>
+            <p>Documents administratifs et pièces justificatives</p>
+          </div>
+        </div>
+
+        <div class="documents-grid-premium">
+          <div class="document-card-premium" *ngFor="let doc of provider.documents; let i = index" (click)="openFile(doc)">
+            <div class="document-icon">
+              <ng-lottie [options]="documentLottie"></ng-lottie>
+            </div>
+            <div class="document-info">
+              <h4>Document {{ i + 1 }}</h4>
+              <p>Cliquez pour voir</p>
+            </div>
+            <button class="document-delete-btn" *ngIf="isEditing" (click)="removeItem('documents', i); $event.stopPropagation()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+              </svg>
+            </button>
+          </div>
+
+          <button class="add-document-btn-premium" *ngIf="isEditing" (click)="docFileInput.click()">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            <span>Ajouter un document</span>
+          </button>
+        </div>
+        <input #docFileInput type="file" style="display:none" (change)="onDocFileSelected($event)" multiple>
+      </section>
+
+    </form>
   </div>
 </div>

@@ -1,66 +1,170 @@
-<div class="services-wrapper">
+<div class="dashboard-wrapper">
 
-  <div class="header-row">
+  <!-- Header with back button -->
+  <div class="dashboard-header">
     <button class="back-btn" (click)="goBack()">
-      <i class="fa fa-arrow-left"></i> Retour
+      <i class="fas fa-arrow-left"></i>
+      <span>Retour</span>
     </button>
-
-    <h2><i class="fa fa-calendar"></i> Upcoming Services</h2>
   </div>
 
-  <div class="services-table-container">
-    <table class="services-table">
-      <thead>
-        <tr>
-          <th><i class="fa fa-user"></i> Customer</th>
-          <th><i class="fa fa-map-marker"></i> Address</th>
-          <th><i class="fa fa-box"></i> Pieces</th>
-          <th><i class="fa fa-clock"></i> Date</th>
-          <th><i class="fa fa-paper-plane"></i> Drones</th>
-          <th><i class="fa fa-hourglass-half"></i> Time</th>
-          <th><i class="fa fa-money"></i> Price</th>
-          <th><i class="fa fa-map"></i></th>
-          <th><i class="fa fa-check"></i></th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <tr *ngFor="let service of upcomingServices">
-          <td>{{ service.customerName }}</td>
-          <td>{{ service.address }}</td>
-          <td>{{ service.pieces }}</td>
-          <td>{{ service.date | date: 'dd/MM/yyyy' }}</td>
-          <td>{{ service.droneCount }}</td>
-          <td>{{ service.serviceTime }}</td>
-          <td>{{ service.price }} dt</td>
-
-          <td>
-            <button class="icon-btn blue" (click)="openMap(service)">
-              <i class="fa fa-map"></i>
-            </button>
-          </td>
-
-          <td>
-            <button class="icon-btn green" (click)="validate(service)">
-              <i class="fa fa-check"></i>
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <!-- Title Section -->
+  <div class="title-section">
+    <div class="title-icon">
+      <i class="fas fa-calendar-alt"></i>
+    </div>
+    <div class="title-content">
+      <h1>Services à venir</h1>
+      <p>{{ upcomingServices.length }} services planifiés</p>
+    </div>
   </div>
 
-  <!-- POPUP MAP -->
-  <div class="popup" *ngIf="showPopup">
-    <div class="popup-content">
-      <button class="close-btn" (click)="closePopup()">&times;</button>
-      <iframe
-        width="100%"
-        height="100%"
-        style="border:0;"
-        [src]="googleMapUrl"
-        allowfullscreen
-      ></iframe>
+  <!-- Stats Cards -->
+  <!-- <div class="stats-grid">
+    <div class="stat-card blue">
+      <div class="stat-icon">
+        <i class="fas fa-calendar-check"></i>
+      </div>
+      <div class="stat-info">
+        <h3>{{ upcomingServices.length }}</h3>
+        <p>Services planifiés</p>
+      </div>
+    </div>
+
+    <div class="stat-card green">
+      <div class="stat-icon">
+        <i class="fas fa-euro-sign"></i>
+      </div>
+      <div class="stat-info">
+        <h3>{{ calculateTotal() }} dt</h3>
+        <p>Revenus prévus</p>
+      </div>
+    </div>
+
+    <div class="stat-card purple">
+      <div class="stat-icon">
+        <i class="fas fa-drone"></i>
+      </div>
+      <div class="stat-info">
+        <h3>{{ getTotalDrones() }}</h3>
+        <p>Drones requis</p>
+      </div>
+    </div>
+
+    <div class="stat-card orange">
+      <div class="stat-icon">
+        <i class="fas fa-box"></i>
+      </div>
+      <div class="stat-info">
+        <h3>{{ getTotalPieces() }}</h3>
+        <p>Pièces totales</p>
+      </div>
+    </div>
+  </div> -->
+
+  <!-- Table Section -->
+  <div class="table-container">
+    <div class="table-header">
+      <h2>
+        <i class="fas fa-list"></i>
+        Liste des services
+      </h2>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th>
+              <i class="fas fa-user"></i>
+              Client
+            </th>
+            <th>
+              <i class="fas fa-map-marker-alt"></i>
+              Adresse
+            </th>
+            <th>
+              <i class="fas fa-calendar-day"></i>
+              Date
+            </th>
+            <th>
+              <i class="fas fa-clock"></i>
+              Heure
+            </th>
+            <th>
+              <i class="fas fa-box"></i>
+              Pièces
+            </th>
+            <th>
+              <i class="fas fa-drone"></i>
+              Drones
+            </th>
+            <th>
+              <i class="fas fa-euro-sign"></i>
+              Prix
+            </th>
+            <th class="text-center">
+              <i class="fas fa-cog"></i>
+              Actions
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let service of upcomingServices; let i = index" class="table-row">
+            <td>
+              <div class="customer-cell">
+                <div class="customer-avatar">
+                  {{ service.customerName.charAt(0) }}
+                </div>
+                <span class="customer-name">{{ service.customerName }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="address-text">
+                <i class="fas fa-location-dot"></i>
+                {{ service.address }}
+              </span>
+            </td>
+            <td>
+              <span class="date-badge">
+                {{ service.date | date: 'dd MMM yyyy' }}
+              </span>
+            </td>
+            <td>
+              <span class="time-badge">
+                <i class="fas fa-clock"></i>
+                {{ service.serviceTime }}
+              </span>
+            </td>
+            <td>
+              <span class="info-badge purple">
+                {{ service.pieces }}
+              </span>
+            </td>
+            <td>
+              <span class="info-badge orange">
+                {{ service.droneCount }}
+              </span>
+            </td>
+            <td>
+              <span class="price-text">
+                {{ service.price }} dt
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button class="action-btn btn-map" (click)="openMap(service)" title="Voir la carte">
+                  <i class="fas fa-map-marked-alt"></i>
+                </button>
+                <button class="action-btn btn-validate" (click)="validate(service)" title="Valider">
+                  <i class="fas fa-check"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 

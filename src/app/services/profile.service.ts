@@ -10,6 +10,13 @@ export class ProfileService {
 
   constructor(private http: HttpClient) {}
 
+  // ===============================  
+  // GET USER
+  // ===============================
+  getUser(userId: string) {
+    return this.http.get(`${this.apiUrl}/users/${userId}`);
+  }
+
   // ===============================
   // GET PROVIDER
   // ===============================
