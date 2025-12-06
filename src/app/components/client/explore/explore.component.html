@@ -183,7 +183,7 @@
             [src]="getProviderPhoto(provider)" 
             [alt]="provider.user.nom + ' ' + provider.user.prenom"
             class="provider-photo"
-            (error)="$any($event.target).src = 'https://ui-avatars.com/api/?name=' + provider.user.nom + '+' + provider.user.prenom + '&background=025ddd&color=fff&size=400&bold=true'"
+            
           />
           <div class="photo-overlay">
             <div class="overlay-gradient"></div>

@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, PLATFORM_ID, Inject, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -25,6 +25,16 @@ interface Provider {
   experience?: number;
   noteGenerale?: number;
   nombreAvis?: number;
+  disponibilite?: Array<{
+    day: string;
+    isAvailable: boolean;
+    timeSlots: Array<{
+      start: string;
+      end: string;
+      _id?: string;
+    }>;
+    _id?: string;
+  }>;
 }
 
 @Component({
@@ -48,20 +58,23 @@ export class ReservationComponent implements OnInit, AfterViewInit, OnDestroy {
   reservationForm: FormGroup;
   selectedFiles: File[] = [];
   previewUrls: string[] = [];
+
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+  
+  // Calendar & Availability
+  providerAvailability: any[] = [];
+  bookedSlots: {date: string, time: string}[] = [];
+  availableDates: string[] = [];
+  availableTimeSlots: string[] = [];
+  selectedDate: string = '';
+  calendarDays: any[] = [];
+  currentMonth: Date = new Date();
   
   // Map
   private map: any = null;
   private L: any = null;
   private marker: any = null;
   selectedLocation: { lat: number; lng: number; address: string } | null = null;
-  
-  // Time slots
-  availableTimeSlots: string[] = [
-    '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
-    '11:00', '11:30', '12:00', '12:30', '13:00', '13:30',
-    '14:00', '14:30', '15:00', '15:30', '16:00', '16:30',
-    '17:00', '17:30', '18:00', '18:30', '19:00'
-  ];
 
   constructor(
     private route: ActivatedRoute,
@@ -71,11 +84,10 @@ export class ReservationComponent implements OnInit, AfterViewInit, OnDestroy {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.reservationForm = this.fb.group({
-      date: ['', Validators.required],
-      time: ['', Validators.required],
+      selectedDate: ['', Validators.required],
+      selectedTime: ['', Validators.required],
       serviceType: ['', Validators.required],
-      description: ['', [Validators.required, Validators.minLength(10)]],
-      urgency: ['normal', Validators.required]
+      description: ['', [Validators.required, Validators.minLength(10)]]
     });
   }
 
@@ -110,6 +122,9 @@ export class ReservationComponent implements OnInit, AfterViewInit, OnDestroy {
         });
         this.loading = false;
         console.log('Provider loaded:', this.provider);
+        
+        // Load provider availability after provider is loaded
+        this.loadProviderAvailability();
       },
       error: (error) => {
         console.error('Error loading provider:', error);
@@ -117,6 +132,149 @@ export class ReservationComponent implements OnInit, AfterViewInit, OnDestroy {
         this.loading = false;
       }
     });
+  }
+
+  // Load provider availability
+  loadProviderAvailability() {
+    // Use actual provider disponibilite from the loaded provider data
+    if (this.provider?.disponibilite && this.provider.disponibilite.length > 0) {
+      this.providerAvailability = this.provider.disponibilite;
+    } else {
+      // Fallback to default availability if no data available
+      this.providerAvailability = [
+        { day: 'monday', isAvailable: true, timeSlots: [{start: '09:00', end: '17:00'}] },
+        { day: 'tuesday', isAvailable: true, timeSlots: [{start: '09:00', end: '17:00'}] },
+        { day: 'wednesday', isAvailable: true, timeSlots: [{start: '09:00', end: '17:00'}] },
+        { day: 'thursday', isAvailable: true, timeSlots: [{start: '09:00', end: '17:00'}] },
+        { day: 'friday', isAvailable: true, timeSlots: [{start: '09:00', end: '17:00'}] }
+      ];
+    }
+    console.log('Provider availability loaded:', this.providerAvailability);
+    this.generateCalendar();
+  }
+
+  // Generate calendar days
+  generateCalendar() {
+    const year = this.currentMonth.getFullYear();
+    const month = this.currentMonth.getMonth();
+    
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+    
+    this.calendarDays = [];
+    
+    // Add empty cells for days before month starts
+    for (let i = 0; i < startingDayOfWeek; i++) {
+      this.calendarDays.push({ day: null, isAvailable: false });
+    }
+    
+    // Add days of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(year, month, day);
+      const dayOfWeek = date.getDay();
+      const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+      const dayName = dayNames[dayOfWeek];
+      
+      const isAvailable = this.providerAvailability.some(
+        avail => avail.day.toLowerCase() === dayName && avail.isAvailable
+      );
+      
+      const isPast = date < new Date(new Date().setHours(0, 0, 0, 0));
+      
+      this.calendarDays.push({
+        day,
+        date,
+        dayName,
+        isAvailable: isAvailable && !isPast,
+        isPast
+      });
+    }
+  }
+
+  // Select date from calendar
+  selectDate(calendarDay: any) {
+    if (!calendarDay.isAvailable) return;
+    
+    this.selectedDate = this.formatDate(calendarDay.date);
+    this.reservationForm.patchValue({ selectedDate: this.selectedDate });
+    
+    // Generate time slots for selected day
+    const dayAvail = this.providerAvailability.find(
+      a => a.day.toLowerCase() === calendarDay.dayName.toLowerCase()
+    );
+    
+    if (dayAvail) {
+      this.availableTimeSlots = this.generateTimeSlots(dayAvail.timeSlots);
+    }
+  }
+
+  // Generate time slots
+  generateTimeSlots(timeSlots: {start: string, end: string}[]): string[] {
+    const slots: string[] = [];
+    
+    timeSlots.forEach(slot => {
+      const [startH, startM] = slot.start.split(':').map(Number);
+      const [endH, endM] = slot.end.split(':').map(Number);
+      
+      let h = startH, m = startM;
+      
+      while (h < endH || (h === endH && m < endM)) {
+        const timeStr = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+        slots.push(timeStr);
+        
+        m += 30;
+        if (m >= 60) {
+          m = 0;
+          h++;
+        }
+      }
+    });
+    
+    return slots;
+  }
+
+  // Select time slot
+  selectTime(time: string) {
+    this.reservationForm.patchValue({ selectedTime: time });
+  }
+
+  // Navigate calendar month
+  previousMonth() {
+    this.currentMonth = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() - 1);
+    this.generateCalendar();
+  }
+
+  nextMonth() {
+    this.currentMonth = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() + 1);
+    this.generateCalendar();
+  }
+
+  // Format date
+  formatDate(date: Date | null | undefined): string {
+    if (!date) return '';
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  // Format date for display (e.g., "Lundi 26 Novembre 2025")
+  formatDisplayDate(dateString: string): string {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const options: Intl.DateTimeFormatOptions = { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    };
+    return date.toLocaleDateString('fr-FR', options);
+  }
+
+  getMonthName(): string {
+    return this.currentMonth.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
   }
 
   // Step navigation
@@ -149,7 +307,7 @@ export class ReservationComponent implements OnInit, AfterViewInit, OnDestroy {
   validateCurrentStep(): boolean {
     switch (this.currentStep) {
       case 1:
-        return !!this.reservationForm.get('date')?.valid && !!this.reservationForm.get('time')?.valid;
+        return !!this.reservationForm.get('selectedDate')?.valid && !!this.reservationForm.get('selectedTime')?.valid;
       case 2:
         return !!this.reservationForm.get('description')?.valid;
       case 3:
@@ -252,14 +410,15 @@ export class ReservationComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // File handling
-  onFileSelect(event: any) {
-    const files = event.target.files;
+  onFileSelect(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const files = input.files;
     if (files) {
       for (let i = 0; i < files.length && this.selectedFiles.length < 5; i++) {
         const file = files[i];
         if (file.type.startsWith('image/')) {
           this.selectedFiles.push(file);
-          
+
           // Create preview
           const reader = new FileReader();
           reader.onload = (e: any) => {
@@ -268,6 +427,12 @@ export class ReservationComponent implements OnInit, AfterViewInit, OnDestroy {
           reader.readAsDataURL(file);
         }
       }
+    }
+  }
+
+  onFileSelectWrapper() {
+    if (this.fileInput) {
+      this.onFileSelect({ target: this.fileInput.nativeElement } as any);
     }
   }
 
@@ -306,11 +471,10 @@ export class ReservationComponent implements OnInit, AfterViewInit, OnDestroy {
       const formData = new FormData();
       formData.append('providerId', this.providerId);
       formData.append('clientId', clientId);
-      formData.append('date', this.reservationForm.get('date')?.value);
-      formData.append('time', this.reservationForm.get('time')?.value);
+      formData.append('date', this.reservationForm.get('selectedDate')?.value);
+      formData.append('time', this.reservationForm.get('selectedTime')?.value);
       formData.append('serviceType', this.reservationForm.get('serviceType')?.value);
       formData.append('description', this.reservationForm.get('description')?.value);
-      formData.append('urgency', this.reservationForm.get('urgency')?.value);
       formData.append('location', JSON.stringify(this.selectedLocation));
 
       // Add files

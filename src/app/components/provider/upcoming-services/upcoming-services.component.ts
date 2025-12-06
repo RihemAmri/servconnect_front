@@ -1,19 +1,15 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-upcoming-services',
   imports: [CommonModule],
   templateUrl: './upcoming-services.component.html',
-  styleUrls: ['./upcoming-services.component.scss']  // correction ici
+  styleUrls: ['./upcoming-services.component.scss']
 })
 export class UpcomingServicesComponent {
-  selectedService: any = null;
-  showPopup: boolean = false; // pour afficher la popup
-
-  // Structure adaptée aux colonnes de ton tableau
  upcomingServices = [
   {
     customerName: 'Client B',
@@ -54,31 +50,108 @@ export class UpcomingServicesComponent {
 ];
 
 
-  constructor(private router: Router, private sanitizer: DomSanitizer) {}
+  constructor(private router: Router) {}
 
   goBack() {
     this.router.navigate(['/my-services']);
   }
 
+  calculateTotal(): number {
+    return this.upcomingServices.reduce((sum, service) => sum + service.price, 0);
+  }
+
+  getTotalDrones(): number {
+    return this.upcomingServices.reduce((sum, service) => sum + service.droneCount, 0);
+  }
+
+  getTotalPieces(): number {
+    return this.upcomingServices.reduce((sum, service) => sum + service.pieces, 0);
+  }
+
   openMap(service: any) {
-    this.selectedService = service;
-    this.showPopup = true;
-  }
-
-  closePopup() {
-    this.selectedService = null;
-    this.showPopup = false;
-  }
-
-  get googleMapUrl(): SafeResourceUrl {
-    if (!this.selectedService) return '';
-    const query = encodeURIComponent(this.selectedService.address);
-    const url = `https://www.google.com/maps?q=${query}&output=embed`;
-    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    const address = encodeURIComponent(service.address);
+    const mapUrl = `https://www.google.com/maps?q=${address}&output=embed`;
+    
+    Swal.fire({
+      title: `📍 ${service.address}`,
+      html: `
+        <div style="width: 100%; height: 400px; border-radius: 12px; overflow: hidden;">
+          <iframe
+            width="100%"
+            height="100%"
+            style="border:0;"
+            src="${mapUrl}"
+            allowfullscreen
+            loading="lazy"
+          ></iframe>
+        </div>
+      `,
+      width: '800px',
+      showCloseButton: true,
+      showConfirmButton: false,
+      customClass: {
+        popup: 'rounded-2xl shadow-2xl',
+        title: 'text-xl font-bold text-gray-800',
+        closeButton: 'text-gray-500 hover:text-gray-700'
+      }
+    });
   }
 
   validate(service: any) {
-    // Ici tu peux mettre ton code de validation
-    console.log('Service validé:', service);
+    Swal.fire({
+      title: '✅ Confirmer le service',
+      html: `
+        <div style="text-align: left; padding: 1rem;">
+          <div style="background: #f0f9ff; padding: 1rem; border-radius: 12px; margin-bottom: 1rem;">
+            <p style="margin: 0; color: #0369a1; font-weight: 600;">
+              <i class="fas fa-user"></i> ${service.customerName}
+            </p>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.9rem;">
+            <div>
+              <strong style="color: #64748b;">📍 Adresse:</strong><br>
+              <span>${service.address}</span>
+            </div>
+            <div>
+              <strong style="color: #64748b;">📅 Date:</strong><br>
+              <span>${new Date(service.date).toLocaleDateString('fr-FR')}</span>
+            </div>
+            <div>
+              <strong style="color: #64748b;">⏰ Heure:</strong><br>
+              <span>${service.serviceTime}</span>
+            </div>
+            <div>
+              <strong style="color: #64748b;">💰 Prix:</strong><br>
+              <span>${service.price} dt</span>
+            </div>
+          </div>
+        </div>
+      `,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Valider',
+      cancelButtonText: 'Annuler',
+      confirmButtonColor: '#10b981',
+      cancelButtonColor: '#94a3b8',
+      customClass: {
+        popup: 'rounded-2xl shadow-2xl',
+        confirmButton: 'rounded-xl px-6 py-3 font-semibold',
+        cancelButton: 'rounded-xl px-6 py-3 font-semibold'
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Validé!',
+          text: 'Le service a été confirmé avec succès',
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false,
+          customClass: {
+            popup: 'rounded-2xl shadow-2xl'
+          }
+        });
+        console.log('Service validé:', service);
+      }
+    });
   }
 }
