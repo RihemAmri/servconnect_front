@@ -1,0 +1,207 @@
+<div class="min-h-screen bg-white">
+  <div class="max-w-5xl mx-auto px-6 py-6">
+    <div *ngIf="loading" class="flex items-center justify-center h-48">
+      <i class="pi pi-spin pi-spinner text-4xl text-blue-500"></i>
+    </div>
+
+    <div *ngIf="!loading && reservation" class="space-y-6">
+      <!-- En-tête -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <button
+            pButton
+            icon="pi pi-arrow-left"
+            class="p-button-rounded p-button-text p-button-lg"
+            (click)="back()"
+          ></button>
+          <div>
+            <h2 class="text-2xl font-bold text-gray-900">
+              Réservation #{{ reservation._id.substring(0, 8) }}
+            </h2>
+            <p class="text-sm text-gray-500 mt-1">
+              {{ reservation.metier }} • {{ reservation.ville }}
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <p-tag
+            [value]="getStatutLabel(reservation.statut)"
+            [severity]="getStatutSeverity(reservation.statut)"
+            [style]="{ 'font-size': '1rem', padding: '0.5rem 1rem' }"
+          ></p-tag>
+          <button
+            *ngIf="
+              reservation.statut !== 'annulee' &&
+              reservation.statut !== 'terminee'
+            "
+            pButton
+            label="Annuler"
+            icon="pi pi-times"
+            class="p-button-danger p-button-outlined"
+            (click)="cancelReservation()"
+          ></button>
+        </div>
+      </div>
+
+      <!-- Grid 2 colonnes -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Client -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h3
+            class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"
+          >
+            <i class="pi pi-user text-blue-600"></i>
+            Client
+          </h3>
+          <div class="flex items-center gap-4 mb-4">
+            <img
+              [src]="reservation.clientPhoto || 'assets/avatar-default.png'"
+              alt="Client"
+              class="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
+            />
+            <div>
+              <div class="font-semibold text-gray-900">
+                {{ reservation.clientNom }}
+              </div>
+              <div class="text-sm text-gray-600">
+                {{ reservation.clientTelephone }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Prestataire -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h3
+            class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"
+          >
+            <i class="pi pi-briefcase text-green-600"></i>
+            Prestataire
+          </h3>
+          <div class="flex items-center gap-4 mb-4">
+            <img
+              [src]="
+                reservation.prestatairePhoto || 'assets/avatar-default.png'
+              "
+              alt="Prestataire"
+              class="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
+            />
+            <div>
+              <div class="font-semibold text-gray-900">
+                {{ reservation.prestataireNom }}
+              </div>
+              <div class="text-sm text-gray-600">
+                {{ reservation.prestataireTelephone }}
+              </div>
+              <div class="text-xs text-gray-500">{{ reservation.metier }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Détails service -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">
+          Détails du service
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <p class="text-sm text-gray-500 mb-1">Description</p>
+            <p class="text-gray-800">{{ reservation.description }}</p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500 mb-1">Adresse</p>
+            <p class="text-gray-800 flex items-start gap-2">
+              <i class="pi pi-map-marker text-gray-400 mt-1"></i>
+              {{ reservation.adresse }}
+            </p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500 mb-1">Date et heure</p>
+            <p class="text-gray-800">
+              <i class="pi pi-calendar mr-2 text-gray-400"></i>
+              {{ reservation.dateService | date : "dd MMMM yyyy" : "" : "fr" }}
+              <span *ngIf="reservation.heureService">
+                à {{ reservation.heureService }}</span
+              >
+            </p>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500 mb-1">Montant</p>
+            <p class="text-2xl font-bold text-green-600">
+              {{ reservation.prix }} TND
+            </p>
+          </div>
+          <div *ngIf="reservation.notes" class="md:col-span-2">
+            <p class="text-sm text-gray-500 mb-1">Notes</p>
+            <p
+              class="text-gray-800 bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded"
+            >
+              {{ reservation.notes }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Annulation (si annulée) -->
+      <div
+        *ngIf="reservation.statut === 'annulee'"
+        class="bg-red-50 border border-red-200 rounded-lg p-6"
+      >
+        <h3
+          class="text-lg font-semibold text-red-800 mb-2 flex items-center gap-2"
+        >
+          <i class="pi pi-times-circle"></i>
+          Réservation annulée
+        </h3>
+        <p class="text-sm text-gray-600 mb-1">Motif :</p>
+        <p class="text-gray-800">{{ reservation.motifAnnulation }}</p>
+        <p class="text-xs text-gray-500 mt-2">
+          Annulée le
+          {{ reservation.dateAnnulation | date : "dd/MM/yyyy à HH:mm" }}
+        </p>
+      </div>
+
+      <!-- Actions rapides -->
+      <div
+        *ngIf="
+          reservation.statut !== 'terminee' && reservation.statut !== 'annulee'
+        "
+        class="bg-gray-50 rounded-lg border border-gray-200 p-6"
+      >
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">
+          Actions rapides
+        </h3>
+        <div class="flex flex-wrap gap-3">
+          <button
+            *ngIf="reservation.statut === 'en_attente'"
+            pButton
+            label="Confirmer"
+            icon="pi pi-check"
+            class="p-button-success"
+            (click)="changeStatus('confirmee')"
+          ></button>
+          <button
+            *ngIf="reservation.statut === 'confirmee'"
+            pButton
+            label="Marquer en cours"
+            icon="pi pi-hourglass"
+            class="p-button-warning"
+            (click)="changeStatus('en_cours')"
+          ></button>
+          <button
+            *ngIf="reservation.statut === 'en_cours'"
+            pButton
+            label="Marquer terminée"
+            icon="pi pi-check-circle"
+            class="p-button-success"
+            (click)="changeStatus('terminee')"
+          ></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-toast position="top-right"></p-toast>
+<p-confirmDialog></p-confirmDialog>

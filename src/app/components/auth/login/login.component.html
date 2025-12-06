@@ -3,17 +3,35 @@
     <!-- 🧾 Formulaire -->
     <div class="form-side">
       <h2>Connexion</h2>
-      <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+      <div
+        *ngIf="errorMessage"
+        class="alert alert-danger alert-dismissible fade show"
+        role="alert"
+      >
         {{ errorMessage }}
-        <button type="button" class="close" (click)="errorMessage = null" aria-label="Close">
+        <button
+          type="button"
+          class="close"
+          (click)="errorMessage = null"
+          aria-label="Close"
+        >
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
 
       <!-- Succès -->
-      <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+      <div
+        *ngIf="successMessage"
+        class="alert alert-success alert-dismissible fade show"
+        role="alert"
+      >
         {{ successMessage }}
-        <button type="button" class="close" (click)="successMessage = null" aria-label="Close">
+        <button
+          type="button"
+          class="close"
+          (click)="successMessage = null"
+          aria-label="Close"
+        >
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -25,39 +43,47 @@
       </div>
 
       <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
-
         <!-- Email -->
-       <!-- Email -->
-<div class="form-group">
-  <input type="email" placeholder="Email" formControlName="email" (focus)="onFocus('email')" />
-  <small *ngIf="showError.email && loginForm.controls['email'].invalid" class="text-danger">
-    <span *ngIf="loginForm.controls['email'].errors?.['required']">Email est requis.</span>
-    <span *ngIf="loginForm.controls['email'].errors?.['email']">Email non valide.</span>
-  </small>
-</div>
+        <div class="form-group">
+          <input
+            type="email"
+            placeholder="Email"
+            formControlName="email"
+            (focus)="onFocus('email')"
+          />
+          <small
+            *ngIf="showError.email && loginForm.controls['email'].invalid"
+            class="text-danger"
+          >
+            <span *ngIf="loginForm.controls['email'].errors?.['required']"
+              >Email est requis.</span
+            >
+            <span *ngIf="loginForm.controls['email'].errors?.['email']"
+              >Email non valide.</span
+            >
+          </small>
+        </div>
 
-<!-- Password -->
-<!-- Password -->
-<div class="form-group password-group">
-  <input
-    [type]="passwordVisible ? 'text' : 'password'"
-    placeholder="Mot de passe"
-    formControlName="password"
-    (focus)="onFocus('password')"
-  />
-  <i
-    class="fas"
-    [ngClass]="passwordVisible ? 'fa-eye' : 'fa-eye-slash'"
-    (click)="togglePasswordVisibility()"
-  ></i>
-  <small
-    *ngIf="showError.password && loginForm.controls['password'].invalid"
-    class="text-danger"
-  >
-    Mot de passe est requis.
-  </small>
-</div>
-
+        <!-- Password -->
+        <div class="form-group password-group">
+          <input
+            [type]="passwordVisible ? 'text' : 'password'"
+            placeholder="Mot de passe"
+            formControlName="password"
+            (focus)="onFocus('password')"
+          />
+          <i
+            class="fas"
+            [ngClass]="passwordVisible ? 'fa-eye' : 'fa-eye-slash'"
+            (click)="togglePasswordVisibility()"
+          ></i>
+          <small
+            *ngIf="showError.password && loginForm.controls['password'].invalid"
+            class="text-danger"
+          >
+            Mot de passe est requis.
+          </small>
+        </div>
 
         <div class="forgot-password-link">
           <a href="/forgot-password">Mot de passe oublié ?</a>
@@ -75,8 +101,10 @@
     <!-- 🟦 Partie droite : Welcome -->
     <div class="welcome-side">
       <h2>Bonjour et bienvenue !</h2>
-      <p>Vous n'avez pas encore de compte ? </p>
-      <button class="btn-outline" routerLink="/register">Créer un compte</button>
+      <p>Vous n'avez pas encore de compte ?</p>
+      <button class="btn-outline" routerLink="/register">
+        Créer un compte
+      </button>
     </div>
   </div>
 </div>

@@ -1,0 +1,283 @@
+<div class="min-h-screen bg-white">
+  <div class="max-w-5xl mx-auto px-6 py-6">
+    <!-- Chargement -->
+    <div *ngIf="loading" class="flex justify-center items-center h-64">
+      <i class="pi pi-spin pi-spinner text-4xl text-blue-500"></i>
+    </div>
+
+    <!-- Contenu -->
+    <div *ngIf="!loading && user">
+      <!-- En-tête -->
+      <div class="mb-8 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <button
+            pButton
+            icon="pi pi-arrow-left"
+            class="p-button-rounded p-button-text p-button-lg"
+            (click)="goBack()"
+          ></button>
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900">
+              {{ user.prenom }} {{ user.nom }}
+            </h1>
+            <p class="text-gray-600 mt-1">Détails de l'utilisateur</p>
+          </div>
+        </div>
+
+        <button
+          *ngIf="!editMode"
+          pButton
+          label="Modifier"
+          icon="pi pi-pencil"
+          class="p-button-outlined"
+          (click)="editMode = true"
+        ></button>
+      </div>
+
+      <!-- Tabs -->
+      <p-tabView>
+        <p-tabPanel header="Informations" leftIcon="pi pi-user">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Photo de profil -->
+            <div class="md:col-span-1 flex flex-col items-center">
+              <img
+                [src]="user.photo || 'assets/avatar-default.png'"
+                alt="Photo de profil"
+                class="w-48 h-48 rounded-full object-cover border-4 border-gray-200 shadow-lg mb-6"
+              />
+              <p-tag
+                [value]="getRoleLabel(user.role)"
+                [severity]="getRoleSeverity(user.role)"
+                [style]="{ 'font-size': '1.1rem', padding: '0.6rem 1.2rem' }"
+              ></p-tag>
+
+              <div *ngIf="user.isSuspended" class="mt-4">
+                <p-tag value="Suspendu" severity="danger"></p-tag>
+              </div>
+            </div>
+
+            <!-- Informations -->
+            <div class="md:col-span-2">
+              <!-- Mode Lecture -->
+              <div *ngIf="!editMode" class="space-y-6">
+                <div class="border-b border-gray-200 pb-4">
+                  <label
+                    class="text-sm font-semibold text-gray-500 uppercase tracking-wide"
+                    >Nom complet</label
+                  >
+                  <p class="text-xl text-gray-900 mt-1">
+                    {{ user.prenom }} {{ user.nom }}
+                  </p>
+                </div>
+
+                <div class="border-b border-gray-200 pb-4">
+                  <label
+                    class="text-sm font-semibold text-gray-500 uppercase tracking-wide"
+                    >Email</label
+                  >
+                  <p class="text-xl text-gray-900 mt-1">
+                    <i class="pi pi-envelope mr-2 text-gray-400"></i>
+                    {{ user.email }}
+                  </p>
+                </div>
+
+                <div class="border-b border-gray-200 pb-4">
+                  <label
+                    class="text-sm font-semibold text-gray-500 uppercase tracking-wide"
+                    >Téléphone</label
+                  >
+                  <p class="text-xl text-gray-900 mt-1">
+                    <i class="pi pi-phone mr-2 text-gray-400"></i>
+                    {{ user.telephone || "—" }}
+                  </p>
+                </div>
+
+                <div class="border-b border-gray-200 pb-4">
+                  <label
+                    class="text-sm font-semibold text-gray-500 uppercase tracking-wide"
+                    >Adresse</label
+                  >
+                  <p class="text-xl text-gray-900 mt-1">
+                    <i class="pi pi-map-marker mr-2 text-gray-400"></i>
+                    {{ user.adresse || "—" }}
+                  </p>
+                </div>
+
+                <div>
+                  <label
+                    class="text-sm font-semibold text-gray-500 uppercase tracking-wide"
+                    >Date d'inscription</label
+                  >
+                  <p class="text-xl text-gray-900 mt-1">
+                    <i class="pi pi-calendar mr-2 text-gray-400"></i>
+                    {{ user.dateInscription | date : "dd MMMM yyyy à HH:mm" }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Mode Édition -->
+              <div *ngIf="editMode" class="space-y-4">
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2"
+                    >Prénom</label
+                  >
+                  <input
+                    pInputText
+                    [(ngModel)]="editForm.prenom"
+                    class="w-full"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2"
+                    >Nom</label
+                  >
+                  <input pInputText [(ngModel)]="editForm.nom" class="w-full" />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2"
+                    >Téléphone</label
+                  >
+                  <input
+                    pInputText
+                    [(ngModel)]="editForm.telephone"
+                    class="w-full"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2"
+                    >Adresse</label
+                  >
+                  <!-- ✅ CORRECTION : pTextarea au lieu de pInputTextarea -->
+                  <textarea
+                    pTextarea
+                    [(ngModel)]="editForm.adresse"
+                    rows="3"
+                    class="w-full"
+                  ></textarea>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-2"
+                    >Rôle</label
+                  >
+                  <p-dropdown
+                    [options]="roles"
+                    [(ngModel)]="editForm.role"
+                    optionLabel="label"
+                    optionValue="value"
+                    [style]="{ width: '100%' }"
+                  ></p-dropdown>
+                </div>
+
+                <!-- Boutons d'action -->
+                <div class="flex gap-3 pt-6">
+                  <button
+                    pButton
+                    label="Sauvegarder"
+                    icon="pi pi-check"
+                    (click)="saveChanges()"
+                  ></button>
+                  <button
+                    pButton
+                    label="Annuler"
+                    icon="pi pi-times"
+                    class="p-button-outlined p-button-secondary"
+                    (click)="cancelEdit()"
+                  ></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Informations prestataire -->
+          <div
+            *ngIf="provider"
+            class="mt-8 p-6 bg-blue-50 rounded-xl border border-blue-200"
+          >
+            <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+              <i class="pi pi-briefcase mr-3 text-blue-600"></i>
+              Informations Prestataire
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="text-sm font-semibold text-gray-600"
+                  >Métier</label
+                >
+                <p class="text-lg text-gray-900 mt-1">{{ provider.metier }}</p>
+              </div>
+
+              <div>
+                <label class="text-sm font-semibold text-gray-600"
+                  >Expérience</label
+                >
+                <p class="text-lg text-gray-900 mt-1">
+                  {{ provider.experience }} ans
+                </p>
+              </div>
+
+              <div class="md:col-span-2">
+                <label class="text-sm font-semibold text-gray-600"
+                  >Description</label
+                >
+                <p class="text-gray-800 mt-1">
+                  {{ provider.description || "—" }}
+                </p>
+              </div>
+
+              <div>
+                <label class="text-sm font-semibold text-gray-600"
+                  >Statut de vérification</label
+                >
+                <div class="mt-1">
+                  <p-tag
+                    [value]="provider.isVerified ? 'Vérifié' : 'Non vérifié'"
+                    [severity]="provider.isVerified ? 'success' : 'warn'"
+                  ></p-tag>
+                </div>
+              </div>
+
+              <div>
+                <label class="text-sm font-semibold text-gray-600"
+                  >Note moyenne</label
+                >
+                <p class="text-lg text-gray-900 mt-1">
+                  <i class="pi pi-star-fill text-yellow-500 mr-1"></i>
+                  {{ provider.noteGenerale }}/5
+                  <span class="text-sm text-gray-600"
+                    >({{ provider.nombreAvis }} avis)</span
+                  >
+                </p>
+              </div>
+            </div>
+          </div>
+        </p-tabPanel>
+
+        <p-tabPanel header="Réservations" leftIcon="pi pi-calendar">
+          <div class="text-center py-16 text-gray-500">
+            <i class="pi pi-calendar text-6xl mb-4 text-gray-300"></i>
+            <p class="text-xl font-medium">Fonctionnalité à venir</p>
+            <p class="text-sm text-gray-400 mt-2">
+              L'historique des réservations sera disponible prochainement
+            </p>
+          </div>
+        </p-tabPanel>
+
+        <p-tabPanel header="Avis" leftIcon="pi pi-star">
+          <div class="text-center py-16 text-gray-500">
+            <i class="pi pi-star text-6xl mb-4 text-gray-300"></i>
+            <p class="text-xl font-medium">Fonctionnalité à venir</p>
+            <p class="text-sm text-gray-400 mt-2">
+              Les avis seront disponibles prochainement
+            </p>
+          </div>
+        </p-tabPanel>
+      </p-tabView>
+    </div>
+  </div>
+</div>
+
+<p-toast position="top-right"></p-toast>

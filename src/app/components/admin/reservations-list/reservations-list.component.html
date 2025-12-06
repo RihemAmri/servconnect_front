@@ -1,0 +1,347 @@
+<div class="min-h-screen bg-white">
+  <div class="max-w-7xl mx-auto px-6 py-6">
+    <!-- 🎯 En-tête -->
+    <div class="mb-8 mt-6">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">
+        Gestion des réservations
+      </h1>
+      <p class="text-gray-600">Suivez et contrôlez toutes les réservations</p>
+    </div>
+
+    <!-- 📊 Statistiques -->
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
+      <!-- Total -->
+      <div
+        class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-md p-4 text-white"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-blue-100 text-xs font-medium">Total</p>
+            <p class="text-2xl font-bold mt-1">{{ stats.total }}</p>
+          </div>
+          <i class="pi pi-calendar text-3xl opacity-50"></i>
+        </div>
+      </div>
+
+      <!-- En attente -->
+      <div
+        class="bg-gradient-to-br from-gray-500 to-gray-600 rounded-lg shadow-md p-4 text-white"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-100 text-xs font-medium">En attente</p>
+            <p class="text-2xl font-bold mt-1">{{ stats.enAttente }}</p>
+          </div>
+          <i class="pi pi-clock text-3xl opacity-50"></i>
+        </div>
+      </div>
+
+      <!-- Confirmées -->
+      <div
+        class="bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-lg shadow-md p-4 text-white"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-cyan-100 text-xs font-medium">Confirmées</p>
+            <p class="text-2xl font-bold mt-1">{{ stats.confirmees }}</p>
+          </div>
+          <i class="pi pi-check text-3xl opacity-50"></i>
+        </div>
+      </div>
+
+      <!-- En cours -->
+      <div
+        class="bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-lg shadow-md p-4 text-white"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-yellow-100 text-xs font-medium">En cours</p>
+            <p class="text-2xl font-bold mt-1">{{ stats.enCours }}</p>
+          </div>
+          <i class="pi pi-hourglass text-3xl opacity-50"></i>
+        </div>
+      </div>
+
+      <!-- Terminées -->
+      <div
+        class="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-md p-4 text-white"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-green-100 text-xs font-medium">Terminées</p>
+            <p class="text-2xl font-bold mt-1">{{ stats.terminees }}</p>
+          </div>
+          <i class="pi pi-check-circle text-3xl opacity-50"></i>
+        </div>
+      </div>
+
+      <!-- Annulées -->
+      <div
+        class="bg-gradient-to-br from-red-500 to-red-600 rounded-lg shadow-md p-4 text-white"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-red-100 text-xs font-medium">Annulées</p>
+            <p class="text-2xl font-bold mt-1">{{ stats.annulees }}</p>
+          </div>
+          <i class="pi pi-times-circle text-3xl opacity-50"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Revenue card -->
+    <div
+      class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-md p-6 mb-6 text-white"
+    >
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-purple-100 text-sm font-medium">
+            Revenu total (réservations terminées)
+          </p>
+          <p class="text-4xl font-bold mt-2">{{ stats.revenueTotal }} TND</p>
+        </div>
+        <i class="pi pi-wallet text-6xl opacity-30"></i>
+      </div>
+    </div>
+
+    <!-- 🔍 Barre de recherche et filtres -->
+    <div
+      class="bg-gray-50 rounded-lg shadow-sm p-6 mb-6 border border-gray-200"
+    >
+      <div
+        class="flex flex-col md:flex-row gap-4 items-stretch md:items-center"
+      >
+        <!-- Recherche -->
+        <div class="flex-1 md:flex-[2]">
+          <div class="relative w-full">
+            <i
+              class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            ></i>
+            <input
+              pInputText
+              type="text"
+              [(ngModel)]="searchTerm"
+              (keyup.enter)="onSearch()"
+              placeholder="Rechercher par client, prestataire, métier..."
+              class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+        </div>
+
+        <!-- Filtre Statut -->
+        <div class="w-full md:w-auto md:flex-1">
+          <p-dropdown
+            [options]="statuts"
+            [(ngModel)]="selectedStatut"
+            (onChange)="onFilterChange()"
+            optionLabel="label"
+            placeholder="Statut"
+            [style]="{ width: '100%' }"
+          ></p-dropdown>
+        </div>
+
+        <!-- Bouton Réinitialiser -->
+        <div class="w-full md:w-auto">
+          <button
+            pButton
+            icon="pi pi-refresh"
+            label="Réinitialiser"
+            (click)="resetFilters()"
+            class="p-button-outlined p-button-secondary w-full md:w-auto"
+          ></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 📊 Tableau des réservations -->
+    <div
+      class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+    >
+      <p-table
+        [value]="reservations"
+        [paginator]="true"
+        [rows]="limit"
+        [totalRecords]="totalRecords"
+        [loading]="loading"
+        [lazy]="true"
+        (onLazyLoad)="onPageChange($event)"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} réservations"
+        styleClass="p-datatable-sm"
+        [tableStyle]="{ 'min-width': '70rem' }"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="bg-gray-50">ID</th>
+            <th class="bg-gray-50">Client</th>
+            <th class="bg-gray-50">Prestataire</th>
+            <th class="bg-gray-50">Service</th>
+            <th class="bg-gray-50">Date service</th>
+            <th class="bg-gray-50">Heure</th>
+            <th class="bg-gray-50">Ville</th>
+            <th class="bg-gray-50">Montant</th>
+            <th class="bg-gray-50">Statut</th>
+            <th style="width: 200px" class="bg-gray-50">Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-reservation>
+          <tr class="hover:bg-gray-50 transition-colors">
+            <!-- ID -->
+            <td class="text-gray-600 text-xs font-mono">
+              #{{ reservation._id.substring(0, 6) }}
+            </td>
+
+            <!-- Client -->
+            <td>
+              <div class="flex items-center gap-2">
+                <img
+                  [src]="reservation.clientPhoto || 'assets/avatar-default.png'"
+                  [alt]="reservation.clientNom"
+                  class="w-8 h-8 rounded-full object-cover border border-gray-200"
+                />
+                <div>
+                  <div class="font-semibold text-sm text-gray-900">
+                    {{ reservation.clientNom }}
+                  </div>
+                  <div class="text-xs text-gray-500">
+                    {{ reservation.clientTelephone }}
+                  </div>
+                </div>
+              </div>
+            </td>
+
+            <!-- Prestataire -->
+            <td>
+              <div class="flex items-center gap-2">
+                <img
+                  [src]="
+                    reservation.prestatairePhoto || 'assets/avatar-default.png'
+                  "
+                  [alt]="reservation.prestataireNom"
+                  class="w-8 h-8 rounded-full object-cover border border-gray-200"
+                />
+                <div>
+                  <div class="font-semibold text-sm text-gray-900">
+                    {{ reservation.prestataireNom }}
+                  </div>
+                  <div class="text-xs text-gray-500">
+                    {{ reservation.prestataireTelephone }}
+                  </div>
+                </div>
+              </div>
+            </td>
+
+            <!-- Service -->
+            <td>
+              <div class="flex items-center gap-2">
+                <i class="pi pi-briefcase text-gray-400"></i>
+                <span class="text-gray-700">{{ reservation.metier }}</span>
+              </div>
+            </td>
+
+            <!-- Date service -->
+            <td class="text-gray-700">
+              {{ reservation.dateService | date : "dd/MM/yyyy" }}
+            </td>
+
+            <!-- Heure -->
+            <td class="text-gray-600 text-sm">
+              {{ reservation.heureService || "—" }}
+            </td>
+
+            <!-- Ville -->
+            <td>
+              <div class="flex items-center gap-1">
+                <i class="pi pi-map-marker text-gray-400 text-xs"></i>
+                <span class="text-gray-600 text-sm">{{
+                  reservation.ville
+                }}</span>
+              </div>
+            </td>
+
+            <!-- Montant -->
+            <td class="font-semibold text-green-600">
+              {{ reservation.prix }} TND
+            </td>
+
+            <!-- Statut -->
+            <td>
+              <p-tag
+                [value]="getStatutLabel(reservation.statut)"
+                [severity]="getStatutSeverity(reservation.statut)"
+              ></p-tag>
+            </td>
+
+            <!-- Actions -->
+            <td>
+              <div class="flex gap-2 items-center">
+                <!-- Voir détails -->
+                <button
+                  pButton
+                  icon="pi pi-eye"
+                  class="p-button-rounded p-button-info p-button-text p-button-sm"
+                  (click)="viewDetails(reservation._id)"
+                  pTooltip="Voir détails"
+                  tooltipPosition="top"
+                ></button>
+
+                <!-- Changer statut (dropdown) -->
+                <p-dropdown
+                  *ngIf="
+                    reservation.statut !== 'terminee' &&
+                    reservation.statut !== 'annulee'
+                  "
+                  [options]="statuts.slice(1)"
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="Changer"
+                  (onChange)="changeStatus(reservation, $event.value)"
+                  styleClass="p-inputtext-sm"
+                  [style]="{ width: '120px', 'font-size': '0.875rem' }"
+                ></p-dropdown>
+
+                <!-- Annuler -->
+                <button
+                  *ngIf="
+                    reservation.statut !== 'annulee' &&
+                    reservation.statut !== 'terminee'
+                  "
+                  pButton
+                  icon="pi pi-times"
+                  class="p-button-rounded p-button-danger p-button-text p-button-sm"
+                  (click)="cancelReservation(reservation)"
+                  pTooltip="Annuler"
+                  tooltipPosition="top"
+                ></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="10" class="text-center py-12">
+              <div
+                class="flex flex-col items-center justify-center text-gray-500"
+              >
+                <i class="pi pi-calendar text-5xl mb-3 text-gray-300"></i>
+                <p class="text-lg font-medium">Aucune réservation trouvée</p>
+                <p class="text-sm text-gray-400 mt-1">
+                  Essayez de modifier vos critères de recherche
+                </p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<p-toast position="top-right"></p-toast>
+
+<!-- Dialog de confirmation -->
+<p-confirmDialog></p-confirmDialog>

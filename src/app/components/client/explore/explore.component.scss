@@ -32,6 +32,7 @@ $shadow-primary: 0 10px 25px rgba(2, 93, 221, 0.2);
   padding: 0;
   box-sizing: border-box;
   font-family: 'Inter', sans-serif;
+  
 }
 
 // ===== HERO =====
@@ -40,6 +41,7 @@ $shadow-primary: 0 10px 25px rgba(2, 93, 221, 0.2);
   background: linear-gradient(135deg, $primary 0%, $primary-dark 100%);
   padding: 80px 30px 60px;
   overflow: hidden;
+  margin-top: 40px;
   
   .hero-background {
     position: absolute;

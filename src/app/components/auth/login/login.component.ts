@@ -74,9 +74,12 @@ export class LoginComponent {
 
         setTimeout(() => {
           if (res.user.role === 'prestataire') {
-            this.router.navigate(['/explore']);
-          } else {
             this.router.navigate(['/my-services']);
+          } else if (res.user.role === 'client') {
+            this.router.navigate(['/explore']);
+          }
+          else {
+            this.router.navigate(['/']);
           }
         }, 1000);
       },

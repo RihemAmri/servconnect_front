@@ -10,6 +10,8 @@ import { Router } from '@angular/router';
 })
 export class AuthService {
   private baseUrl = 'http://localhost:5000/api/users'; 
+  private currentUserSubject = new BehaviorSubject<any>(null);
+currentUser$ = this.currentUserSubject.asObservable();
   private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private authStatus = new BehaviorSubject<boolean>(false);
   private tokenTimer: any;
@@ -43,7 +45,7 @@ export class AuthService {
         localStorage.setItem('token', res.token);
         localStorage.setItem('user', JSON.stringify(res.user));
         localStorage.setItem('expiration', expirationDate.toISOString());
-
+this.currentUserSubject.next(res.user); // on émet l'utilisateur
         this.authStatus.next(true);
         this.autoLogout(expiresIn);
       })
@@ -62,6 +64,7 @@ export class AuthService {
 
     this.authStatus.next(false);
     clearTimeout(this.tokenTimer);
+    this.currentUserSubject.next(null);
     this.router.navigate(['/login']);
   }
 
@@ -80,9 +83,11 @@ export class AuthService {
     const expiresIn = new Date(expiration).getTime() - new Date().getTime();
 
     if (expiresIn > 0) {
-      this.authStatus.next(true);
-      this.autoLogout(expiresIn);
-    } else {
+  const user = JSON.parse(localStorage.getItem('user')!);
+  this.currentUserSubject.next(user);
+  this.authStatus.next(true);
+  this.autoLogout(expiresIn);
+}else {
       this.logout();
     }
   }
@@ -106,6 +111,28 @@ export class AuthService {
   isLoggedIn(): boolean {
     return this.authStatus.value;
   }
+
+   getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+getUserRole(): string | null {
+  const user = localStorage.getItem('user');
+  if (user) {
+    const parsed = JSON.parse(user);
+    return parsed.role || null; // supposant que ton backend renvoie { role: 'client' | 'provider' | 'admin' }
+  }
+  return null;
+}
+
+getCurrentUser(): any {
+  const user = localStorage.getItem('user');
+  return user ? JSON.parse(user) : null;
+}
+
+
+
+
   forgotPassword(email: string) {
   return this.http.post(`${this.baseUrl}/forgot-password`, { email });
 }
