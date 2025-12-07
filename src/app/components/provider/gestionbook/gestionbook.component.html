@@ -1,18 +1,289 @@
-<h2>Brouillon Map</h2>
+<div class="gestionbook-container">
+  
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement de la réservation...</p>
+  </div>
 
-<input 
-  type="text" 
-  placeholder="Recherche une adresse…" 
-  #searchInput
-  style="width: 100%; padding: 10px; border-radius: 8px; margin-bottom: 10px;"
->
+  <!-- Booking Details -->
+  <div *ngIf="!loading && booking" class="booking-details">
+    
+    <!-- Header avec statut -->
+    <div class="header-section">
+      <button class="btn-back" (click)="goBack()">
+        <i class="fas fa-arrow-left"></i>
+        Retour
+      </button>
+      
+      <div class="status-badge" 
+        [class.status-pending]="booking.status === 'pending'"
+        [class.status-accepted]="booking.status === 'accepted'"
+        [class.status-paid]="booking.status === 'paid'"
+        [class.status-completed]="booking.status === 'completed'"
+        [class.status-refused]="booking.status === 'refused'">
+        <i class="fas"
+          [class.fa-clock]="booking.status === 'pending'"
+          [class.fa-check]="booking.status === 'accepted'"
+          [class.fa-credit-card]="booking.status === 'paid'"
+          [class.fa-check-double]="booking.status === 'completed'"
+          [class.fa-times]="booking.status === 'refused'"></i>
+        {{ getStatusLabel(booking.status) }}
+      </div>
+    </div>
 
-<button class="btn-outline" (click)="search(searchInput.value)">
-  Rechercher
-</button>
+    <h1 class="page-title">Gestion de la réservation</h1>
 
-<div id="map" style="height: 350px; width: 100%; border-radius: 10px; background: #eee; margin-top: 10px;"></div>
+    <!-- Grid 2 colonnes -->
+    <div class="content-grid">
+      
+      <!-- Colonne gauche: Informations -->
+      <div class="info-section">
+        
+        <!-- Client Info Card -->
+        <div class="card">
+          <h3 class="card-title">
+            <i class="fas fa-user"></i>
+            Informations Client
+          </h3>
+          <div class="client-info">
+            <img 
+              [src]="booking.client?.photo || '/assets/images/default-avatar.png'"
+              [alt]="booking.client?.nom"
+              class="client-photo">
+            <div>
+              <h4>{{ booking.client?.nom }} {{ booking.client?.prenom }}</h4>
+              <p><i class="fas fa-envelope"></i> {{ booking.client?.email }}</p>
+              <p *ngIf="booking.client?.telephone">
+                <i class="fas fa-phone"></i> {{ booking.client?.telephone }}
+              </p>
+              <button class="btn-contact" (click)="contactClient()">
+                <i class="fas fa-comment-dots"></i>
+                Contacter
+              </button>
+            </div>
+          </div>
+        </div>
 
-<button class="btn-outline" (click)="locate()" style="margin-top: 15px;">
-  Ma position
-</button>
+        <!-- Service Details Card -->
+        <div class="card">
+          <h3 class="card-title">
+            <i class="fas fa-wrench"></i>
+            Détails du service
+          </h3>
+          <div class="detail-row">
+            <span class="label">Service:</span>
+            <span class="value">{{ booking.service }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Date:</span>
+            <span class="value">{{ booking.date | date:'fullDate':'':'fr' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Heure:</span>
+            <span class="value">{{ booking.time || 'Non spécifiée' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Urgence:</span>
+            <span class="value" [class.urgent]="booking.urgency === 'high'">
+              {{ booking.urgency === 'high' ? 'Urgent' : 'Normal' }}
+            </span>
+          </div>
+          <div class="detail-full">
+            <span class="label">Description du problème:</span>
+            <p class="description">{{ booking.cause }}</p>
+          </div>
+        </div>
+
+        <!-- Location Card -->
+        <div class="card" *ngIf="booking.location">
+          <h3 class="card-title">
+            <i class="fas fa-map-marker-alt"></i>
+            Localisation
+          </h3>
+          <p class="address">{{ booking.location.address }}</p>
+          <button class="btn-map" (click)="viewOnMap()">
+            <i class="fas fa-map"></i>
+            Voir sur la carte
+          </button>
+        </div>
+
+        <!-- Attachments -->
+        <div class="card" *ngIf="booking.attachments && booking.attachments.length > 0">
+          <h3 class="card-title">
+            <i class="fas fa-paperclip"></i>
+            Photos jointes ({{ booking.attachments.length }})
+          </h3>
+          <div class="attachments-grid">
+            <div class="attachment-item" *ngFor="let img of booking.attachments; let i = index" (click)="openImageModal(img)">
+              <img [src]="img" alt="Photo {{ i + 1 }}" class="attachment-img">
+              <div class="attachment-overlay">
+                <i class="fas fa-search-plus"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Colonne droite: Actions -->
+      <div class="action-section">
+        
+        <!-- PENDING: Accept or Refuse -->
+        <div *ngIf="booking.status === 'pending'" class="card action-card">
+          <h3 class="card-title">
+            <i class="fas fa-tasks"></i>
+            Actions requises
+          </h3>
+          
+          <div class="form-group">
+            <label>Prix proposé (DT) *</label>
+            <input type="number" 
+              [(ngModel)]="proposedPrice" 
+              placeholder="Ex: 150"
+              class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label>Durée estimée (minutes) *</label>
+            <input type="number" 
+              [(ngModel)]="estimatedDuration" 
+              placeholder="Ex: 120"
+              class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label>Notes (optionnel)</label>
+            <textarea 
+              [(ngModel)]="providerNotes" 
+              rows="3"
+              placeholder="Informations complémentaires..."
+              class="form-textarea"></textarea>
+          </div>
+
+          <div class="action-buttons">
+            <button class="btn-accept" (click)="acceptBooking()">
+              <i class="fas fa-check"></i>
+              Accepter
+            </button>
+            <button class="btn-refuse" (click)="refuseBooking()">
+              <i class="fas fa-times"></i>
+              Refuser
+            </button>
+          </div>
+        </div>
+
+        <!-- ACCEPTED: Waiting for client payment -->
+        <div *ngIf="booking.status === 'accepted'" class="card action-card waiting-card">
+          <h3 class="card-title">
+            <i class="fas fa-hourglass-half"></i>
+            En attente du paiement
+          </h3>
+
+          <div class="info-box">
+            <p><strong>Prix convenu:</strong> {{ booking.proposedPrice }} DT</p>
+            <p><strong>Durée estimée:</strong> {{ booking.estimatedDuration }} min</p>
+            <p *ngIf="booking.providerNotes"><strong>Notes:</strong> {{ booking.providerNotes }}</p>
+          </div>
+
+          <div class="waiting-message">
+            <div class="waiting-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+            <h4>En attente de l'action du client</h4>
+            <p>Le client doit effectuer le paiement pour confirmer la réservation. Vous serez notifié dès que le paiement sera reçu.</p>
+          </div>
+
+          <div class="status-timeline">
+            <div class="timeline-step completed">
+              <i class="fas fa-check-circle"></i>
+              <span>Acceptée</span>
+            </div>
+            <div class="timeline-line"></div>
+            <div class="timeline-step current">
+              <i class="fas fa-spinner fa-spin"></i>
+              <span>Paiement en attente</span>
+            </div>
+            <div class="timeline-line inactive"></div>
+            <div class="timeline-step inactive">
+              <i class="fas fa-circle"></i>
+              <span>Service à effectuer</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAID: Can Complete or Cancel -->
+        <div *ngIf="booking.status === 'paid'" class="card action-card">
+          <h3 class="card-title">
+            <i class="fas fa-cog"></i>
+            Gérer la réservation
+          </h3>
+
+          <div class="info-box success-box">
+            <div class="payment-confirmed">
+              <i class="fas fa-check-circle"></i>
+              <span>Paiement confirmé !</span>
+            </div>
+            <p><strong>Prix convenu:</strong> {{ booking.proposedPrice }} DT</p>
+            <p><strong>Durée estimée:</strong> {{ booking.estimatedDuration }} min</p>
+            <p *ngIf="booking.providerNotes"><strong>Notes:</strong> {{ booking.providerNotes }}</p>
+          </div>
+
+          <div class="action-buttons">
+            <button class="btn-complete" (click)="markAsCompleted()">
+              <i class="fas fa-check-double"></i>
+              Marquer terminé
+            </button>
+            <button class="btn-cancel" (click)="cancelBooking()">
+              <i class="fas fa-ban"></i>
+              Annuler
+            </button>
+          </div>
+        </div>
+
+        <!-- COMPLETED: Read-only -->
+        <div *ngIf="booking.status === 'completed'" class="card action-card completed">
+          <h3 class="card-title">
+            <i class="fas fa-check-circle"></i>
+            Service terminé
+          </h3>
+
+          <div class="info-box success">
+            <p><i class="fas fa-coins"></i> Montant: {{ booking.proposedPrice }} DT</p>
+            <p><i class="fas fa-clock"></i> Durée: {{ booking.estimatedDuration }} min</p>
+            <p><i class="fas fa-calendar-check"></i> Terminé le: {{ booking.completedAt | date:'short':'':'fr' }}</p>
+          </div>
+        </div>
+
+        <!-- REFUSED: Read-only -->
+        <div *ngIf="booking.status === 'refused'" class="card action-card refused">
+          <h3 class="card-title">
+            <i class="fas fa-times-circle"></i>
+            Réservation refusée
+          </h3>
+
+          <div class="info-box error">
+            <p *ngIf="booking.refusalReason">
+              <strong>Raison:</strong> {{ booking.refusalReason }}
+            </p>
+            <p *ngIf="!booking.refusalReason">
+              Vous avez refusé cette réservation
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Image Modal -->
+<div class="image-modal" *ngIf="selectedImage" (click)="closeImageModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <button class="close-btn" (click)="closeImageModal()">
+      <i class="fas fa-times"></i>
+    </button>
+    <img [src]="selectedImage" alt="Image agrandie">
+  </div>
+</div>

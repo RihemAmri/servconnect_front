@@ -1,227 +1,223 @@
-<div class="min-h-screen bg-gray-50 pt-20">
-  <div class="max-w-5xl mx-auto px-6 py-8">
-    <!-- Header -->
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">
-        Mes documents de vérification
+<div class="docs-container">
+  
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement de vos documents...</p>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!loading" class="content">
+    
+    <!-- Header Section -->
+    <div class="header-section">
+      <div class="header-top">
+        <button class="btn-back" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          Retour
+        </button>
+      </div>
+      
+      <h1 class="page-title">
+        <i class="fas fa-folder-open"></i>
+        Mes Documents
       </h1>
-      <p class="text-gray-600">
-        Gérez vos documents pour valider votre compte prestataire
-      </p>
+      <p class="page-subtitle">Gérez vos documents de vérification professionnelle</p>
     </div>
 
-    <!-- Loading -->
-    <div *ngIf="loading" class="flex items-center justify-center h-48">
-      <i class="pi pi-spin pi-spinner text-4xl text-blue-500"></i>
+    <!-- Account Status Card -->
+    <div class="status-card" [class.verified]="isVerified">
+      <div class="status-content">
+        <div class="status-icon">
+          <i class="fas" [class.fa-check-circle]="isVerified" [class.fa-hourglass-half]="!isVerified"></i>
+        </div>
+        <div class="status-info">
+          <h2>{{ isVerified ? 'Compte vérifié' : 'Vérification en cours' }}</h2>
+          <p>{{ isVerified ? 'Votre compte a été vérifié avec succès' : 'Vos documents sont en cours de vérification' }}</p>
+        </div>
+      </div>
+      
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-item">
+          <span class="stat-value total">{{ stats.total }}</span>
+          <span class="stat-label">Total</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value pending">{{ stats.pending }}</span>
+          <span class="stat-label">En attente</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value verified">{{ stats.verified }}</span>
+          <span class="stat-label">Vérifiés</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value rejected">{{ stats.rejected }}</span>
+          <span class="stat-label">Rejetés</span>
+        </div>
+      </div>
     </div>
 
-    <div *ngIf="!loading" class="space-y-6">
-      <!-- Statut du compte -->
-      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-lg font-semibold text-gray-900 mb-2">
-              Statut de votre compte
-            </h2>
-            <div class="flex items-center gap-2">
-              <p-tag
-                [value]="isVerified ? 'Vérifié' : 'En attente de vérification'"
-                [severity]="isVerified ? 'success' : 'warn'"
-              ></p-tag>
+    <!-- Documents Grid -->
+    <div class="documents-section">
+      <h2 class="section-title">
+        <i class="fas fa-file-alt"></i>
+        Documents requis
+      </h2>
+
+      <div class="documents-grid">
+        <div *ngFor="let docType of documentTypes" class="document-card" 
+             [class.has-document]="getDocumentByType(docType.type)"
+             [class.verified]="getDocumentByType(docType.type)?.status === 'verified'"
+             [class.pending]="getDocumentByType(docType.type)?.status === 'pending'"
+             [class.rejected]="getDocumentByType(docType.type)?.status === 'rejected'">
+          
+          <!-- Document Header -->
+          <div class="doc-header">
+            <div class="doc-icon">
+              <i class="fas" [ngClass]="docType.icon"></i>
+            </div>
+            <div class="doc-title">
+              <h3>{{ docType.label }}</h3>
+              <p>{{ docType.description }}</p>
             </div>
           </div>
 
-          <!-- Badge vérifié -->
-          <div *ngIf="isVerified" class="text-green-500">
-            <i class="pi pi-check-circle text-5xl"></i>
-          </div>
-        </div>
+          <!-- Document Status (if exists) -->
+          <div *ngIf="getDocumentByType(docType.type) as doc" class="doc-status-section">
+            <div class="status-badge" [ngClass]="getStatusInfo(doc.status).class">
+              <i class="fas" [ngClass]="getStatusInfo(doc.status).icon"></i>
+              {{ getStatusInfo(doc.status).label }}
+            </div>
 
-        <!-- Statistiques -->
-        <div class="grid grid-cols-4 gap-4 mt-6 pt-6 border-t">
-          <div class="text-center">
-            <p class="text-2xl font-bold text-blue-600">{{ stats.total }}</p>
-            <p class="text-sm text-gray-600">Total</p>
-          </div>
-          <div class="text-center">
-            <p class="text-2xl font-bold text-yellow-600">
-              {{ stats.pending }}
+            <p class="upload-date">
+              <i class="fas fa-calendar-alt"></i>
+              Envoyé le {{ doc.uploadedAt | date:'d MMM yyyy':'':'fr' }}
             </p>
-            <p class="text-sm text-gray-600">En attente</p>
+
+            <!-- Preview & Actions - IMAGE -->
+            <div *ngIf="!isPdf(doc.path)" class="doc-preview" (click)="viewDocument(doc.path)">
+              <img [src]="doc.path" [alt]="docType.label">
+              <div class="preview-overlay">
+                <i class="fas fa-search-plus"></i>
+              </div>
+            </div>
+
+            <!-- Preview & Actions - PDF -->
+            <div *ngIf="isPdf(doc.path)" class="doc-preview pdf-preview" (click)="viewDocument(doc.path)">
+              <div class="pdf-icon">
+                <i class="fas fa-file-pdf"></i>
+                <span>Document PDF</span>
+              </div>
+              <div class="preview-overlay">
+                <i class="fas fa-external-link-alt"></i>
+                <span>Ouvrir</span>
+              </div>
+            </div>
+
+            <div class="doc-actions">
+              <button class="btn-view" (click)="viewDocument(doc.path)">
+                <i class="fas" [class.fa-eye]="!isPdf(doc.path)" [class.fa-external-link-alt]="isPdf(doc.path)"></i>
+                {{ isPdf(doc.path) ? 'Ouvrir PDF' : 'Voir' }}
+              </button>
+              <button class="btn-external" (click)="openDocumentNewTab(doc.path)">
+                <i class="fas fa-external-link-alt"></i>
+              </button>
+            </div>
+
+            <!-- Rejection Reason -->
+            <div *ngIf="doc.status === 'rejected' && doc.rejectionReason" class="rejection-alert">
+              <i class="fas fa-exclamation-triangle"></i>
+              <div>
+                <strong>Motif du refus :</strong>
+                <p>{{ doc.rejectionReason }}</p>
+              </div>
+            </div>
           </div>
-          <div class="text-center">
-            <p class="text-2xl font-bold text-green-600">
-              {{ stats.verified }}
-            </p>
-            <p class="text-sm text-gray-600">Vérifiés</p>
+
+          <!-- No Document Yet -->
+          <div *ngIf="!getDocumentByType(docType.type)" class="no-document">
+            <div class="empty-icon">
+              <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            <p>Aucun document soumis</p>
           </div>
-          <div class="text-center">
-            <p class="text-2xl font-bold text-red-600">{{ stats.rejected }}</p>
-            <p class="text-sm text-gray-600">Rejetés</p>
+
+          <!-- Upload Section (if can upload) -->
+          <div *ngIf="canUpload(docType.type)" class="upload-section">
+            <div class="upload-zone" [class.has-file]="selectedFiles[docType.type]">
+              <input 
+                type="file" 
+                [id]="'file-' + docType.type"
+                accept=".pdf,.jpg,.jpeg,.png"
+                (change)="onFileSelected($event, docType.type)"
+                hidden>
+              
+              <label *ngIf="!selectedFiles[docType.type]" [for]="'file-' + docType.type" class="upload-label">
+                <i class="fas fa-plus"></i>
+                <span>Sélectionner un fichier</span>
+                <small>PDF, JPG, PNG (max 5MB)</small>
+              </label>
+
+              <div *ngIf="selectedFiles[docType.type]" class="selected-file">
+                <div class="file-info">
+                  <i class="fas fa-file"></i>
+                  <div>
+                    <span class="file-name">{{ selectedFiles[docType.type]?.name }}</span>
+                    <span class="file-size">{{ formatFileSize(selectedFiles[docType.type]?.size || 0) }}</span>
+                  </div>
+                </div>
+                <button class="btn-remove" (click)="removeSelectedFile(docType.type)">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+
+            <button 
+              *ngIf="selectedFiles[docType.type]"
+              class="btn-upload"
+              (click)="uploadDocument(docType.type)"
+              [disabled]="uploading">
+              <i class="fas" [class.fa-spinner]="uploading" [class.fa-spin]="uploading" [class.fa-cloud-upload-alt]="!uploading"></i>
+              {{ uploading ? 'Envoi...' : 'Envoyer' }}
+            </button>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Liste des documents -->
-      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">
-          Documents soumis
-        </h2>
-
-        <div
-          *ngIf="documents.length === 0"
-          class="text-center py-8 text-gray-500"
-        >
-          <i class="pi pi-file text-4xl mb-3"></i>
-          <p>Aucun document soumis</p>
-        </div>
-
-        <div class="space-y-4">
-          <div
-            *ngFor="let doc of documents"
-            class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-          >
-            <div class="flex items-start justify-between gap-4">
-              <div class="flex-1">
-                <div class="flex items-center gap-3 mb-2">
-                  <h3 class="font-semibold text-gray-900">
-                    {{ getDocumentTypeLabel(doc.documentType) }}
-                  </h3>
-                  <p-tag
-                    [value]="getStatusLabel(doc.status)"
-                    [severity]="getStatusSeverity(doc.status)"
-                  ></p-tag>
-                </div>
-
-                <p class="text-sm text-gray-600 mb-2">
-                  <i class="pi pi-calendar mr-1"></i>
-                  Uploadé le {{ doc.uploadedAt | date : "dd/MM/yyyy à HH:mm" }}
-                </p>
-
-                <!-- Motif de refus -->
-                <div
-                  *ngIf="doc.status === 'rejected' && doc.rejectionReason"
-                  class="mt-3 p-3 bg-red-50 border border-red-200 rounded-md"
-                >
-                  <p class="text-sm text-red-800">
-                    <i class="pi pi-exclamation-triangle mr-2"></i>
-                    <strong>Motif du refus :</strong> {{ doc.rejectionReason }}
-                  </p>
-                </div>
-              </div>
-
-              <button
-                pButton
-                icon="pi pi-eye"
-                class="p-button-outlined p-button-sm"
-                (click)="openDocument(doc.path)"
-                pTooltip="Voir le document"
-              ></button>
-            </div>
-          </div>
-        </div>
+    <!-- Help Section -->
+    <div class="help-card">
+      <div class="help-icon">
+        <i class="fas fa-info-circle"></i>
       </div>
+      <div class="help-content">
+        <h3>Besoin d'aide ?</h3>
+        <p>Assurez-vous que vos documents sont :</p>
+        <ul>
+          <li><i class="fas fa-check"></i> Lisibles et de bonne qualité</li>
+          <li><i class="fas fa-check"></i> En cours de validité</li>
+          <li><i class="fas fa-check"></i> Format PDF, JPG ou PNG</li>
+        </ul>
+      </div>
+    </div>
 
-      <!-- Formulaire de re-soumission (si documents rejetés) -->
-      <div
-        *ngIf="stats.rejected > 0"
-        class="bg-amber-50 border-2 border-amber-200 rounded-lg p-6"
-      >
-        <div class="flex items-start gap-3 mb-4">
-          <i class="pi pi-info-circle text-amber-600 text-2xl"></i>
-          <div>
-            <h3 class="font-semibold text-amber-900 mb-1">Documents rejetés</h3>
-            <p class="text-sm text-amber-800">
-              Certains de vos documents ont été rejetés. Veuillez soumettre de
-              nouveaux documents pour débloquer votre compte.
-            </p>
-          </div>
-        </div>
+  </div>
 
-        <!-- Upload certifications -->
-        <div class="space-y-4 mt-6">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              Nouveaux certificats (optionnel)
-            </label>
-            <input
-              #certificationsInput
-              type="file"
-              multiple
-              accept=".pdf,.jpg,.jpeg,.png"
-              (change)="onCertificationsSelected($event)"
-              class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-            />
-            <div *ngIf="certificationsFiles.length > 0" class="mt-2 space-y-1">
-              <div
-                *ngFor="let file of certificationsFiles; let i = index"
-                class="flex items-center justify-between text-sm bg-gray-50 p-2 rounded"
-              >
-                <span
-                  >{{ file.name }} ({{
-                    (file.size / 1024).toFixed(2)
-                  }}
-                  KB)</span
-                >
-                <button
-                  pButton
-                  icon="pi pi-times"
-                  class="p-button-text p-button-sm p-button-danger"
-                  (click)="removeCertification(i)"
-                ></button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Upload documents -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              Nouveaux documents (optionnel)
-            </label>
-            <input
-              #documentsInput
-              type="file"
-              multiple
-              accept=".pdf,.jpg,.jpeg,.png"
-              (change)="onDocumentsSelected($event)"
-              class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-            />
-            <div *ngIf="documentsFiles.length > 0" class="mt-2 space-y-1">
-              <div
-                *ngFor="let file of documentsFiles; let i = index"
-                class="flex items-center justify-between text-sm bg-gray-50 p-2 rounded"
-              >
-                <span
-                  >{{ file.name }} ({{
-                    (file.size / 1024).toFixed(2)
-                  }}
-                  KB)</span
-                >
-                <button
-                  pButton
-                  icon="pi pi-times"
-                  class="p-button-text p-button-sm p-button-danger"
-                  (click)="removeDocument(i)"
-                ></button>
-              </div>
-            </div>
-          </div>
-
-          <button
-            pButton
-            label="Soumettre les nouveaux documents"
-            icon="pi pi-upload"
-            class="p-button-success w-full"
-            [loading]="uploading"
-            [disabled]="
-              certificationsFiles.length === 0 && documentsFiles.length === 0
-            "
-            (click)="resubmitDocuments()"
-          ></button>
-        </div>
+  <!-- Image Modal -->
+  <div *ngIf="selectedImage" class="image-modal" (click)="closeImageModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeImageModal()">
+        <i class="fas fa-times"></i>
+      </button>
+      <img [src]="selectedImage" alt="Document">
+      <div class="modal-actions">
+        <button class="btn-modal" (click)="openDocumentNewTab(selectedImage)">
+          <i class="fas fa-external-link-alt"></i>
+          Ouvrir dans un nouvel onglet
+        </button>
       </div>
     </div>
   </div>
 
-  <p-toast position="top-right"></p-toast>
 </div>
