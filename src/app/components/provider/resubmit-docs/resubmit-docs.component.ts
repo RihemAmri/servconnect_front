@@ -1,63 +1,72 @@
-import { Component, OnInit, inject, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
+import Swal from 'sweetalert2';
 
-// PrimeNG
-import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
-import { TagModule } from 'primeng/tag';
-import { ToastModule } from 'primeng/toast';
-import { FileUploadModule } from 'primeng/fileupload';
-import { MessageService } from 'primeng/api';
+interface VerificationDocument {
+  _id: string;
+  documentType: 'id' | 'certificate' | 'license' | 'other';
+  path: string;
+  isVerified: boolean;
+  status: 'pending' | 'verified' | 'rejected';
+  rejectionReason?: string;
+  uploadedAt: string;
+}
 
-import { 
-  ProvidersService, 
-  DocumentStatus, 
-  DocumentsStatusResponse 
-} from '../../../services/providers.service';
-import { AuthService } from '../../../services/auth.service';
+interface DocumentStats {
+  total: number;
+  pending: number;
+  verified: number;
+  rejected: number;
+}
+
+interface ProviderDocumentsResponse {
+  provider: {
+    _id: string;
+    isVerified: boolean;
+    verificationDocuments: VerificationDocument[];
+    stats: DocumentStats;
+  };
+}
 
 @Component({
   selector: 'app-resubmit-docs',
-  standalone: true, // ✅ standalone: true
-  imports: [
-    CommonModule,
-    FormsModule,
-    CardModule,
-    ButtonModule,
-    TagModule,
-    ToastModule,
-    FileUploadModule
-  ],
-  providers: [MessageService],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './resubmit-docs.component.html',
   styleUrl: './resubmit-docs.component.scss'
 })
-export class ResubmitDocsComponent implements OnInit { // ✅ implements OnInit
-  
-  @ViewChild('certificationsInput') certificationsInput!: ElementRef<HTMLInputElement>;
-  @ViewChild('documentsInput') documentsInput!: ElementRef<HTMLInputElement>;
+export class ResubmitDocsComponent implements OnInit {
+  private http = inject(HttpClient);
+  private router = inject(Router);
 
-  private documentsService = inject(ProvidersService); // ✅ ProvidersService
-  private authService = inject(AuthService);
-  private messageService = inject(MessageService);
+  // Data
+  providerId = '';
+  isVerified = false;
+  documents: VerificationDocument[] = [];
+  stats: DocumentStats = { total: 0, pending: 0, verified: 0, rejected: 0 };
 
-  providerId: string = '';
-  isVerified: boolean = false;
-  documents: DocumentStatus[] = [];
-  stats = {
-    total: 0,
-    pending: 0,
-    verified: 0,
-    rejected: 0
+  // UI States
+  loading = true;
+  uploading = false;
+  selectedImage: string | null = null;
+
+  // Upload - Track by document type
+  selectedFiles: { [key: string]: File | null } = {
+    id: null,
+    certificate: null,
+    license: null
   };
 
-  loading = false;
-  uploading = false;
-
-  // Fichiers sélectionnés
-  certificationsFiles: File[] = [];
-  documentsFiles: File[] = [];
+  // Document types config
+  documentTypes = [
+    { type: 'id', label: "Pièce d'identité", icon: 'fa-id-card', description: 'CIN, Passeport ou Permis de conduire' },
+    { type: 'certificate', label: 'Certificat', icon: 'fa-certificate', description: 'Diplôme ou certificat professionnel' },
+    { type: 'license', label: 'Licence', icon: 'fa-file-contract', description: 'Licence ou autorisation professionnelle' }
+  ];
 
   ngOnInit() {
     this.loadDocumentsStatus();
@@ -65,133 +74,175 @@ export class ResubmitDocsComponent implements OnInit { // ✅ implements OnInit
 
   loadDocumentsStatus() {
     this.loading = true;
-    this.documentsService.getMyDocumentsStatus().subscribe({
-      next: (response: DocumentsStatusResponse) => {
-        this.providerId = response.provider._id;
-        this.isVerified = response.provider.isVerified;
-        this.documents = response.provider.verificationDocuments;
-        this.stats = response.provider.stats;
-        this.loading = false;
-        console.log('📄 Documents chargés:', response);
-      },
-      error: (error) => {
-        console.error('❌ Erreur chargement documents:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erreur',
-          detail: 'Impossible de charger vos documents'
-        });
-        this.loading = false;
-      }
-    });
+    
+    this.http.get<ProviderDocumentsResponse>(`${environment.apiUrl}/api/providers/me/documents-status`)
+      .subscribe({
+        next: (response) => {
+          console.log('📄 Documents loaded:', response);
+          this.providerId = response.provider._id;
+          this.isVerified = response.provider.isVerified;
+          this.documents = response.provider.verificationDocuments || [];
+          this.stats = response.provider.stats;
+          this.loading = false;
+        },
+        error: (error) => {
+          console.error('❌ Error loading documents:', error);
+          this.loading = false;
+          Swal.fire({
+            icon: 'error',
+            title: 'Erreur',
+            text: 'Impossible de charger vos documents',
+            confirmButtonColor: '#025ddd'
+          });
+        }
+      });
   }
 
-  onCertificationsSelected(event: any) {
-    this.certificationsFiles = Array.from(event.target.files);
-    console.log(`📄 ${this.certificationsFiles.length} certification(s) sélectionnée(s)`);
+  // Get document by type
+  getDocumentByType(type: string): VerificationDocument | undefined {
+    return this.documents.find(d => d.documentType === type);
   }
 
-  onDocumentsSelected(event: any) {
-    this.documentsFiles = Array.from(event.target.files);
-    console.log(`📄 ${this.documentsFiles.length} document(s) sélectionné(s)`);
+  // Get status info
+  getStatusInfo(status: string): { label: string; class: string; icon: string } {
+    switch (status) {
+      case 'verified':
+        return { label: 'Vérifié', class: 'status-verified', icon: 'fa-check-circle' };
+      case 'pending':
+        return { label: 'En attente', class: 'status-pending', icon: 'fa-clock' };
+      case 'rejected':
+        return { label: 'Rejeté', class: 'status-rejected', icon: 'fa-times-circle' };
+      default:
+        return { label: 'Inconnu', class: 'status-pending', icon: 'fa-question-circle' };
+    }
   }
 
-  removeCertification(index: number) {
-    this.certificationsFiles.splice(index, 1);
+  // Check if document can be uploaded (new or rejected)
+  canUpload(type: string): boolean {
+    const doc = this.getDocumentByType(type);
+    return !doc || doc.status === 'rejected';
   }
 
-  removeDocument(index: number) {
-    this.documentsFiles.splice(index, 1);
+  // File selection
+  onFileSelected(event: Event, type: string) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFiles[type] = input.files[0];
+    }
   }
 
-  resubmitDocuments() {
-    if (this.certificationsFiles.length === 0 && this.documentsFiles.length === 0) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Aucun fichier',
-        detail: 'Veuillez sélectionner au moins un document'
+  removeSelectedFile(type: string) {
+    this.selectedFiles[type] = null;
+    // Reset input
+    const input = document.getElementById(`file-${type}`) as HTMLInputElement;
+    if (input) input.value = '';
+  }
+
+  // Upload single document
+  async uploadDocument(type: string) {
+    const file = this.selectedFiles[type];
+    if (!file) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Aucun fichier',
+        text: 'Veuillez sélectionner un fichier',
+        confirmButtonColor: '#025ddd'
       });
       return;
     }
 
-    const formData = new FormData();
-
-    // Ajouter les certificats
-    this.certificationsFiles.forEach(f => {
-      formData.append('certifications', f);
-      console.log(`📄 Ajout certificat: ${f.name}`);
+    const result = await Swal.fire({
+      title: 'Confirmer l\'envoi',
+      text: `Voulez-vous envoyer ce document (${this.getDocTypeLabel(type)}) ?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#025ddd',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Oui, envoyer',
+      cancelButtonText: 'Annuler'
     });
 
-    // Ajouter les documents
-    this.documentsFiles.forEach(f => {
-      formData.append('documents', f);
-      console.log(`📄 Ajout document: ${f.name}`);
-    });
+    if (!result.isConfirmed) return;
 
     this.uploading = true;
 
-    console.log(`🚀 Envoi vers: /api/providers/${this.providerId}/resubmit-documents`);
+    const formData = new FormData();
+    formData.append('documentType', type);
+    formData.append('document', file);
 
-    this.documentsService.resubmitDocuments(this.providerId, formData).subscribe({
-      next: (response) => {
-        console.log('✅ Documents re-soumis:', response);
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Succès',
-          detail: 'Vos documents ont été envoyés pour vérification'
-        });
-
-        // Réinitialiser
-        this.certificationsFiles = [];
-        this.documentsFiles = [];
-        if (this.certificationsInput) this.certificationsInput.nativeElement.value = '';
-        if (this.documentsInput) this.documentsInput.nativeElement.value = '';
-
-        // Recharger
-        this.loadDocumentsStatus();
-        this.uploading = false;
-      },
-      error: (error) => {
-        console.error('❌ Erreur re-soumission:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erreur',
-          detail: error.error?.message || 'Impossible d\'envoyer les documents'
-        });
-        this.uploading = false;
-      }
-    });
+    this.http.post(`${environment.apiUrl}/api/providers/${this.providerId}/upload-document`, formData)
+      .subscribe({
+        next: (response) => {
+          console.log('✅ Document uploaded:', response);
+          Swal.fire({
+            icon: 'success',
+            title: 'Document envoyé',
+            text: 'Votre document a été soumis pour vérification',
+            confirmButtonColor: '#025ddd'
+          });
+          this.selectedFiles[type] = null;
+          this.loadDocumentsStatus();
+          this.uploading = false;
+        },
+        error: (error) => {
+          console.error('❌ Upload error:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Erreur',
+            text: error.error?.message || 'Impossible d\'envoyer le document',
+            confirmButtonColor: '#025ddd'
+          });
+          this.uploading = false;
+        }
+      });
   }
 
-  getStatusSeverity(status: string): 'success' | 'warn' | 'danger' {
-    switch (status) {
-      case 'verified': return 'success';
-      case 'pending': return 'warn';
-      case 'rejected': return 'danger';
-      default: return 'warn';
+  // View document in modal (only for images)
+  viewDocument(url: string) {
+    if (this.isPdf(url)) {
+      // PDF - ouvrir dans un nouvel onglet
+      window.open(url, '_blank');
+    } else {
+      // Image - afficher dans le modal
+      this.selectedImage = url;
     }
   }
 
-  getStatusLabel(status: string): string {
-    switch (status) {
-      case 'verified': return 'Vérifié';
-      case 'pending': return 'En attente';
-      case 'rejected': return 'Rejeté';
-      default: return status;
-    }
+  closeImageModal() {
+    this.selectedImage = null;
   }
 
-  getDocumentTypeLabel(type: string): string {
-    switch (type) {
-      case 'id': return 'Pièce d\'identité';
-      case 'certificate': return 'Certificat';
-      case 'license': return 'Licence';
-      case 'other': return 'Autre document';
-      default: return type;
-    }
-  }
-
-  openDocument(url: string) {
+  // Open in new tab
+  openDocumentNewTab(url: string) {
     window.open(url, '_blank');
+  }
+
+  // Check if URL is PDF
+  isPdf(url: string): boolean {
+    if (!url) return false;
+    const lowerUrl = url.toLowerCase();
+    return lowerUrl.includes('.pdf') || lowerUrl.includes('/raw/') || lowerUrl.includes('resource_type=raw');
+  }
+
+  // Helper functions
+  getDocTypeLabel(type: string): string {
+    const found = this.documentTypes.find(d => d.type === type);
+    return found ? found.label : type;
+  }
+
+  getDocTypeIcon(type: string): string {
+    const found = this.documentTypes.find(d => d.type === type);
+    return found ? found.icon : 'fa-file';
+  }
+
+  goBack() {
+    this.router.navigate(['/my-services']);
+  }
+
+  // Format file size
+  formatFileSize(bytes: number): string {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
   }
 }

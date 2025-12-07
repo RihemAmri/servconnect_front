@@ -6,7 +6,13 @@
 
 <!-- Error State -->
 <div class="error-container" *ngIf="error && !loading">
-  <div class="error-icon">⚠️</div>
+  <div class="error-icon">
+    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="8" x2="12" y2="12"></line>
+      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+    </svg>
+  </div>
   <h3>Erreur</h3>
   <p>{{ error }}</p>
   <button class="retry-btn" (click)="loadProviderDetails()">Réessayer</button>
@@ -15,129 +21,117 @@
 <!-- PREMIUM PROVIDER DETAILS - FULL WIDTH DESIGN -->
 <div class="provider-details-wrapper" *ngIf="provider && !loading">
 
-  <!-- HERO SECTION - FULL WIDTH -->
-  <section class="hero-section-full">
-    <div class="hero-background">
-      <div class="hero-overlay"></div>
-      <div class="hero-pattern"></div>
+  <!-- HERO SECTION - PREMIUM REDESIGN -->
+  <section class="hero-section-premium">
+    <!-- Animated Background -->
+    <div class="hero-bg-layers">
+      <div class="hero-gradient-layer"></div>
+      <div class="hero-mesh-layer"></div>
+      <div class="hero-glow-orb hero-glow-1"></div>
+      <div class="hero-glow-orb hero-glow-2"></div>
     </div>
 
-    <div class="hero-container">
-      <!-- Back Button -->
-      <button class="back-btn-float" (click)="goBack()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M19 12H5M12 19l-7-7 7-7"/>
-        </svg>
-        Retour
-      </button>
+    <div class="hero-main-container">
+      <!-- Navigation Bar -->
+      <div class="hero-nav-bar">
+        <button class="back-btn-premium" (click)="goBack()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          <span>Retour</span>
+        </button>
+        <span class="hero-category-tag">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+          </svg>
+          {{ provider.metier }}
+        </span>
+      </div>
 
-      <!-- Hero Content -->
-      <div class="hero-content-full">
-        <!-- Provider Photo Section -->
-        <div class="provider-photo-section">
-          <div class="photo-container-large">
+      <!-- Main Hero Content -->
+      <div class="hero-profile-card">
+        <!-- Photo Section with Glow -->
+        <div class="hero-photo-wrapper">
+          <div class="photo-glow-ring"></div>
+          <div class="photo-container-premium">
             <img 
               [src]="getProviderPhoto()" 
               [alt]="provider.user.nom + ' ' + provider.user.prenom"
-              class="provider-photo-premium"
+              class="provider-avatar-premium"
             />
-            <div class="photo-ring"></div>
+            <div class="photo-shine-effect"></div>
           </div>
-          
-          <div class="verification-badge-large" *ngIf="provider.isVerified">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          <!-- Verified Badge Floating -->
+          <div class="verified-floating-badge" *ngIf="provider.isVerified">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
             </svg>
-            Vérifié
           </div>
         </div>
 
-        <!-- Provider Info Section -->
-        <div class="provider-info-section">
-          <span class="category-badge-premium">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-            </svg>
-            {{ provider.metier }}
-          </span>
-
-          <h1 class="provider-name-premium">
+        <!-- Info Section -->
+        <div class="hero-info-wrapper">
+          <h1 class="provider-name-hero">
             {{ provider.user.prenom }} {{ provider.user.nom }}
           </h1>
-
-          <div class="rating-display-premium">
-            <div class="stars-premium">
-              <span *ngFor="let star of getStarsArray(provider.noteGenerale)">⭐</span>
-              <span *ngFor="let star of getStarsArray(5 - provider.noteGenerale)" class="star-icon-empty">⭐</span>
+          
+          <!-- Premium Rating Display -->
+          <div class="rating-block-premium">
+            <div class="stars-row-premium">
+              <svg *ngFor="let star of getStarsArray(provider.noteGenerale)" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700" stroke="#F59E0B" stroke-width="0.5">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+              <svg *ngFor="let star of getStarsArray(5 - provider.noteGenerale)" width="22" height="22" viewBox="0 0 24 24" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" stroke-width="0.5">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
             </div>
-            <div class="rating-meta">
-              <span class="rating-score">{{ provider.noteGenerale }}</span>
-              <span class="rating-separator">/</span>
-              <span>5.0</span>
-              <span class="rating-separator">•</span>
-              <span class="rating-reviews">{{ provider.nombreAvis }} avis</span>
-            </div>
-          </div>
-
-          <!-- Quick Stats Bar -->
-          <div class="quick-stats-bar">
-            <div class="stat-item-inline">
-              <div class="stat-icon-box">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"/>
-                  <polyline points="12 6 12 12 16 14"/>
-                </svg>
-              </div>
-              <div class="stat-text">
-                <span class="stat-value-inline">{{ provider.experience || 0 }} ans</span>
-                <span class="stat-label-inline">Expérience</span>
-              </div>
-            </div>
-
-            <div class="stat-divider"></div>
-
-            <div class="stat-item-inline">
-              <div class="stat-icon-box">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                  <circle cx="12" cy="10" r="3"/>
-                </svg>
-              </div>
-              <div class="stat-text">
-                <span class="stat-value-inline">{{ getAddressString() }}</span>
-                <span class="stat-label-inline">Localisation</span>
-              </div>
-            </div>
-
-            <div class="stat-divider"></div>
-
-            <div class="stat-item-inline">
-              <div class="stat-icon-box">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                </svg>
-              </div>
-              <div class="stat-text">
-                <span class="stat-value-inline">{{ provider.user.telephone || 'Non fourni' }}</span>
-                <span class="stat-label-inline">Téléphone</span>
-              </div>
+            <div class="rating-info-text">
+              <span class="rating-number">{{ provider.noteGenerale }}</span>
+              <span class="rating-max">/5</span>
+              <span class="rating-dot">·</span>
+              <span class="rating-count">{{ provider.nombreAvis }} avis</span>
             </div>
           </div>
 
-          <!-- CTA Button -->
-          <button class="cta-book-premium" (click)="bookProvider()">
-            <svg class="cta-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-              <line x1="16" y1="2" x2="16" y2="6"/>
-              <line x1="8" y1="2" x2="8" y2="6"/>
-              <line x1="3" y1="10" x2="21" y2="10"/>
-            </svg>
-            <span>Réserver maintenant</span>
-            <span class="cta-arrow">→</span>
-          </button>
+          <!-- Quick Info Pills -->
+          <div class="info-pills-row">
+            <div class="info-pill">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              <span>{{ provider.experience || 0 }} ans d'exp.</span>
+            </div>
+            <div class="info-pill">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <span>{{ getAddressString() }}</span>
+            </div>
+            <div class="info-pill">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+              <span>{{ provider.user.telephone || 'Non fourni' }}</span>
+            </div>
+          </div>
         </div>
       </div>
+
+      <!-- CTA Button -->
+      <button class="cta-hero-premium" (click)="bookProvider()">
+        <span class="cta-text">Réserver maintenant</span>
+        <div class="cta-icon-wrapper">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </div>
+      </button>
     </div>
   </section>
 
@@ -189,7 +183,11 @@
           <div class="stats-grid-full">
             <div class="stat-card-full">
               <div class="stat-decoration"></div>
-              <div class="stat-icon-full">⭐</div>
+              <div class="stat-icon-full">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#025ddd" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+              </div>
               <div class="stat-content-full">
                 <div class="stat-value-full">{{ provider.noteGenerale }}/5</div>
                 <div class="stat-label-full">Note moyenne</div>
@@ -198,7 +196,13 @@
 
             <div class="stat-card-full">
               <div class="stat-decoration"></div>
-              <div class="stat-icon-full">💬</div>
+              <div class="stat-icon-full">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#025ddd" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                  <line x1="9" y1="9" x2="15" y2="9"></line>
+                  <line x1="9" y1="13" x2="13" y2="13"></line>
+                </svg>
+              </div>
               <div class="stat-content-full">
                 <div class="stat-value-full">{{ provider.nombreAvis }}</div>
                 <div class="stat-label-full">Avis clients</div>
@@ -207,7 +211,12 @@
 
             <div class="stat-card-full">
               <div class="stat-decoration"></div>
-              <div class="stat-icon-full">🏆</div>
+              <div class="stat-icon-full">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#025ddd" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="8" r="6"></circle>
+                  <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"></path>
+                </svg>
+              </div>
               <div class="stat-content-full">
                 <div class="stat-value-full">{{ provider.experience || 0 }}</div>
                 <div class="stat-label-full">Années d'expérience</div>
@@ -216,7 +225,12 @@
 
             <div class="stat-card-full">
               <div class="stat-decoration"></div>
-              <div class="stat-icon-full">✅</div>
+              <div class="stat-icon-full">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  <polyline points="9 12 11 14 15 10"></polyline>
+                </svg>
+              </div>
               <div class="stat-content-full">
                 <div class="stat-value-full">{{ provider.isVerified ? 'Vérifié' : 'En attente' }}</div>
                 <div class="stat-label-full">Statut</div>
@@ -354,7 +368,15 @@
         <div class="section-content-full">
           <div class="certifications-grid-full">
             <div class="certification-card-full" *ngFor="let cert of provider.certifications; let i = index">
-              <div class="cert-icon-full">📄</div>
+              <div class="cert-icon-full">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#025ddd" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+              </div>
               <div class="cert-content-full">
                 <div class="cert-name-full">Document {{ i + 1 }}</div>
                 <a [href]="cert" target="_blank" class="cert-link-full">
@@ -397,7 +419,9 @@
                 <div class="review-meta-full">
                   <span class="review-author-full">{{ review.client.prenom }} {{ review.client.nom }}</span>
                   <div class="review-stars-full">
-                    <span *ngFor="let star of getStarsArray(review.note)" class="star-review">⭐</span>
+                    <svg *ngFor="let star of getStarsArray(review.note)" width="16" height="16" viewBox="0 0 24 24" fill="#FFD700" stroke="#F59E0B" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="star-review">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
                   </div>
                 </div>
                 <span class="review-date-full">{{ formatDate(review.createdAt) }}</span>
@@ -407,7 +431,13 @@
           </div>
 
           <div class="no-reviews-full" *ngIf="!provider.reviews || provider.reviews.length === 0">
-            <div class="no-reviews-icon-full">💬</div>
+            <div class="no-reviews-icon-full">
+              <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                <line x1="9" y1="9" x2="15" y2="9"></line>
+                <line x1="9" y1="13" x2="12" y2="13"></line>
+              </svg>
+            </div>
             <h3 class="no-reviews-title">Aucun avis pour le moment</h3>
             <p class="no-reviews-text">Soyez le premier à laisser un avis après votre réservation !</p>
           </div>

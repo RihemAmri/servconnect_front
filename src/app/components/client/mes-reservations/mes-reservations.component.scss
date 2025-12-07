@@ -1,0 +1,780 @@
+// ===== MES RESERVATIONS - PREMIUM CLIENT INTERFACE =====
+
+// ===== VARIABLES =====
+$primary: #025ddd;
+$primary-dark: #0047b3;
+$primary-light: #e6f2ff;
+$primary-gradient: linear-gradient(135deg, #025ddd 0%, #0047b3 100%);
+$success: #10b981;
+$success-light: #d1fae5;
+$warning: #f59e0b;
+$warning-light: #fef3c7;
+$danger: #ef4444;
+$danger-light: #fee2e2;
+$gold: #f59e0b;
+$white: #ffffff;
+$black: #1a1a1a;
+$gray-50: #f9fafb;
+$gray-100: #f3f4f6;
+$gray-200: #e5e7eb;
+$gray-300: #d1d5db;
+$gray-400: #9ca3af;
+$gray-500: #6b7280;
+$gray-600: #4b5563;
+$gray-700: #374151;
+
+$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+$shadow-md: 0 6px 25px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.12);
+$shadow-xl: 0 20px 50px rgba(0, 0, 0, 0.15);
+$shadow-primary: 0 8px 30px rgba(2, 93, 221, 0.25);
+
+// ===== BASE CONTAINER =====
+.reservations-container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, $gray-50 0%, $white 100%);
+}
+
+// ===== LOADING STATE =====
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  padding: 4rem 2rem;
+
+  .spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid $gray-200;
+    border-left: 4px solid $primary;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 1.5rem;
+  }
+
+  p {
+    font-size: 1.1rem;
+    color: $gray-600;
+    font-weight: 500;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// ===== HERO HEADER =====
+.hero-header {
+  position: relative;
+  background: $primary-gradient;
+  padding: 3rem 2rem;
+  overflow: hidden;
+  
+  .hero-background {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.3;
+      
+      &.orb-1 {
+        width: 300px;
+        height: 300px;
+        background: rgba(255, 255, 255, 0.4);
+        top: -100px;
+        right: -50px;
+        animation: floatOrb 8s ease-in-out infinite;
+      }
+      
+      &.orb-2 {
+        width: 200px;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.3);
+        bottom: -50px;
+        left: 10%;
+        animation: floatOrb 10s ease-in-out infinite reverse;
+      }
+      
+      &.orb-3 {
+        width: 150px;
+        height: 150px;
+        background: $gold;
+        top: 50%;
+        left: 50%;
+        opacity: 0.15;
+        animation: floatOrb 12s ease-in-out infinite;
+      }
+    }
+  }
+  
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 1400px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    padding: 10px 20px;
+    border-radius: 50px;
+    color: $white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+  
+  .hero-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: $white;
+    margin-bottom: 0.5rem;
+    letter-spacing: -1px;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  .hero-subtitle {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 400;
+  }
+}
+
+@keyframes floatOrb {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-20px, -20px) scale(1.1); }
+}
+
+// ===== STATS DASHBOARD =====
+.stats-dashboard {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+  max-width: 1400px;
+  margin: -2rem auto 2rem;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 10;
+  
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 0 1rem;
+  }
+}
+
+.stat-card {
+  background: $white;
+  border-radius: 16px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: $shadow-md;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: $shadow-lg;
+  }
+  
+  &.active {
+    border-color: $primary;
+    background: $primary-light;
+    
+    .stat-icon {
+      transform: scale(1.1);
+    }
+  }
+  
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+    
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+    
+    &.total {
+      background: linear-gradient(135deg, rgba(2, 93, 221, 0.1), rgba(2, 93, 221, 0.2));
+      color: $primary;
+    }
+    
+    &.pending {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.2));
+      color: $warning;
+    }
+    
+    &.accepted {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.2));
+      color: $success;
+    }
+    
+    &.paid {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.2));
+      color: #3b82f6;
+    }
+    
+    &.completed {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.2));
+      color: $success;
+    }
+    
+    &.refused {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.2));
+      color: $danger;
+    }
+  }
+  
+  .stat-content {
+    display: flex;
+    flex-direction: column;
+    
+    .stat-number {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: $black;
+      line-height: 1.2;
+    }
+    
+    .stat-label {
+      font-size: 0.8rem;
+      color: $gray-500;
+      font-weight: 500;
+    }
+  }
+}
+
+// ===== RESERVATIONS SECTION =====
+.reservations-section {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem 3rem;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  
+  .section-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: $black;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    
+    svg {
+      color: $primary;
+    }
+  }
+  
+  .results-count {
+    font-size: 0.9rem;
+    color: $gray-500;
+    font-weight: 500;
+    background: $gray-100;
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+}
+
+// ===== EMPTY STATE =====
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background: $white;
+  border-radius: 24px;
+  box-shadow: $shadow-sm;
+  
+  .empty-illustration {
+    margin-bottom: 1.5rem;
+    
+    svg {
+      width: 100px;
+      height: 100px;
+      opacity: 0.5;
+    }
+  }
+  
+  h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: $black;
+    margin-bottom: 0.5rem;
+  }
+  
+  p {
+    font-size: 1rem;
+    color: $gray-500;
+    margin-bottom: 1.5rem;
+  }
+  
+  .btn-explore {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: $primary-gradient;
+    color: $white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: $shadow-primary;
+    
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(2, 93, 221, 0.35);
+    }
+    
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+// ===== RESERVATIONS GRID =====
+.reservations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 24px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ===== RESERVATION CARD =====
+.reservation-card {
+  position: relative;
+  background: $white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: $shadow-md;
+  border: 1px solid $gray-200;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: $shadow-lg;
+  }
+  
+  // Status-based left border
+  &.status-pending {
+    border-left: 4px solid $warning;
+  }
+  
+  &.status-accepted {
+    border-left: 4px solid $success;
+  }
+  
+  &.status-paid {
+    border-left: 4px solid #3b82f6;
+  }
+  
+  &.status-completed {
+    border-left: 4px solid $success;
+  }
+  
+  &.status-refused {
+    border-left: 4px solid $danger;
+  }
+  
+  &.status-cancelled {
+    border-left: 4px solid $gray-400;
+  }
+}
+
+.status-ribbon {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 5;
+  
+  &.status-pending {
+    background: $warning-light;
+    color: #b45309;
+  }
+  
+  &.status-accepted {
+    background: $success-light;
+    color: #047857;
+  }
+  
+  &.status-paid {
+    background: rgba(59, 130, 246, 0.15);
+    color: #1d4ed8;
+  }
+  
+  &.status-completed {
+    background: $success-light;
+    color: #047857;
+  }
+  
+  &.status-refused {
+    background: $danger-light;
+    color: #b91c1c;
+  }
+  
+  &.status-cancelled {
+    background: $gray-200;
+    color: $gray-600;
+  }
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid $gray-100;
+  
+  .provider-avatar {
+    position: relative;
+    
+    img {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      object-fit: cover;
+      border: 3px solid $primary-light;
+    }
+    
+    .metier-badge {
+      position: absolute;
+      bottom: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: $primary;
+      color: $white;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 10px;
+      white-space: nowrap;
+      text-transform: uppercase;
+    }
+  }
+  
+  .provider-info {
+    flex: 1;
+    min-width: 0;
+    padding-right: 80px; // Space for status badge
+    
+    .provider-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: $black;
+      margin: 0 0 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .service-type {
+      font-size: 0.9rem;
+      color: $gray-500;
+      font-weight: 500;
+    }
+  }
+}
+
+.card-body {
+  padding: 16px 20px;
+  
+  .info-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 12px;
+    
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: $gray-600;
+      
+      svg {
+        color: $primary;
+        flex-shrink: 0;
+      }
+      
+      &.location {
+        flex: 1;
+        min-width: 100%;
+        
+        span {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+  }
+  
+  .description-box {
+    background: $gray-50;
+    padding: 12px 14px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    
+    p {
+      font-size: 0.9rem;
+      color: $gray-700;
+      line-height: 1.5;
+      margin: 0;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  }
+}
+
+// ===== PRICE PROPOSAL BOX =====
+.price-proposal {
+  background: linear-gradient(135deg, $success-light, rgba(16, 185, 129, 0.08));
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 14px;
+  padding: 16px;
+  margin-top: 12px;
+  
+  .proposal-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    
+    svg {
+      color: $success;
+    }
+    
+    span {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #047857;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+  
+  .proposal-details {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 8px;
+    
+    .price, .duration {
+      display: flex;
+      flex-direction: column;
+      
+      .amount {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: $black;
+      }
+      
+      .label {
+        font-size: 0.75rem;
+        color: $gray-500;
+        font-weight: 500;
+      }
+    }
+  }
+  
+  .provider-notes {
+    font-size: 0.85rem;
+    color: $gray-600;
+    margin: 0;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(16, 185, 129, 0.3);
+    
+    strong {
+      color: $gray-700;
+    }
+  }
+}
+
+// ===== REFUSAL BOX =====
+.refusal-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: $danger-light;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-top: 12px;
+  
+  svg {
+    color: $danger;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  
+  span {
+    font-size: 0.9rem;
+    color: #b91c1c;
+    line-height: 1.4;
+  }
+}
+
+// ===== CARD FOOTER =====
+.card-footer {
+  display: flex;
+  gap: 12px;
+  padding: 16px 20px;
+  background: $gray-50;
+  border-top: 1px solid $gray-200;
+  
+  button {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+    
+    &.full-width {
+      flex: 1;
+    }
+  }
+  
+  .btn-primary {
+    background: $primary-gradient;
+    color: $white;
+    box-shadow: $shadow-primary;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(2, 93, 221, 0.35);
+    }
+  }
+  
+  .btn-secondary {
+    background: $white;
+    color: $gray-600;
+    border: 1px solid $gray-300;
+    
+    &:hover {
+      background: $gray-50;
+      color: $danger;
+      border-color: $danger;
+    }
+  }
+  
+  .btn-success {
+    background: linear-gradient(135deg, $success 0%, #059669 100%);
+    color: $white;
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+    }
+  }
+  
+  .btn-gold {
+    background: linear-gradient(135deg, $gold 0%, #d97706 100%);
+    color: $white;
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.3);
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);
+    }
+  }
+}
+
+// ===== RESPONSIVE =====
+@media (max-width: 768px) {
+  .hero-header {
+    padding: 2rem 1rem;
+    
+    .hero-title {
+      font-size: 1.8rem;
+    }
+    
+    .hero-subtitle {
+      font-size: 0.95rem;
+    }
+  }
+  
+  .reservations-section {
+    padding: 0 1rem 2rem;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .card-footer {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+    }
+  }
+}

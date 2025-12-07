@@ -18,6 +18,7 @@ import { ProviderDetailsComponent } from './components/client/provider-details/p
 import { ServicedetailsComponent } from './components/client/servicedetails/servicedetails.component';
 import { ReservationComponent } from './components/client/reservation/reservation.component';
 import { PaiementComponent } from './components/client/paiement/paiement.component';
+import { MesReservationsComponent } from './components/client/mes-reservations/mes-reservations.component';
 
 // Auth Components
 import { LoginComponent } from './components/auth/login/login.component';
@@ -58,6 +59,12 @@ export const routes: Routes = [
     data: { roles: ['prestataire'] }
   },
   {
+    path: 'manage-bookings/:id',
+    component: GestionbookComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['prestataire'] }
+  },
+  {
     path: 'add-service',
     component: AddservicesComponent,
     canActivate: [AuthGuard, RoleGuard],
@@ -76,16 +83,19 @@ export const routes: Routes = [
     data: { roles: ['prestataire'] }
   },
   {
-    path: 'manage-bookings',
-    component: GestionbookComponent,
-    canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['prestataire'] }
-  },
-  {
     path: 'provider/my-documents',
     component:ResubmitDocsComponent ,
     canActivate: [AuthGuard],
     data: { role: 'prestataire' }
+  },
+  {
+    path: 'provider/dashboard',
+    loadComponent: () =>
+      import('./components/provider/dashboard/dashboard.component').then(
+        m => m.ProviderDashboardComponent
+      ),
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['prestataire'] }
   },
 
   /** CLIENT ROUTES **/
@@ -119,9 +129,25 @@ export const routes: Routes = [
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['client'] }
   },
+  
   {
-    path: 'paiement',
+    path: 'paiement/:id',
     component: PaiementComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['client'] }
+  },
+  {
+    path: 'mes-reservations',
+    component: MesReservationsComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['client'] }
+  },
+  {
+    path: 'reservation-details/:id',
+    loadComponent: () =>
+      import('./components/client/reservation-details/reservation-details.component').then(
+        m => m.ReservationDetailsComponent
+      ),
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['client'] }
   },
