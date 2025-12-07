@@ -65,7 +65,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.userRole = user.role;
         this.userName = `${user.prenom || ''} ${user.nom || ''}`.trim() || 'Utilisateur';
 
-        // Simuler des notifications (à remplacer par votre logique)
+        
         this.notificationsCount = this.getNotificationsCount(user.role);
 
         console.log("Nom calculé:", this.userName);
@@ -73,27 +73,27 @@ export class NavbarComponent implements OnInit, OnDestroy {
       })
     );
 
-    // Vérifier si on est dans le navigateur avant d'accéder à window/document
+    
     if (isPlatformBrowser(this.platformId)) {
       this.isClientInitialized = true;
-      // Scroll listener
+      
       this.subs.push(
         fromEvent(window, 'scroll').subscribe(() => {
           this.isScrolled = window.scrollY > 10;
         })
       );
 
-      // Click listener pour fermer les dropdowns
+     
       this.subs.push(
         fromEvent(document, 'click').subscribe((event: Event) => {
           const target = event.target as HTMLElement;
           
-          // Fermer le dropdown "Plus" si on clique à l'extérieur
+          
           if (!target.closest('.nav-dropdown')) {
             this.isDropdownOpen = false;
           }
 
-          // Fermer le menu utilisateur si on clique à l'extérieur
+          
           if (!target.closest('.user-menu')) {
             this.isUserMenuOpen = false;
           }
@@ -105,7 +105,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subs.forEach(s => s.unsubscribe());
     
-    // Réactiver le scroll du body seulement si on est dans le navigateur
+    
     if (isPlatformBrowser(this.platformId)) {
       document.body.style.overflow = '';
     }
@@ -242,6 +242,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       detail: 'Utilisateur déconnecté', // Le message souhaité
       life: 1000 // Durée d'affichage en ms (3 secondes)
     });
+     window.location.href="/";
   }
 
   /**

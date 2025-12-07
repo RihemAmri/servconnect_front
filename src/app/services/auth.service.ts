@@ -126,9 +126,13 @@ getUserRole(): string | null {
 }
 
 getCurrentUser(): any {
-  const user = localStorage.getItem('user');
-  return user ? JSON.parse(user) : null;
+  if (typeof window !== 'undefined') {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
+  }
+  return null; // côté serveur, renvoie null
 }
+
 
 
 

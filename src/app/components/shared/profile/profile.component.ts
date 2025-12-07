@@ -54,6 +54,7 @@ export class ProfileComponent implements OnInit {
     if (!userData) return;
 
     const localUser = JSON.parse(userData);
+    console.log("nom",localUser)
     
     // Load fresh user data from server
     this.profileService.getUser(localUser._id).subscribe({
@@ -62,7 +63,7 @@ export class ProfileComponent implements OnInit {
         // Update localStorage with fresh data
         localStorage.setItem('user', JSON.stringify(this.user));
         this.initForm();
-
+          console.log(this.user)
         if (this.user.role === 'prestataire') {
           this.loadProviderData(this.user._id);
         }
@@ -80,7 +81,6 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  /** Initialisation dynamique du formulaire selon le rôle */
   initForm() {
     const baseFields = {
       nom: [''],

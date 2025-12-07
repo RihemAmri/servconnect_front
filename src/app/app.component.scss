@@ -1,0 +1,27 @@
+.floating-chatbot {
+    position: fixed;
+    bottom: 70px; /* juste au-dessus du bouton */
+    right: 100px;
+    z-index: 100;
+    width: 370px;
+    max-height: 520px;
+      
+  }
+  .help-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 50px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: background 0.3s ease;
+    z-index: 3001;
+  }
+  
+  .help-btn:hover {
+    background-color: #0056b3;
+  }

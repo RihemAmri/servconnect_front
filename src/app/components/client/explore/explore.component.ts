@@ -117,7 +117,7 @@ export class ExploreComponent implements OnInit, AfterViewInit, OnDestroy {
       next: (response) => {
         this.providers = response.providers || [];
         this.loading = false;
-        console.log(response);
+        
         
         // Initialize card maps after providers are loaded
         setTimeout(() => {
@@ -190,7 +190,7 @@ export class ExploreComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // ✅ Nouvelle méthode pour obtenir la photo du provider
   getProviderPhoto(provider: Provider): string {
-    console.log('Provider photo:', provider.user?.photo);
+    
     if (provider.user?.photo) {
       return provider.user.photo;
     }
