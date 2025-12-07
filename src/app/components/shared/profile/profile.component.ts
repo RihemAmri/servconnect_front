@@ -18,11 +18,15 @@ export class ProfileComponent implements OnInit {
   provider: any = null;
   isEditing = false;
   profileForm!: FormGroup;
+  isLoading = true;
 
   certificateLottie = { path: 'assets/animations/Files.json', autoplay: true, loop: true };
   documentLottie = { path: 'assets/animations/Document.json', autoplay: true, loop: true };
 
-  constructor(private fb: FormBuilder, private profileService: ProfileService) {}
+  constructor(private fb: FormBuilder, private profileService: ProfileService) {
+    // Initialize form immediately with empty values
+    this.initEmptyForm();
+  }
 
   // Get user photo URL
   getUserPhoto(): string {
@@ -51,18 +55,23 @@ export class ProfileComponent implements OnInit {
 
   loadUserData() {
     const userData = localStorage.getItem('user');
-    if (!userData) return;
+    if (!userData) {
+      this.isLoading = false;
+      return;
+    }
 
     const localUser = JSON.parse(userData);
+    console.log("nom",localUser)
     
     // Load fresh user data from server
     this.profileService.getUser(localUser._id).subscribe({
       next: (freshUser: any) => {
+        console.log('User loaded:', freshUser);
         this.user = freshUser;
         // Update localStorage with fresh data
         localStorage.setItem('user', JSON.stringify(this.user));
         this.initForm();
-
+          console.log(this.user)
         if (this.user.role === 'prestataire') {
           this.loadProviderData(this.user._id);
         }
@@ -80,33 +89,33 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  /** Initialisation dynamique du formulaire selon le rôle */
-  initForm() {
-    const baseFields = {
+  /** Initialize empty form to prevent FormGroup errors */
+  initEmptyForm() {
+    this.profileForm = this.fb.group({
       nom: [''],
       prenom: [''],
       email: [''],
       telephone: [''],
       adresse: [''],
-    };
-
-    const providerFields = {
       metier: [''],
       description: [''],
       experience: [''],
-    };
+    });
+  }
 
-    this.profileForm = this.fb.group(
-      this.user.role === 'prestataire' ? { ...baseFields, ...providerFields } : baseFields
-    );
+  /** Initialisation dynamique du formulaire selon le rôle */
+  initForm() {
+    if (!this.user) return;
 
     this.profileForm.patchValue({
-      nom: this.user.nom,
-      prenom: this.user.prenom,
-      email: this.user.email,
-      telephone: this.user.telephone,
-      adresse: this.user.adresse,
+      nom: this.user.nom || '',
+      prenom: this.user.prenom || '',
+      email: this.user.email || '',
+      telephone: this.user.telephone || '',
+      adresse: this.user.adresse || '',
     });
+
+    this.isLoading = false;
   }
 
   loadProviderData(userId: string) {

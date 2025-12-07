@@ -1,6 +1,15 @@
 <!-- PREMIUM PROFILE - FULL WIDTH DESIGN -->
 <div class="profile-wrapper-premium">
   
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-profile">
+    <div class="spinner"></div>
+    <p>Chargement du profil...</p>
+  </div>
+
+  <!-- Main Content (only when data is loaded) -->
+  <ng-container *ngIf="!isLoading && user">
+  
   <!-- HERO HEADER -->
   <section class="profile-hero">
     <div class="hero-gradient-bg">
@@ -390,4 +399,6 @@
 
     </form>
   </div>
+
+  </ng-container>
 </div>

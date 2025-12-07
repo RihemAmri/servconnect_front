@@ -69,7 +69,7 @@ export class LoginComponent {
         this.successMessage = 'Connexion réussie ! 🎉';
         console.log('✅ Login réussi :', res);
 
-        // Déjà sauvegardé dans AuthService
+        
         this.authService['authStatus'].next(true);
 
         setTimeout(() => {
@@ -77,6 +77,11 @@ export class LoginComponent {
             this.router.navigate(['/my-services']);
           } else if (res.user.role === 'client') {
             this.router.navigate(['/explore']);
+          
+          } else if (res.user.role === 'admin') {
+            
+            window.location.href="/admin/users"
+           
           }
           else {
             this.router.navigate(['/']);
