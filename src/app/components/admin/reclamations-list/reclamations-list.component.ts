@@ -11,16 +11,20 @@ import { ReclamationService } from '../../../services/reclamation.service';
   styleUrls: ['./reclamations-list.component.scss']
 })
 export class ReclamationsListComponent implements OnInit {
-
   reclamations: any[] = [];
   searchTerm: string = "";
   filterStatus: string = "";
+
+  // pagination
+  currentPage: number = 1;
+  pageSize: number = 6; // items par page (change si tu veux)
+  maxPagesToShow: number = 5;
 
   constructor(private recService: ReclamationService, private router: Router) {}
 
   ngOnInit(): void {
     this.recService.getAllReclamations().subscribe({
-      next: (res: any) => this.reclamations = res,
+      next: (res: any) => this.reclamations = res || [],
       error: (err) => console.error(err)
     });
   }
@@ -28,13 +32,51 @@ export class ReclamationsListComponent implements OnInit {
   get filteredReclamations() {
     return this.reclamations
       .filter(r =>
-        (r.user?.nom + " " + r.user?.prenom + " " + r.sujet)
+        ((r.user?.nom || '') + " " + (r.user?.prenom || '') + " " + (r.sujet || ''))
           .toLowerCase()
           .includes(this.searchTerm.toLowerCase())
       )
       .filter(r =>
         this.filterStatus ? r.status === this.filterStatus : true
       );
+  }
+
+  // --- pagination helpers ---
+  get total() { return this.reclamations.length; }
+  get enAttente() { return this.reclamations.filter(r => r.status === "en attente").length; }
+  get repondu() { return this.reclamations.filter(r => r.status === "répondu").length; }
+
+  get totalPages() {
+    return Math.max(1, Math.ceil(this.filteredReclamations.length / this.pageSize));
+  }
+
+  get pagesToShow(): number[] {
+    const total = this.totalPages;
+    const max = this.maxPagesToShow;
+    let start = Math.max(1, this.currentPage - Math.floor(max / 2));
+    let end = start + max - 1;
+    if (end > total) { end = total; start = Math.max(1, end - max + 1); }
+    const pages: number[] = [];
+    for (let p = start; p <= end; p++) pages.push(p);
+    return pages;
+  }
+
+  get pagedReclamations() {
+    const filtered = this.filteredReclamations;
+    const start = (this.currentPage - 1) * this.pageSize;
+    return filtered.slice(start, start + this.pageSize);
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) this.currentPage--;
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) this.currentPage++;
+  }
+
+  goToPage(p: number) {
+    if (p >= 1 && p <= this.totalPages) this.currentPage = p;
   }
 
   viewDetails(id: string) {

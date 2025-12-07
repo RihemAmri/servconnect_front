@@ -1,53 +1,112 @@
-<div class="reclamations-container">
+<div class="page-container">
 
-  <div class="header-bar">
-    <h2>Gestion des Réclamations</h2>
+  <!-- 🔷 TITRE ET SOUS-TITRE -->
+  <div class="page-header">
+    <h1>Gestion des réclamations</h1>
+    <p>Consultez, filtrez et gérez les réclamations des utilisateurs.</p>
+  </div>
 
-    <div class="actions">
-      <input type="text" placeholder="Rechercher..." [(ngModel)]="searchTerm">
+  <!-- 🟦 CARDS STATISTIQUES -->
+  <div class="stats-container">
+    <div class="stat-card blue">
+      <div class="stat-value">{{ total }}</div>
+      <div class="stat-label">Total</div>
+    </div>
 
-      <select [(ngModel)]="filterStatus">
-        <option value="">Tous les statuts</option>
-        <option value="en attente">En attente</option>
-        <option value="répondu">Répondu</option>
-      </select>
+    <div class="stat-card orange">
+      <div class="stat-value">{{ enAttente }}</div>
+      <div class="stat-label">En attente</div>
+    </div>
+
+    <div class="stat-card green">
+      <div class="stat-value">{{ repondu }}</div>
+      <div class="stat-label">Répondu</div>
     </div>
   </div>
 
-  <div class="table-wrapper" *ngIf="filteredReclamations.length > 0">
+  <!-- 🔍 BARRE RECHERCHE + FILTRES -->
+  <div class="filter-bar">
+    <input
+      type="text"
+      placeholder="Rechercher par nom, sujet..."
+      [(ngModel)]="searchTerm"
+      class="search-input"
+    />
 
+    <select [(ngModel)]="filterStatus" class="filter-select">
+      <option value="">Tous les statuts</option>
+      <option value="en attente">En attente</option>
+      <option value="répondu">Répondu</option>
+    </select>
+
+    <button class="reset-btn" (click)="searchTerm=''; filterStatus=''">
+      Réinitialiser
+    </button>
+  </div>
+
+  <!-- 📋 TABLEAU -->
+  <div class="table-container">
     <table class="styled-table">
       <thead>
         <tr>
           <th>Utilisateur</th>
           <th>Sujet</th>
           <th>Status</th>
-          <th>Action</th>
+          <th>Actions</th>
         </tr>
       </thead>
 
       <tbody>
-        <tr *ngFor="let r of filteredReclamations">
+        <!-- ✔ Utilisation de pagedReclamations -->
+        <tr *ngFor="let r of pagedReclamations">
           <td>{{ r.user?.nom }} {{ r.user?.prenom }}</td>
           <td>{{ r.sujet }}</td>
 
           <td>
-            <span class="status" [ngClass]="r.status.replace(' ', '-')">{{ r.status }}</span>
+            <span
+              class="status-badge"
+              [ngClass]="{
+                'pending': r.status === 'en attente',
+                'done': r.status === 'répondu'
+              }"
+            >
+              {{ r.status }}
+            </span>
           </td>
 
-          <td class="action-btn">
-            <button (click)="viewDetails(r._id)">
-              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          <td>
+            <button class="action-btn" (click)="viewDetails(r._id)">
+              <i class="fa-solid fa-eye"></i>
             </button>
           </td>
         </tr>
       </tbody>
-    </table>
 
+    </table>
   </div>
 
-  <div class="empty" *ngIf="filteredReclamations.length === 0">
-    Aucune réclamation trouvée.
+  <!-- 🔽 PAGINATION -->
+  <div class="pagination-container">
+    <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1">
+      ‹
+    </button>
+
+    <button
+      class="page-number"
+      *ngFor="let p of pagesToShow"
+      [class.active]="currentPage === p"
+      (click)="goToPage(p)"
+    >
+      {{ p }}
+    </button>
+
+    <button
+      class="page-btn"
+      (click)="nextPage()"
+      [disabled]="currentPage === totalPages"
+    >
+      ›
+    </button>
   </div>
 
 </div>
