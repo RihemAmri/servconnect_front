@@ -161,6 +161,18 @@ export const routes: Routes = [
         path: 'reservations/:id',
         loadComponent: () =>
           import('./components/admin/reservation-details/reservation-details.component').then(m => m.ReservationDetailsComponent)
+      },
+      {
+        path: 'reclamations',
+        loadComponent: () =>
+          import('./components/admin/reclamations-list/reclamations-list.component')
+            .then(m => m.ReclamationsListComponent)
+      },
+      {
+        path: 'reclamations/:id',
+        loadComponent: () =>
+          import('./components/admin/reclamation-details/reclamation-details.component')
+            .then(m => m.ReclamationDetailsComponent)
       }
     ]
   },
@@ -177,6 +189,22 @@ export const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password/:token', component: ResetPasswordComponent },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
+
+  /*reclamation */
+  {
+  path: 'reclamation',
+  loadComponent: () =>
+    import('./components/shared/reclamation/reclamation.component')
+      .then(m => m.ReclamationComponent),
+  canActivate: [AuthGuard] 
+},
+{
+  path: 'mes-reclamations',
+  loadComponent: () =>
+    import('./components/shared/mes-reclamations/mes-reclamations.component')
+      .then(m => m.MesReclamationsComponent),
+  canActivate: [AuthGuard]
+},
 
   /** DEFAULT ROUTE **/
 { path: '**', redirectTo: '/404' }

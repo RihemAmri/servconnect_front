@@ -1,0 +1,81 @@
+<div class="reclamation-container">
+
+  <!-- Bloc global -->
+  <div class="reclamation-card">
+
+    <!-- Bloc gauche avec Lottie -->
+    <div class="left-box">
+      <div class="back-btn" (click)="goBack()">
+        <i class="fas fa-arrow-left"></i>
+        <span>Retour</span>
+      </div>
+      <ng-lottie 
+        [options]="lottieOptions"
+        (animationCreated)="onAnimationCreated($event)">
+      </ng-lottie>
+    </div>
+
+    <!-- Bloc droit : Formulaire -->
+    <div class="right-box">
+      <h2>Déposer une Réclamation</h2>
+      <p class="subtitle">Veuillez remplir le formulaire ci-dessous 📩</p>
+
+      <form #recForm="ngForm" (ngSubmit)="onSubmit(recForm)">
+
+        <!-- Sujet -->
+        <div class="form-group">
+          <input
+            type="text"
+            id="sujet"
+            name="sujet"
+            placeholder="Sujet"
+            class="form-control"
+            [(ngModel)]="reclamationModel.sujet"
+            required
+            minlength="3"
+          />
+          <div class="error" *ngIf="recForm.submitted && recForm.controls['sujet']?.invalid">
+            Le sujet doit contenir au moins 3 caractères.
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <textarea
+            id="description"
+            name="description"
+            placeholder="Votre message..."
+            class="form-control textarea"
+            rows="4"
+            [(ngModel)]="reclamationModel.description"
+            required
+            minlength="10"
+          ></textarea>
+
+          <div class="error" *ngIf="recForm.submitted && recForm.controls['description']?.invalid">
+            La description doit contenir au moins 10 caractères.
+          </div>
+        </div>
+
+        <button class="btn-submit" type="submit">Envoyer</button>
+      </form>
+    </div>
+
+  </div>
+</div>
+<div class="toast" *ngIf="showToast">
+  <button class="close-btn" (click)="closeToast(false)">×</button>
+  <div class="toast-message">
+    <span class="emoji-success">✅</span>
+    <p>{{ toastMessage }}</p>
+  </div>
+  <div class="toast-actions">
+    <button class="ok-btn" (click)="closeToast(true)">OK</button>
+  </div>
+</div>
+
+
+<div *ngIf="loading" class="loading-alert">
+  <div class="spinner"></div>
+  <p>En cours...</p>
+</div>

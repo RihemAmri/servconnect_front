@@ -1,0 +1,101 @@
+<div class="admin-rec-container" *ngIf="reclamation">
+
+  <div class="admin-rec-card">
+
+    <!-- Bloc gauche avec Lottie -->
+    <div class="left-box">
+       <div class="back-btn" (click)="goBack()">
+        <i class="fas fa-arrow-left"></i>
+        <span>Retour</span>
+      </div>
+      <ng-lottie 
+        [options]="lottieOptions"
+        (animationCreated)="onAnimationCreated($event)">
+      </ng-lottie>
+    </div>
+
+    <!-- Bloc droit : Détails + Formulaire -->
+    <div class="right-box">
+      <h2>Réclamation de {{ reclamation.user?.nom }} {{ reclamation.user?.prenom }}</h2>
+      <p class="info-line">
+        <i class="fas fa-comment-alt"></i>
+        <span class="label">Sujet :</span>
+        <span class="value">{{ reclamation.sujet }}</span>
+      </p>
+
+      <p class="info-line">
+        <i class="fa-solid fa-align-left"></i>
+        <span class="label">Description :</span>
+        <span class="value">{{ reclamation.description }}</span>
+      </p>
+
+      <p class="info-line">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <span class="label">Status :</span>
+        <span class="value">
+          <span class="status" [ngClass]="reclamation.status.replace(' ', '-')">
+            {{ reclamation.status }}
+          </span>
+        </span>
+      </p>
+
+      <form #respForm="ngForm" (ngSubmit)="sendResponse(respForm)" 
+            *ngIf="reclamation.status === 'en attente' || reclamation.status === 'répondu'">
+        <label for="response">Réponse Admin</label>
+
+        <textarea
+        id="response"
+        name="response"
+        [(ngModel)]="responseText"
+        #response="ngModel"
+        rows="4"
+        [readonly]="reclamation.status === 'répondu'"
+        [required]="reclamation.status === 'en attente'"
+        [minlength]="reclamation.status === 'en attente' ? 5 : null"
+        class="response-textarea"
+      ></textarea>
+
+      <!-- Message d'erreur -->
+      <div class="error" *ngIf="respForm.submitted && response.invalid && reclamation.status === 'en attente'">
+        La réponse est obligatoire et doit contenir au moins 5 caractères.
+      </div>
+
+
+        <button type="submit" [disabled]="reclamation.status === 'répondu'">Envoyer</button>
+      </form>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Alertes flottantes -->
+<div class="toast" *ngIf="showToast">
+  <!-- bouton fermeture (juste ferme le toast) -->
+  <button class="close-btn" (click)="closeToast(false)">×</button>
+
+  <!-- message avec emoji succès -->
+  <div class="toast-message">
+    <span class="emoji-success">✅</span>
+    <p>{{ toastMessage }}</p>
+  </div>
+
+  <!-- actions -->
+  <div class="toast-actions">
+    <button class="ok-btn" (click)="closeToast(true)">OK</button>
+  </div>
+</div>
+
+
+<div *ngIf="!reclamation" class="loading">
+  Chargement...
+</div>
+
+<div *ngIf="loading" class="loading-alert">
+  <div class="spinner"></div>
+  <p>En cours...</p>
+</div>
+
+
+
