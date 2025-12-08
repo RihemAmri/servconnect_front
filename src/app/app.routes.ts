@@ -107,7 +107,7 @@ export const routes: Routes = [
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['client'] }
   },
-  {
+/*   {
     path: 'reservation',
     component: ReservationComponent,
     canActivate: [AuthGuard, RoleGuard],
@@ -118,7 +118,7 @@ export const routes: Routes = [
     component: ReservationComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['client'] }
-  },
+  }, */
   {
     path: 'paiement',
     component: PaiementComponent,
