@@ -23,44 +23,72 @@
       <div class="stat-label">Répondu</div>
     </div>
   </div>
+<!-- 🔍 BARRE RECHERCHE + FILTRES STYLE CAMARADE -->
+<div class="bg-gray-50 rounded-lg shadow-sm p-6 mb-6 border border-gray-200">
+  <div class="flex flex-col md:flex-row gap-4 items-stretch md:items-center">
 
-  <!-- 🔍 BARRE RECHERCHE + FILTRES -->
-  <div class="filter-bar">
-    <input
-      type="text"
-      placeholder="Rechercher par nom, sujet..."
-      [(ngModel)]="searchTerm"
-      class="search-input"
-    />
+    <!-- Recherche -->
+    <div class="flex-1 md:flex-[2]">
+      <div class="relative w-full">
+      
+        <input
+          pInputText
+          type="text"
+          [(ngModel)]="searchTerm"
+          placeholder="Rechercher par nom, sujet..."
+          class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+    </div>
 
-    <select [(ngModel)]="filterStatus" class="filter-select">
-      <option value="">Tous les statuts</option>
-      <option value="en attente">En attente</option>
-      <option value="répondu">Répondu</option>
-    </select>
+    <!-- Filtre Statut -->
+    <div class="w-full md:w-auto md:flex-1">
+    <p-dropdown
+      [options]="statuts"
+      [(ngModel)]="filterStatus"
+      optionLabel="label"
+      optionValue="value"
+      placeholder="Statut"
+      [style]="{ width: '100%' }"
+    ></p-dropdown>
+    </div>
 
-    <button class="reset-btn" (click)="searchTerm=''; filterStatus=''">
-      Réinitialiser
-    </button>
+    <!-- Bouton Réinitialiser -->
+    <div class="w-full md:w-auto">
+      <button
+        pButton
+        icon="pi pi-refresh"
+        label="Réinitialiser"
+        (click)="resetFilters()"
+        class="p-button-outlined p-button-secondary w-full md:w-auto"
+      ></button>
+    </div>
+
   </div>
+</div>
+
 
   <!-- 📋 TABLEAU -->
   <div class="table-container">
     <table class="styled-table">
       <thead>
         <tr>
-          <th>Utilisateur</th>
-          <th>Sujet</th>
-          <th>Status</th>
-          <th>Actions</th>
+          <th><i class="fa-solid fa-user"></i> Utilisateur</th>
+          <th><i class="fa-solid fa-shield-alt"></i> Rôle</th>
+          <th><i class="fa-solid fa-envelope-open-text"></i> Sujet</th>
+          <th><i class="fa-solid fa-circle-info"></i> Status</th>
+          <th><i class="fa-solid fa-calendar-alt"></i> Date de création</th>
+          <th><i class="fa-solid fa-gear"></i> Actions</th>
         </tr>
+
       </thead>
 
       <tbody>
         <!-- ✔ Utilisation de pagedReclamations -->
-        <tr *ngFor="let r of pagedReclamations">
+        <tr *ngFor="let r of pagedReclamations; let i = index" [hidden]="pagedReclamations.length === 0">
           <td>{{ r.user?.nom }} {{ r.user?.prenom }}</td>
-          <td>{{ r.sujet }}</td>
+          <td>{{ r.user?.role || '-' }}</td> <!-- ajout du rôle -->
+          <td class="sujet-cell" title="{{ r.sujet }}">{{ r.sujet }}</td>
 
           <td>
             <span
@@ -73,11 +101,17 @@
               {{ r.status }}
             </span>
           </td>
-
+            <td>{{ r.dateCreation | date:'short' }}</td> <!-- ajout de la date formatée -->
           <td>
             <button class="action-btn" (click)="viewDetails(r._id)">
               <i class="fa-solid fa-eye"></i>
             </button>
+          </td>
+        </tr>
+         <!-- Ligne "aucune réclamation" -->
+        <tr *ngIf="pagedReclamations.length === 0">
+          <td colspan="6" class="text-center" style="color:gray ; padding: 1rem; font-style: italic;">
+            Aucune réclamation trouvée.
           </td>
         </tr>
       </tbody>
@@ -85,14 +119,22 @@
     </table>
   </div>
 
-  <!-- 🔽 PAGINATION -->
-  <div class="pagination-container">
-    <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1">
-      ‹
+<!-- 🔽 PAGINATION VERSION ENCADRÉE -->
+<div class="pagination-box">
+  
+  <div class="pagination-inner">
+
+    <!-- Previous -->
+    <button 
+      class="pag-arrow"
+      (click)="prevPage()" 
+      [disabled]="currentPage === 1">
+      «
     </button>
 
+    <!-- Pages -->
     <button
-      class="page-number"
+      class="pag-number"
       *ngFor="let p of pagesToShow"
       [class.active]="currentPage === p"
       (click)="goToPage(p)"
@@ -100,13 +142,17 @@
       {{ p }}
     </button>
 
-    <button
-      class="page-btn"
-      (click)="nextPage()"
-      [disabled]="currentPage === totalPages"
-    >
-      ›
+    <!-- Next -->
+    <button 
+      class="pag-arrow"
+      (click)="nextPage()" 
+      [disabled]="currentPage === totalPages">
+      »
     </button>
+
   </div>
+
+</div>
+
 
 </div>

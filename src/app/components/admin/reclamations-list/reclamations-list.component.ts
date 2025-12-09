@@ -3,10 +3,30 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ReclamationService } from '../../../services/reclamation.service';
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { DropdownModule } from 'primeng/dropdown';
+import { TagModule } from 'primeng/tag';
+import { ToastModule } from 'primeng/toast';
+import { TooltipModule } from 'primeng/tooltip';
+import { BadgeModule } from 'primeng/badge';
 
 @Component({
   selector: 'app-reclamations-list',
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    TableModule,
+    ButtonModule,
+    InputTextModule,
+    DropdownModule,
+    TagModule,
+    ToastModule,
+    TooltipModule,
+    BadgeModule
+  ],
   templateUrl: './reclamations-list.component.html',
   styleUrls: ['./reclamations-list.component.scss']
 })
@@ -14,6 +34,13 @@ export class ReclamationsListComponent implements OnInit {
   reclamations: any[] = [];
   searchTerm: string = "";
   filterStatus: string = "";
+
+  // dropdown options pour le filtre
+  statuts = [
+    { label: 'Tous', value: '' },
+    { label: 'En attente', value: 'en attente' },
+    { label: 'Répondu', value: 'répondu' }
+  ];
 
   // pagination
   currentPage: number = 1;
@@ -29,16 +56,34 @@ export class ReclamationsListComponent implements OnInit {
     });
   }
 
-  get filteredReclamations() {
-    return this.reclamations
-      .filter(r =>
-        ((r.user?.nom || '') + " " + (r.user?.prenom || '') + " " + (r.sujet || ''))
-          .toLowerCase()
-          .includes(this.searchTerm.toLowerCase())
-      )
-      .filter(r =>
-        this.filterStatus ? r.status === this.filterStatus : true
+get filteredReclamations() {
+  const term = this.searchTerm.toLowerCase();
+
+  return this.reclamations
+    .filter(r => {
+      const fullName = (r.user?.nom || '') + ' ' + (r.user?.prenom || '');
+      const sujet = r.sujet || '';
+      const role = r.user?.role || '';
+      const dateStr = r.dateCreation ? new Date(r.dateCreation).toLocaleDateString() : '';
+      
+      // Vérifie si le terme de recherche est dans l'un de ces champs
+      return (
+        fullName.toLowerCase().includes(term) ||
+        sujet.toLowerCase().includes(term) ||
+        role.toLowerCase().includes(term) ||
+        dateStr.toLowerCase().includes(term)
       );
+    })
+    .filter(r =>
+      !this.filterStatus || r.status.toLowerCase() === this.filterStatus.toLowerCase()
+    );
+}
+
+
+    resetFilters() {
+    this.searchTerm = "";
+    this.filterStatus = "";
+    this.currentPage = 1; // reset pagination
   }
 
   // --- pagination helpers ---

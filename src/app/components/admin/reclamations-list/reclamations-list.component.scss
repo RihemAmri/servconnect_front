@@ -49,35 +49,6 @@
   .green { background: #16a34a; }
 }
 
-/* -------- SEARCH & FILTERS -------- */
-.filter-bar {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 18px;
-
-  .search-input {
-    flex: 1;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid #d1d5db;
-  }
-
-  .filter-select {
-    width: 200px;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid #d1d5db;
-  }
-
-  .reset-btn {
-    padding: 0 16px;
-    border: none;
-    background: #e5e7eb;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 500;
-  }
-}
 
 /* -------- TABLE -------- */
 .table-container {
@@ -108,6 +79,12 @@
   tr:hover {
     background: #f9fafb;
   }
+}
+.sujet-cell {
+  max-width: 300px; // tu peux ajuster selon ton design
+  white-space: nowrap; // empêche le texte de passer à la ligne
+  overflow: hidden;    // cache le texte qui dépasse
+  text-overflow: ellipsis; // ajoute "..." si le texte dépasse
 }
 
 /* STATUS BADGES */
@@ -142,24 +119,58 @@
 }
 
 /* -------- PAGINATION -------- */
-.pagination-container {
+/* ======== NEW PAGINATION STYLE ======== */
+/* ---------- PAGINATION ENCADRÉE ---------- */
+.pagination-box {
+  margin-top: 5px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 5px 18px;
+  //box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
   display: flex;
   justify-content: center;
+}
+
+.pagination-inner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 6px;
-  margin-top: 15px;
+}
 
-  .page-btn,
-  .page-number {
-    padding: 8px 12px;
-    border: 1px solid #d1d5db;
-    background: white;
-    border-radius: 8px;
-    cursor: pointer;
-  }
+/* Boutons */
+.pag-number,
+.pag-arrow {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
 
-  .active {
-    background: #0056b3;
-    color: white;
-    border-color: #0056b3;
-  }
+.pag-number:hover,
+.pag-arrow:hover:not(:disabled) {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.pag-arrow:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Active */
+.pag-number.active {
+  background: #007bff22;
+  border-color: #007bff;
+  color: #007bff;
+  font-weight: 700;
+  border-radius: 999px;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
 }
