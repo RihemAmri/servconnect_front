@@ -1,6 +1,6 @@
 
-  import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject ,PLATFORM_ID, Inject} from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
@@ -32,6 +32,8 @@ interface Provider {
   templateUrl: './user-details.component.html'
 })
 export class UserDetailsComponent implements OnInit {
+    constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private messageService = inject(MessageService);
@@ -57,19 +59,23 @@ export class UserDetailsComponent implements OnInit {
   loading = true;
   editMode = false;
 
-  editForm: {
-    nom: string;
-    prenom: string;
-    telephone: string;
-    adresse: string;
-    role: 'client' | 'prestataire' | 'admin';
-  } = {
-    nom: '',
-    prenom: '',
-    telephone: '',
-    adresse: '',
-    role: 'client'
-  };
+editForm: {
+  nom: string;
+  prenom: string;
+  telephone: string;
+  adresse: {
+    street: string;
+    lat: number;
+    lng: number;
+  } | null;
+  role: 'client' | 'prestataire' | 'admin';
+} = {
+  nom: '',
+  prenom: '',
+  telephone: '',
+  adresse: null, // Changé de '' à null
+  role: 'client'
+};
 
   roles = [
     { label: 'Client', value: 'client' as const },
@@ -78,17 +84,31 @@ export class UserDetailsComponent implements OnInit {
   ];
 
   ngOnInit() {
+      if (isPlatformBrowser(this.platformId)) {
+      window.scrollTo({ top: 0 });
+    }
     const userId = this.route.snapshot.paramMap.get('id');
     if (userId) {
       this.loadUserDetails(userId);
     }
+  
   }
+ 
+  
+
+  
 
   loadUserDetails(id: string) {
     this.loading = true;
     this.usersService.getUserById(id).subscribe({
       next: (resp) => {
-        this.user = resp.user;
+        console.log("hahahaha");
+      console.log('Response complète:', resp);
+      console.log('User adresse:', resp.user.adresse);
+      console.log('Type de adresse:', typeof resp.user.adresse);
+      console.log('Street:', resp.user.adresse?.street);
+      
+      this.user = resp.user;
         // si tu veux utiliser des données statiques, décommente la logique qui récupère providersData
         if (resp.provider) {
           this.provider = resp.provider;
@@ -108,18 +128,19 @@ export class UserDetailsComponent implements OnInit {
       }
     });
   }
-
+editAddressStreet: string = '';
   initEditForm() {
-    if (this.user) {
-      this.editForm = {
-        nom: this.user.nom,
-        prenom: this.user.prenom,
-        telephone: this.user.telephone || '',
-        adresse: this.user.adresse || '',
-        role: this.user.role
-      };
-    }
+  if (this.user) {
+    this.editForm = {
+      nom: this.user.nom,
+      prenom: this.user.prenom,
+      telephone: this.user.telephone || '',
+      adresse: this.user.adresse || null, // Changé de '' à null
+      role: this.user.role
+    };
+    this.editAddressStreet = this.user.adresse?.street || '';
   }
+}
 
   saveChanges() {
     if (!this.user) return;
@@ -127,7 +148,13 @@ export class UserDetailsComponent implements OnInit {
       nom: this.editForm.nom,
       prenom: this.editForm.prenom,
       telephone: this.editForm.telephone,
-      adresse: this.editForm.adresse,
+      adresse: this.editAddressStreet 
+      ? {
+          street: this.editAddressStreet,
+          lat: this.user.adresse?.lat || 0,
+          lng: this.user.adresse?.lng || 0
+        }
+      : null,
       role: this.editForm.role
     };
     this.usersService.updateUser(this.user._id, payload).subscribe({

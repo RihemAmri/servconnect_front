@@ -10,6 +10,8 @@ import { MyservicesComponent } from './components/provider/myservices/myservices
 import { UpcomingServicesComponent } from './components/provider/upcoming-services/upcoming-services.component';
 import { PastServicesComponent } from './components/provider/past-services/past-services.component';
 import { GestionbookComponent } from './components/provider/gestionbook/gestionbook.component';
+import { ResubmitDocsComponent } from './components/provider/resubmit-docs/resubmit-docs.component';
+
 
 // Client Components
 import { ExploreComponent } from './components/client/explore/explore.component';
@@ -27,7 +29,6 @@ import { ResetPasswordComponent } from './components/auth/reset-password/reset-p
 // Guards
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
-import { ResubmitDocsComponent } from './components/provider/resubmit-docs/resubmit-docs.component';
 
 export const routes: Routes = [
   /** PUBLIC ROUTES **/
@@ -110,7 +111,7 @@ export const routes: Routes = [
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['client'] }
   },
-  {
+   {
     path: 'reservation',
     component: ReservationComponent,
     canActivate: [AuthGuard, RoleGuard],
@@ -180,6 +181,18 @@ export const routes: Routes = [
         path: 'reservations/:id',
         loadComponent: () =>
           import('./components/admin/reservation-details/reservation-details.component').then(m => m.ReservationDetailsComponent)
+      },
+      {
+        path: 'reclamations',
+        loadComponent: () =>
+          import('./components/admin/reclamations-list/reclamations-list.component')
+            .then(m => m.ReclamationsListComponent)
+      },
+      {
+        path: 'reclamations/:id',
+        loadComponent: () =>
+          import('./components/admin/reclamation-details/reclamation-details.component')
+            .then(m => m.ReclamationDetailsComponent)
       }
     ]
   },
@@ -196,6 +209,22 @@ export const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password/:token', component: ResetPasswordComponent },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
+
+  /*reclamation */
+  {
+  path: 'reclamation',
+  loadComponent: () =>
+    import('./components/shared/reclamation/reclamation.component')
+      .then(m => m.ReclamationComponent),
+  canActivate: [AuthGuard] 
+},
+{
+  path: 'mes-reclamations',
+  loadComponent: () =>
+    import('./components/shared/mes-reclamations/mes-reclamations.component')
+      .then(m => m.MesReclamationsComponent),
+  canActivate: [AuthGuard]
+},
 
   /** DEFAULT ROUTE **/
 { path: '**', redirectTo: '/404' }

@@ -71,4 +71,6 @@ uploadFiles(userId: string, type: 'documents' | 'certifications', data: FormData
 
 
 
+
 }
+

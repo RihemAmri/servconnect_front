@@ -1,0 +1,143 @@
+<div class="rec-wrapper">
+  <!--h1 class="page-title">Mes réclamations</h1-->
+
+  <!-- HEADER TOP COUNTERS -->
+  <div class="top-stats">
+    <div class="stat-box">
+      <h3>{{ attenteCount }}</h3>
+      <p>En attente</p>
+    </div>
+
+    <div class="stat-box">
+      <h3>{{ reponduCount }}</h3>
+      <p>Répondu</p>
+    </div>
+
+    <div class="stat-box">
+      <h3>{{ totalCount }}</h3>
+      <p>Total</p>
+    </div>
+  </div>
+
+  <!-- FILTER TABS -->
+  <div class="tabs">
+    <button [class.active]="filter === 'all'" (click)="applyFilter('all')">Tous</button>
+    <button [class.active]="filter === 'en attente'" (click)="applyFilter('en attente')">En attente</button>
+    <button [class.active]="filter === 'répondu'" (click)="applyFilter('répondu')">Répondu</button>
+
+    <button class="btn-add" routerLink="/reclamation">➕ Nouvelle Réclamation</button>
+  </div>
+
+  <!-- TABLE CARD -->
+  <div class="table-card">
+    <div class="table-header">
+      <span><i class="fa fa-book"></i> Sujet</span>
+      <span><i class="fa fa-align-left"></i> Description</span>
+      <span><i class="fa fa-circle-dot"></i> Statut</span>
+      <span><i class="fa fa-reply"></i> Réponse</span>
+    </div>
+
+    <!-- LIGNE DU TABLEAU AVEC PAGINATION -->
+   <div class="table-row" *ngFor="let r of paginatedReclamations">
+  <!-- SUJET -->
+  <div class="cell">
+    <div class="text-wrapper">
+      <p class="short-text">
+        {{ r.showSujet ? r.sujet : shorten(r.sujet, 80) }}
+      </p>
+      <span *ngIf="r.sujet.length > 80" class="toggle-link" (click)="r.showSujet = !r.showSujet">
+        {{ r.showSujet ? 'Voir moins' : 'Voir plus' }}
+      </span>
+    </div>
+  </div>
+
+  <!-- DESCRIPTION -->
+  <div class="cell">
+    <div class="text-wrapper">
+      <p class="short-text">
+        {{ r.showFullDescription ? r.description : shorten(r.description, 150) }}
+      </p>
+      <span *ngIf="r.description.length > 150" class="toggle-link" (click)="r.showFullDescription = !r.showFullDescription">
+        {{ r.showFullDescription ? 'Voir moins' : 'Voir plus' }}
+      </span>
+    </div>
+  </div>
+
+  <!-- STATUT -->
+  <div class="cell">
+    <span class="status" [ngClass]="{'attente': r.status === 'en attente', 'répondu': r.status === 'répondu'}">
+      {{ r.status }}
+    </span>
+  </div>
+
+  <!-- RÉPONSE -->
+  <div class="cell">
+    <ng-container *ngIf="r.reponse; else nores">
+      <div class="text-wrapper">
+        <p class="short-text">
+          {{ r.showReponse ? r.reponse : shorten(r.reponse, 120) }}
+        </p>
+        <span *ngIf="r.reponse.length > 120" class="toggle-link" (click)="r.showReponse = !r.showReponse">
+          {{ r.showReponse ? 'Voir moins' : 'Voir plus' }}
+        </span>
+      </div>
+    </ng-container>
+    <ng-template #nores>
+      <span class="no-response">---</span>
+    </ng-template>
+  </div>
+</div>
+
+  </div>
+
+  <!-- PAGINATION -->
+<div class="modern-pagination" *ngIf="filteredReclamations.length > 2">
+
+  <!-- Bouton Précédent -->
+  <button 
+    class="nav-btn" 
+    (click)="prevPage()" 
+    [disabled]="currentPage === 1">
+    ‹ Précédent
+  </button>
+
+  <!-- Numéros de pages -->
+  <ng-container *ngFor="let p of pagesToShow">
+    <button 
+      class="page-btn"
+      [class.active]="p === currentPage"
+      (click)="goToPage(p)"
+      *ngIf="p !== '...'">
+      {{ p }}
+    </button>
+
+    <span class="dots" *ngIf="p === '...'">...</span>
+  </ng-container>
+
+  <!-- Suivant -->
+  <button 
+    class="nav-btn" 
+    (click)="nextPage()" 
+    [disabled]="currentPage === totalPages">
+    Suivant ›
+  </button>
+
+  <!-- Texte d'information -->
+  <span class="info">
+    Affichage 
+    {{ currentPage * itemsPerPage > filteredReclamations.length 
+        ? filteredReclamations.length 
+        : currentPage * itemsPerPage }} 
+    sur {{ filteredReclamations.length }} résultats
+  </span>
+</div>
+
+
+
+  <div class="table-row empty-row" *ngIf="filteredReclamations.length === 0">
+  <span class="no-data" colspan="4">
+    Aucune réclamation pour le moment.
+  </span>
+</div>
+
+</div>

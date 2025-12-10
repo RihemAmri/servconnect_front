@@ -1,0 +1,19 @@
+<div  *ngIf="!isAdmin" class="chatbot-container">
+  <div class="chat-header">🤖 SERVEBOT</div>
+
+  <div class="chat-window">
+    <div class="chat-messages">
+      <div *ngFor="let msg of messages" [ngClass]="msg.sender">
+        <div class="message-bubble">
+<span>{{ msg.sender === 'bot' ? '🤖' : '👤' }} {{ msg.text }}</span>
+        </div>
+      </div>
+    </div>
+ <!-- 🔹 Si utilisateur non connecté et nom non saisi -->
+    
+    <div class="chat-input">
+      <input [(ngModel)]="newMessage" (keyup.enter)="sendMessage()" placeholder="Écrivez ici...">
+      <button (click)="sendMessage()">Envoyer</button>
+    </div>
+  </div>
+</div>

@@ -711,3 +711,30 @@ textarea {
 .map-gps-btn {
   align-self: flex-end; /* seulement pour le bouton GPS */
 }
+.password-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.password-group input {
+  padding-right: 40px; /* espace pour l’œil */
+}
+
+/* 🔒 Icône complètement fixée */
+.password-group i {
+  position: absolute;
+  right: 12px;
+  top: 16px;    /* FIXÉ, NE BOUGE PAS */
+  transform: none;
+  cursor: pointer;
+  color: #888;
+  transition: color 0.2s ease;
+  pointer-events: auto;
+  z-index: 5;
+}
+
+/* ✔️ Le message d’erreur s’affiche dessous sans pousser l’œil */
+.password-group small {
+  margin-top: 5px; 
+}

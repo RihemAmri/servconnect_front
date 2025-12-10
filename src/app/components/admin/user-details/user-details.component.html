@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-white">
+<div class="min-h-screen bg-white pt-30">
   <div class="max-w-5xl mx-auto px-6 py-6">
     <!-- Chargement -->
     <div *ngIf="loading" class="flex justify-center items-center h-64">
@@ -99,7 +99,7 @@
                   >
                   <p class="text-xl text-gray-900 mt-1">
                     <i class="pi pi-map-marker mr-2 text-gray-400"></i>
-                    {{ user.adresse || "—" }}
+                    {{ user.adresse?.street || "Non renseignée" }}
                   </p>
                 </div>
 
