@@ -1,37 +1,89 @@
+<!-- MYSERVICES PREMIUM - FullCalendar View -->
 <div class="myservices-container">
-
-  <!-- Agenda -->
-  <div class="agenda-section">
-    <h2 class="title">
-      <i class="fas fa-calendar-alt"></i>
-      Mon Agenda
-    </h2>
-
-    <div class="calendar-wrapper" *ngIf="calendarOptions.initialView">
-      <full-calendar [options]="calendarOptions"></full-calendar>
-    </div>
+  
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement des réservations...</p>
   </div>
 
-  <!-- Colonne latérale -->
-  <div class="side-section">
+  <!-- Main Content -->
+  <div *ngIf="!isLoading" class="content">
+    
+    <!-- Header with Stats Dashboard -->
+    <div class="header-section">
+      <h1 class="page-title">📅 Mes Réservations</h1>
+      
+      <div class="stats-dashboard">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-calendar-check"></i>
+          </div>
+          <div class="stat-content">
+            <h3>{{ stats.thisMonth.total }}</h3>
+            <p>Ce mois</p>
+          </div>
+        </div>
 
-    <div class="image-wrapper">
-  <img src="agenda3.png" alt="Illustration" class="lottie-box" />
-</div>
+        <div class="stat-card pending">
+          <div class="stat-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="stat-content">
+            <h3>{{ stats.pending }}</h3>
+            <p>En attente</p>
+          </div>
+        </div>
 
+        <div class="stat-card accepted">
+          <div class="stat-icon">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <div class="stat-content">
+            <h3>{{ stats.accepted + stats.paid }}</h3>
+            <p>Confirmées</p>
+          </div>
+        </div>
 
-    <div class="button-group">
-      <button class="btn btn-secondary" (click)="goToUpcomingServices()">
-        <i class="fas fa-calendar-plus"></i>
-        Services à venir
-      </button>
+        <div class="stat-card revenue">
+          <div class="stat-icon">
+            <i class="fas fa-coins"></i>
+          </div>
+          <div class="stat-content">
+            <h3>{{ stats.totalRevenue }} DT</h3>
+            <p>Revenus</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
-      <button class="btn btn-primary" (click)="goToPastServices()">
-        <i class="fas fa-calendar-check"></i>
-        Services terminés
-      </button>
+    <!-- Calendar Section -->
+    <div class="calendar-card">
+      <div class="calendar-header">
+        <h2><i class="fas fa-calendar-alt"></i> Planning des Services</h2>
+        <div class="legend">
+          <span class="legend-item pending">
+            <span class="color-dot"></span> En attente
+          </span>
+          <span class="legend-item accepted">
+            <span class="color-dot"></span> Accepté
+          </span>
+          <span class="legend-item paid">
+            <span class="color-dot"></span> Payé
+          </span>
+          <span class="legend-item completed">
+            <span class="color-dot"></span> Terminé
+          </span>
+          <span class="legend-item refused">
+            <span class="color-dot"></span> Refusé
+          </span>
+        </div>
+      </div>
+
+      <div class="calendar-wrapper">
+        <full-calendar [options]="calendarOptions()"></full-calendar>
+      </div>
     </div>
 
   </div>
-
 </div>

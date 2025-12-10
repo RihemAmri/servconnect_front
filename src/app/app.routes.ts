@@ -11,6 +11,8 @@ import { AddservicesComponent } from './components/provider/addservices/addservi
 import { UpcomingServicesComponent } from './components/provider/upcoming-services/upcoming-services.component';
 import { PastServicesComponent } from './components/provider/past-services/past-services.component';
 import { GestionbookComponent } from './components/provider/gestionbook/gestionbook.component';
+import { ResubmitDocsComponent } from './components/provider/resubmit-docs/resubmit-docs.component';
+
 
 // Client Components
 import { ExploreComponent } from './components/client/explore/explore.component';
@@ -18,6 +20,7 @@ import { ProviderDetailsComponent } from './components/client/provider-details/p
 import { ServicedetailsComponent } from './components/client/servicedetails/servicedetails.component';
 import { ReservationComponent } from './components/client/reservation/reservation.component';
 import { PaiementComponent } from './components/client/paiement/paiement.component';
+import { MesReservationsComponent } from './components/client/mes-reservations/mes-reservations.component';
 
 // Auth Components
 import { LoginComponent } from './components/auth/login/login.component';
@@ -27,7 +30,6 @@ import { ResetPasswordComponent } from './components/auth/reset-password/reset-p
 // Guards
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
-import { ResubmitDocsComponent } from './components/provider/resubmit-docs/resubmit-docs.component';
 
 export const routes: Routes = [
   /** PUBLIC ROUTES **/
@@ -58,6 +60,12 @@ export const routes: Routes = [
     data: { roles: ['prestataire'] }
   },
   {
+    path: 'manage-bookings/:id',
+    component: GestionbookComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['prestataire'] }
+  },
+  {
     path: 'add-service',
     component: AddservicesComponent,
     canActivate: [AuthGuard, RoleGuard],
@@ -76,16 +84,19 @@ export const routes: Routes = [
     data: { roles: ['prestataire'] }
   },
   {
-    path: 'manage-bookings',
-    component: GestionbookComponent,
-    canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['prestataire'] }
-  },
-  {
     path: 'provider/my-documents',
     component:ResubmitDocsComponent ,
     canActivate: [AuthGuard],
     data: { role: 'prestataire' }
+  },
+  {
+    path: 'provider/dashboard',
+    loadComponent: () =>
+      import('./components/provider/dashboard/dashboard.component').then(
+        m => m.ProviderDashboardComponent
+      ),
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['prestataire'] }
   },
 
   /** CLIENT ROUTES **/
@@ -107,7 +118,7 @@ export const routes: Routes = [
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['client'] }
   },
-/*   {
+   {
     path: 'reservation',
     component: ReservationComponent,
     canActivate: [AuthGuard, RoleGuard],
@@ -118,10 +129,26 @@ export const routes: Routes = [
     component: ReservationComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['client'] }
-  }, */
+  },
+  
   {
-    path: 'paiement',
+    path: 'paiement/:id',
     component: PaiementComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['client'] }
+  },
+  {
+    path: 'mes-reservations',
+    component: MesReservationsComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['client'] }
+  },
+  {
+    path: 'reservation-details/:id',
+    loadComponent: () =>
+      import('./components/client/reservation-details/reservation-details.component').then(
+        m => m.ReservationDetailsComponent
+      ),
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['client'] }
   },

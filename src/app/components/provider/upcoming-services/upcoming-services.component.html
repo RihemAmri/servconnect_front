@@ -1,67 +1,242 @@
-<div class="services-wrapper">
+<<!-- Loading State -->
+<div class="loading-overlay" *ngIf="loading">
+  <div class="loading-spinner"></div>
+  <p>Chargement des services...</p>
+</div>
 
-  <div class="header-row">
-    <button class="back-btn" (click)="goBack()">
-      <i class="fa fa-arrow-left"></i> Retour
-    </button>
+<!-- Main Container -->
+<div class="upcoming-container" *ngIf="!loading">
+  
+  <!-- Hero Header -->
+  <div class="hero-header">
+    <div class="hero-gradient"></div>
+    <div class="hero-content">
+      <button class="back-button" (click)="goBack()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Retour
+      </button>
 
-    <h2><i class="fa fa-calendar"></i> Upcoming Services</h2>
-  </div>
+      <div class="hero-text">
+        <h1 class="hero-title">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          Services à Venir
+        </h1>
+        <p class="hero-subtitle">Gérez vos rendez-vous confirmés et préparez vos interventions</p>
+      </div>
 
-  <div class="services-table-container">
-    <table class="services-table">
-      <thead>
-        <tr>
-          <th><i class="fa fa-user"></i> Customer</th>
-          <th><i class="fa fa-map-marker"></i> Address</th>
-          <th><i class="fa fa-box"></i> Pieces</th>
-          <th><i class="fa fa-clock"></i> Date</th>
-          <th><i class="fa fa-paper-plane"></i> Drones</th>
-          <th><i class="fa fa-hourglass-half"></i> Time</th>
-          <th><i class="fa fa-money"></i> Price</th>
-          <th><i class="fa fa-map"></i></th>
-          <th><i class="fa fa-check"></i></th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <tr *ngFor="let service of upcomingServices">
-          <td>{{ service.customerName }}</td>
-          <td>{{ service.address }}</td>
-          <td>{{ service.pieces }}</td>
-          <td>{{ service.date | date: 'dd/MM/yyyy' }}</td>
-          <td>{{ service.droneCount }}</td>
-          <td>{{ service.serviceTime }}</td>
-          <td>{{ service.price }} dt</td>
-
-          <td>
-            <button class="icon-btn blue" (click)="openMap(service)">
-              <i class="fa fa-map"></i>
-            </button>
-          </td>
-
-          <td>
-            <button class="icon-btn green" (click)="validate(service)">
-              <i class="fa fa-check"></i>
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- POPUP MAP -->
-  <div class="popup" *ngIf="showPopup">
-    <div class="popup-content">
-      <button class="close-btn" (click)="closePopup()">&times;</button>
-      <iframe
-        width="100%"
-        height="100%"
-        style="border:0;"
-        [src]="googleMapUrl"
-        allowfullscreen
-      ></iframe>
+      <!-- Stats Cards (Quick Overview) -->
+      <div class="quick-stats">
+        <div class="quick-stat">
+          <div class="stat-value">{{ upcomingServices.length }}</div>
+          <div class="stat-label">Rendez-vous</div>
+        </div>
+        <div class="quick-stat">
+          <div class="stat-value">{{ calculateTotalRevenue() | number:'1.0-0' }} DT</div>
+          <div class="stat-label">Revenus prévus</div>
+        </div>
+        <div class="quick-stat">
+          <div class="stat-value">{{ calculateTotalDuration() }}h</div>
+          <div class="stat-label">Heures planifiées</div>
+        </div>
+      </div>
     </div>
   </div>
 
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="upcomingServices.length === 0">
+    <div class="empty-icon">
+      <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+        <line x1="8" y1="14" x2="16" y2="14"/>
+        <line x1="8" y1="18" x2="12" y2="18"/>
+      </svg>
+    </div>
+    <h2>Aucun service planifié</h2>
+    <p>Vous n'avez aucun rendez-vous confirmé pour le moment.</p>
+    <p class="hint">Les demandes acceptées et payées apparaîtront ici.</p>
+  </div>
+
+  <!-- Services Grid -->
+  <div class="services-grid" *ngIf="upcomingServices.length > 0">
+    <div class="service-card" *ngFor="let service of upcomingServices" 
+         [class.urgent]="isUrgent(service.date)">
+      
+      <!-- Card Header -->
+      <div class="card-header">
+        <div class="client-info">
+          <div class="client-avatar">
+            <img [src]="getClientPhoto(service.client)" 
+                 [alt]="getClientName(service.client)">
+          </div>
+          <div class="client-details">
+            <h3 class="client-name">{{ getClientName(service.client) }}</h3>
+            <p class="service-type">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+              </svg>
+              {{ service.service }}
+            </p>
+          </div>
+        </div>
+        
+        <div class="status-badge" [class]="getStatusClass(service.status)">
+          {{ getStatusLabel(service.status) }}
+        </div>
+      </div>
+
+      <!-- Date & Time Section -->
+      <div class="datetime-section">
+        <div class="datetime-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          <div class="datetime-content">
+            <span class="label">Date</span>
+            <span class="value">{{ formatDate(service.date) }}</span>
+          </div>
+        </div>
+
+        <div class="datetime-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <div class="datetime-content">
+            <span class="label">Heure</span>
+            <span class="value">{{ service.time || '09:00' }}</span>
+          </div>
+        </div>
+
+        <div class="datetime-item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <div class="datetime-content">
+            <span class="label">Durée</span>
+            <span class="value">{{ service.estimatedDuration || 60 }} min</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Location Section -->
+      <div class="location-section">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+        <span class="location-text">{{ service.location?.address || 'Adresse non spécifiée' }}</span>
+      </div>
+
+      <!-- Description Section -->
+      <div class="description-section" *ngIf="service.cause">
+        <h4 class="section-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          Description
+        </h4>
+        <p class="description-text">{{ service.cause }}</p>
+      </div>
+
+      <!-- Provider Notes (if any) -->
+      <div class="notes-section" *ngIf="service.providerNotes">
+        <h4 class="section-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+          Vos notes
+        </h4>
+        <p class="notes-text">{{ service.providerNotes }}</p>
+      </div>
+
+      <!-- Price Section -->
+      <div class="price-section">
+        <div class="price-info">
+          <span class="price-label">Prix convenu</span>
+          <span class="price-value">{{ service.proposedPrice || 0 }} DT</span>
+        </div>
+        <div class="payment-indicator" [class.paid]="service.status === 'paid'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+            <line x1="1" y1="10" x2="23" y2="10"/>
+          </svg>
+          {{ service.status === 'paid' ? 'Payé' : 'En attente de paiement' }}
+        </div>
+      </div>
+
+      <!-- Photos (if attached) -->
+      <div class="photos-section" *ngIf="service.attachments && service.attachments.length > 0">
+        <h4 class="section-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+          Photos ({{ service.attachments.length }})
+        </h4>
+        <div class="photos-grid">
+          <img *ngFor="let photo of service.attachments.slice(0, 3)" 
+               [src]="photo" 
+               alt="Photo du problème"
+               (click)="openPhotoModal(photo)">
+          <div class="more-photos" *ngIf="service.attachments.length > 3">
+            +{{ service.attachments.length - 3 }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Actions -->
+      <div class="card-actions">
+        <button class="action-btn view-location" (click)="viewOnMap(service)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+          Voir sur la carte
+        </button>
+
+        <button class="action-btn contact-client" (click)="contactClient(service.client)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+          Contacter
+        </button>
+
+        <button class="action-btn complete-service" 
+                (click)="markAsCompleted(service)"
+                *ngIf="service.status === 'paid'">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          Marquer terminé
+        </button>
+      </div>
+
+      <!-- Urgent Badge -->
+      <div class="urgent-badge" *ngIf="isUrgent(service.date)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        Urgent - Aujourd'hui ou demain
+      </div>
+    </div>
+  </div>
 </div>

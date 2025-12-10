@@ -6,7 +6,13 @@
       <div class="hero-pattern"></div>
     </div>
     <div class="hero-content">
-      <div class="hero-badge">🔒 Paiement 100% Sécurisé</div>
+      <div class="hero-badge">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        Paiement 100% Sécurisé
+      </div>
       <h1 class="hero-title">Finaliser votre Réservation</h1>
       <p class="hero-subtitle">Choisissez votre méthode de paiement préférée</p>
     </div>
@@ -21,7 +27,13 @@
       <!-- Payment Methods -->
       <div class="payment-section">
         <div class="section-header">
-          <h2 class="section-title">💳 Méthode de Paiement</h2>
+          <h2 class="section-title">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+              <line x1="1" y1="10" x2="23" y2="10"/>
+            </svg>
+            Méthode de Paiement
+          </h2>
           <p class="section-subtitle">Sélectionnez votre mode de paiement préféré</p>
         </div>
 
@@ -30,9 +42,18 @@
                [class.active]="selectedMethod === 'card'"
                (click)="selectMethod('card')">
             <div class="method-radio">
-              <span class="radio-check" *ngIf="selectedMethod === 'card'">✓</span>
+              <span class="radio-check" *ngIf="selectedMethod === 'card'">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </span>
             </div>
-            <div class="method-icon">💳</div>
+            <div class="method-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                <line x1="1" y1="10" x2="23" y2="10"/>
+              </svg>
+            </div>
             <div class="method-info">
               <h3 class="method-title">Carte Bancaire</h3>
               <p class="method-description">Visa, Mastercard, CIB</p>
@@ -44,9 +65,18 @@
                [class.active]="selectedMethod === 'sobflous'"
                (click)="selectMethod('sobflous')">
             <div class="method-radio">
-              <span class="radio-check" *ngIf="selectedMethod === 'sobflous'">✓</span>
+              <span class="radio-check" *ngIf="selectedMethod === 'sobflous'">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </span>
             </div>
-            <div class="method-icon">📱</div>
+            <div class="method-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                <line x1="12" y1="18" x2="12.01" y2="18"/>
+              </svg>
+            </div>
             <div class="method-info">
               <h3 class="method-title">Sobflous</h3>
               <p class="method-description">Paiement mobile instantané</p>
@@ -57,9 +87,18 @@
                [class.active]="selectedMethod === 'd17'"
                (click)="selectMethod('d17')">
             <div class="method-radio">
-              <span class="radio-check" *ngIf="selectedMethod === 'd17'">✓</span>
+              <span class="radio-check" *ngIf="selectedMethod === 'd17'">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </span>
             </div>
-            <div class="method-icon">🏪</div>
+            <div class="method-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+              </svg>
+            </div>
             <div class="method-info">
               <h3 class="method-title">D17</h3>
               <p class="method-description">Paiement en point de vente</p>
@@ -70,9 +109,18 @@
                [class.active]="selectedMethod === 'cash'"
                (click)="selectMethod('cash')">
             <div class="method-radio">
-              <span class="radio-check" *ngIf="selectedMethod === 'cash'">✓</span>
+              <span class="radio-check" *ngIf="selectedMethod === 'cash'">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </span>
             </div>
-            <div class="method-icon">💵</div>
+            <div class="method-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="1" x2="12" y2="23"/>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+            </div>
             <div class="method-info">
               <h3 class="method-title">Paiement sur Place</h3>
               <p class="method-description">Payez en espèces lors du service</p>
@@ -81,82 +129,123 @@
         </div>
       </div>
 
-      <!-- Payment Form (Card) -->
+      <!-- Payment Form (Card) - Stripe -->
       <div class="payment-section" *ngIf="selectedMethod === 'card'">
         <div class="section-header">
-          <h2 class="section-title">💳 Informations de la Carte</h2>
-          <p class="section-subtitle">Vos données sont cryptées et sécurisées</p>
+          <h2 class="section-title">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+              <line x1="1" y1="10" x2="23" y2="10"/>
+            </svg>
+            Paiement par Carte
+          </h2>
+          <p class="section-subtitle">Paiement sécurisé via Stripe</p>
+        </div>
+
+        <!-- Stripe Badge -->
+        <div class="stripe-badge">
+          <svg width="60" height="25" viewBox="0 0 60 25" fill="none">
+            <path fill="#635BFF" d="M59.64 14.28h-8.06c.19 1.93 1.6 2.55 3.2 2.55 1.64 0 2.96-.27 4.06-.68v3.59c-1.26.58-2.84.91-4.77.91-4.14 0-7.27-2.21-7.27-7.54 0-4.18 2.6-7.58 6.53-7.58 4.04 0 6.4 3.07 6.4 7.11 0 .57-.06 1.3-.1 1.64zm-5.75-6c-1.08 0-2.14.8-2.33 2.64h4.54c-.02-1.53-.87-2.64-2.21-2.64zM39.2 5.85c1.42 0 2.68.26 3.63.58l-.67 3.59c-.88-.32-1.93-.52-3.04-.52-1.87 0-2.8.81-2.8 1.72 0 1.17 1.26 1.7 2.9 2.44 2.45 1.08 3.54 2.51 3.54 4.49 0 3.38-2.72 5.41-6.8 5.41-1.95 0-3.76-.4-4.71-.85l.7-3.62c1.13.52 2.62.9 4.04.9 1.62 0 2.54-.6 2.54-1.68 0-1.02-.87-1.59-2.66-2.33-2.67-1.12-3.82-2.65-3.82-4.53 0-3.06 2.52-5.6 7.15-5.6zM23.88 23.4V11.26h-.05l-1.35 12.14h-3.52l-1.35-12.14h-.05V23.4h-4.5V5.53h6.73l1.22 10.67h.04l1.22-10.67h6.71V23.4h-5.1zM6.16 14.28H3.94v5.1c0 1.22.48 1.64 1.4 1.64.43 0 .78-.04 1-.1v3.35c-.46.18-1.22.29-2.14.29-2.84 0-4.2-1.38-4.2-4.47V14.28H0V10.7h.1L3.94 6.53V5.53h4.2v5.17h3.8v3.58H6.16z"/>
+          </svg>
+          <span>Paiement 100% sécurisé</span>
         </div>
 
         <form class="payment-form">
+          <!-- Nom sur la carte -->
           <div class="form-row">
             <div class="form-group full">
               <label class="form-label">
-                <span class="label-icon">👤</span>
-                Nom sur la carte
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+                Nom sur la carte <span class="required">*</span>
               </label>
               <input type="text" 
                      class="form-input" 
                      placeholder="Ex: Ahmed Ben Ali"
                      [(ngModel)]="cardName"
-                     name="cardName">
+                     name="cardName"
+                     required>
+              <small class="input-hint">Entrez le nom exactement comme il apparaît sur votre carte</small>
             </div>
           </div>
 
+          <!-- Élément Stripe Card (Sécurisé) -->
           <div class="form-row">
             <div class="form-group full">
               <label class="form-label">
-                <span class="label-icon">💳</span>
-                Numéro de carte
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                  <line x1="1" y1="10" x2="23" y2="10"/>
+                </svg>
+                Informations de la carte <span class="required">*</span>
               </label>
-              <input type="text" 
-                     class="form-input" 
-                     placeholder="1234 5678 9012 3456"
-                     [(ngModel)]="cardNumber"
-                     name="cardNumber"
-                     maxlength="19">
-              <div class="card-icons">
-                <span class="card-icon">💳</span>
+              <div class="stripe-card-wrapper">
+                <div id="stripe-card-element" class="stripe-card-element"></div>
+                <div class="stripe-card-icons">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" class="card-brand-icon">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" class="card-brand-icon">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg" alt="Amex" class="card-brand-icon">
+                </div>
               </div>
+              <small class="input-hint">Numéro de carte, date d'expiration et CVV</small>
             </div>
           </div>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">
-                <span class="label-icon">📅</span>
-                Date d'expiration
-              </label>
-              <input type="text" 
-                     class="form-input" 
-                     placeholder="MM/AA"
-                     [(ngModel)]="cardExpiry"
-                     name="cardExpiry"
-                     maxlength="5">
-            </div>
+          <!-- Erreur Stripe -->
+          <div class="stripe-error" *ngIf="stripeError">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="15" y1="9" x2="9" y2="15"/>
+              <line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+            {{ stripeError }}
+          </div>
 
-            <div class="form-group">
-              <label class="form-label">
-                <span class="label-icon">🔒</span>
-                CVV
-              </label>
-              <input type="text" 
-                     class="form-input" 
-                     placeholder="123"
-                     [(ngModel)]="cardCvv"
-                     name="cardCvv"
-                     maxlength="3">
+          <!-- Mode Test Info -->
+          <div class="test-mode-info">
+            <div class="test-badge">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              Mode Test Stripe
+            </div>
+            <p>Utilisez ces cartes de test :</p>
+            <ul class="test-cards">
+              <li><code>4242 4242 4242 4242</code> - Paiement réussi</li>
+              <li><code>4000 0000 0000 0002</code> - Carte refusée</li>
+              <li>Date : toute date future (ex: 12/34)</li>
+              <li>CVV : 3 chiffres quelconques (ex: 123)</li>
+            </ul>
+          </div>
+
+          <!-- Stripe Info -->
+          <div class="stripe-info">
+            <div class="info-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <polyline points="9 12 11 14 15 10"/>
+              </svg>
+              <span>Cryptage SSL 256 bits</span>
+            </div>
+            <div class="info-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <span>Vos données ne sont jamais stockées</span>
             </div>
           </div>
 
-          <div class="form-checkbox">
-            <input type="checkbox" 
-                   id="saveCard" 
-                   [(ngModel)]="saveCard"
-                   name="saveCard">
-            <label for="saveCard">
-              💾 Sauvegarder cette carte pour les prochains paiements
-            </label>
+          <!-- Accepted Cards -->
+          <div class="accepted-cards">
+            <span class="label">Cartes acceptées :</span>
+            <div class="cards-icons">
+              <img src="https://cdn.jsdelivr.net/gh/lipis/flag-icons@main/flags/4x3/us.svg" alt="Visa" class="card-icon" title="Visa">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" class="card-icon" title="Mastercard">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg" alt="Amex" class="card-icon" title="American Express">
+            </div>
           </div>
         </form>
       </div>
@@ -164,7 +253,13 @@
       <!-- Payment Form (Sobflous) -->
       <div class="payment-section" *ngIf="selectedMethod === 'sobflous'">
         <div class="section-header">
-          <h2 class="section-title">📱 Paiement Sobflous</h2>
+          <h2 class="section-title">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+              <line x1="12" y1="18" x2="12.01" y2="18"/>
+            </svg>
+            Paiement Sobflous
+          </h2>
           <p class="section-subtitle">Entrez votre numéro de téléphone</p>
         </div>
 
@@ -172,7 +267,10 @@
           <div class="form-row">
             <div class="form-group full">
               <label class="form-label">
-                <span class="label-icon">📱</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                  <line x1="12" y1="18" x2="12.01" y2="18"/>
+                </svg>
                 Numéro de téléphone
               </label>
               <input type="tel" 
@@ -184,7 +282,13 @@
           </div>
 
           <div class="info-box sobflous">
-            <div class="info-icon">ℹ️</div>
+            <div class="info-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="16" x2="12" y2="12"/>
+                <line x1="12" y1="8" x2="12.01" y2="8"/>
+              </svg>
+            </div>
             <div class="info-content">
               <strong>Comment ça marche ?</strong>
               <p>Vous recevrez un SMS avec un code à confirmer pour finaliser le paiement.</p>
@@ -196,7 +300,13 @@
       <!-- Payment Form (D17) -->
       <div class="payment-section" *ngIf="selectedMethod === 'd17'">
         <div class="section-header">
-          <h2 class="section-title">🏪 Paiement D17</h2>
+          <h2 class="section-title">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            Paiement D17
+          </h2>
           <p class="section-subtitle">Générez votre code de paiement</p>
         </div>
 
@@ -226,7 +336,13 @@
           </div>
 
           <button class="btn-generate" (click)="generateD17Code()">
-            <span class="btn-icon">🎫</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <line x1="9" y1="3" x2="9" y2="21"/>
+              <line x1="15" y1="3" x2="15" y2="21"/>
+              <line x1="3" y1="9" x2="21" y2="9"/>
+              <line x1="3" y1="15" x2="21" y2="15"/>
+            </svg>
             <span>Générer le Code D17</span>
           </button>
 
@@ -241,12 +357,25 @@
       <!-- Payment Form (Cash) -->
       <div class="payment-section" *ngIf="selectedMethod === 'cash'">
         <div class="section-header">
-          <h2 class="section-title">💵 Paiement sur Place</h2>
+          <h2 class="section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+              <line x1="1" y1="10" x2="23" y2="10"/>
+              <circle cx="12" cy="14" r="2"/>
+            </svg>
+            Paiement sur Place
+          </h2>
           <p class="section-subtitle">Payez directement au prestataire</p>
         </div>
 
         <div class="info-box cash">
-          <div class="info-icon">💡</div>
+          <div class="info-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="16" x2="12" y2="12"/>
+              <line x1="12" y1="8" x2="12.01" y2="8"/>
+            </svg>
+          </div>
           <div class="info-content">
             <strong>Information importante</strong>
             <p>Vous payerez le montant exact en espèces au prestataire lors de la réalisation du service. Assurez-vous d'avoir le montant exact.</p>
@@ -254,12 +383,44 @@
         </div>
 
         <div class="cash-checklist">
-          <h4 class="checklist-title">✓ Avantages du paiement sur place :</h4>
+          <h4 class="checklist-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            Avantages du paiement sur place :
+          </h4>
           <ul class="checklist-items">
-            <li>💵 Pas de frais supplémentaires</li>
-            <li>🤝 Paiement direct au prestataire</li>
-            <li>✅ Confirmation immédiate du service</li>
-            <li>🔄 Possibilité de négociation sur place</li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                <line x1="1" y1="10" x2="23" y2="10"/>
+              </svg>
+              Pas de frais supplémentaires
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+              Paiement direct au prestataire
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+              Confirmation immédiate du service
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23 4 23 10 17 10"/>
+                <polyline points="1 20 1 14 7 14"/>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+              </svg>
+              Possibilité de négociation sur place
+            </li>
           </ul>
         </div>
       </div>
@@ -269,17 +430,31 @@
     <!-- Order Summary Sidebar -->
     <div class="payment-sidebar">
       
+      <!-- Loading State for Sidebar -->
+      <div *ngIf="isLoading" class="sidebar-loading">
+        <div class="spinner-small"></div>
+        <p>Chargement...</p>
+      </div>
+
       <!-- Service Summary -->
-      <div class="summary-card">
+      <div class="summary-card" *ngIf="!isLoading && booking">
         <div class="summary-header">
-          <h3 class="summary-title">📋 Résumé de la Commande</h3>
+          <h3 class="summary-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+            Résumé de la Commande
+          </h3>
         </div>
 
         <div class="service-item">
-          <div class="service-icon">🔧</div>
+          <img [src]="getProviderPhoto()" class="provider-avatar" [alt]="booking.provider?.user?.nom">
           <div class="service-details">
-            <h4 class="service-name">Réparation Plomberie</h4>
-            <p class="service-provider">Par Mohamed Trabelsi</p>
+            <h4 class="service-name">{{ booking.service }}</h4>
+            <p class="service-provider">Par {{ booking.provider?.user?.prenom }} {{ booking.provider?.user?.nom }}</p>
           </div>
         </div>
 
@@ -287,16 +462,46 @@
 
         <div class="summary-details">
           <div class="detail-row">
-            <span class="detail-label">📅 Date</span>
-            <span class="detail-value">15 Nov 2025</span>
+            <span class="detail-label">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+              Date
+            </span>
+            <span class="detail-value">{{ formatDate(booking.date) }}</span>
+          </div>
+          <div class="detail-row" *ngIf="booking.time">
+            <span class="detail-label">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              Heure
+            </span>
+            <span class="detail-value">{{ booking.time }}</span>
+          </div>
+          <div class="detail-row" *ngIf="booking.estimatedDuration">
+            <span class="detail-label">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              Durée estimée
+            </span>
+            <span class="detail-value">{{ booking.estimatedDuration }} min</span>
           </div>
           <div class="detail-row">
-            <span class="detail-label">⏰ Heure</span>
-            <span class="detail-value">14:00 - 16:00</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">📍 Adresse</span>
-            <span class="detail-value">Tunis, La Marsa</span>
+            <span class="detail-label">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              Adresse
+            </span>
+            <span class="detail-value">{{ booking.location?.address }}</span>
           </div>
         </div>
 
@@ -305,15 +510,24 @@
         <div class="price-details">
           <div class="price-row">
             <span class="price-label">Prix du service</span>
-            <span class="price-value">80.000 TND</span>
+            <span class="price-value">{{ getSubtotal() }} DT</span>
           </div>
           <div class="price-row">
-            <span class="price-label">Frais de service</span>
-            <span class="price-value">5.000 TND</span>
+            <span class="price-label">Frais de service (5%)</span>
+            <span class="price-value">{{ getServiceFee() }} DT</span>
           </div>
-          <div class="price-row discount">
-            <span class="price-label">🎉 Réduction (-10%)</span>
-            <span class="price-value">-8.500 TND</span>
+          <div class="price-row discount" *ngIf="promoApplied">
+            <span class="price-label">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 12 20 22 4 22 4 12"/>
+                <rect x="2" y="7" width="20" height="5"/>
+                <line x1="12" y1="22" x2="12" y2="7"/>
+                <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
+                <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
+              </svg>
+              Réduction (-{{ promoDiscount }}%)
+            </span>
+            <span class="price-value discount">-{{ getDiscount() }} DT</span>
           </div>
         </div>
 
@@ -321,59 +535,105 @@
 
         <div class="total-row">
           <span class="total-label">Total à payer</span>
-          <span class="total-value">76.500 TND</span>
+          <span class="total-value">{{ getTotal() }} DT</span>
         </div>
 
-        <button class="btn-pay" (click)="processPayment()">
-          <span class="btn-icon">🔒</span>
-          <span>Payer Maintenant</span>
+        <button class="btn-pay" (click)="processPayment()" [disabled]="isProcessing">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <span *ngIf="!isProcessing">Payer {{ getTotal() }} DT</span>
+          <span *ngIf="isProcessing">Traitement...</span>
+        </button>
+
+        <button class="btn-back-link" (click)="goBack()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"/>
+            <polyline points="12 19 5 12 12 5"/>
+          </svg>
+          Retour aux détails
         </button>
 
         <div class="security-badges">
           <div class="security-badge">
-            <span class="badge-icon">🔒</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
             <span>Paiement Sécurisé</span>
           </div>
           <div class="security-badge">
-            <span class="badge-icon">✅</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <polyline points="9 12 11 14 15 10"/>
+            </svg>
             <span>Certifié SSL</span>
           </div>
         </div>
       </div>
 
       <!-- Promo Code -->
-      <div class="promo-card">
-        <h4 class="promo-title">🎁 Code Promo</h4>
+      <div class="promo-card" *ngIf="!isLoading && booking">
+        <h4 class="promo-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 12 20 22 4 22 4 12"/>
+            <rect x="2" y="7" width="20" height="5"/>
+            <line x1="12" y1="22" x2="12" y2="7"/>
+            <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
+            <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
+          </svg>
+          Code Promo
+        </h4>
         <div class="promo-input-group">
           <input type="text" 
                  class="promo-input" 
                  placeholder="Entrez votre code"
-                 [(ngModel)]="promoCode">
-          <button class="btn-apply" (click)="applyPromo()">Appliquer</button>
+                 [(ngModel)]="promoCode"
+                 [disabled]="promoApplied">
+          <button class="btn-apply" (click)="applyPromo()" [disabled]="promoApplied">
+            {{ promoApplied ? 'Appliqué' : 'Appliquer' }}
+          </button>
         </div>
         <p class="promo-success" *ngIf="promoApplied">
-          ✅ Code promo "FIRST10" appliqué avec succès!
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          Code "{{ promoCode.toUpperCase() }}" appliqué (-{{ promoDiscount }}%)
         </p>
       </div>
 
       <!-- Trust Indicators -->
-      <div class="trust-indicators">
+      <div class="trust-indicators" *ngIf="!isLoading">
         <div class="trust-item">
-          <div class="trust-icon">🛡️</div>
+          <div class="trust-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
           <div class="trust-text">
             <strong>Garantie Satisfait ou Remboursé</strong>
             <p>Service non conforme ? Nous vous remboursons</p>
           </div>
         </div>
         <div class="trust-item">
-          <div class="trust-icon">⭐</div>
+          <div class="trust-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" stroke-width="1">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </div>
           <div class="trust-text">
             <strong>Prestataires Vérifiés</strong>
             <p>Tous nos professionnels sont certifiés</p>
           </div>
         </div>
         <div class="trust-item">
-          <div class="trust-icon">📞</div>
+          <div class="trust-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#025ddd" stroke-width="2">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+          </div>
           <div class="trust-text">
             <strong>Support 24/7</strong>
             <p>Une question ? Nous sommes là pour vous</p>

@@ -12,72 +12,144 @@ import { LottieComponent } from 'ngx-lottie';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [CommonModule, ReactiveFormsModule, FormsModule, LottieComponent]
 })
+  
+  
+  
 export class ProfileComponent implements OnInit {
 
   user: any = null;
   provider: any = null;
   isEditing = false;
   profileForm!: FormGroup;
+  isLoading = true;
+
+  private readonly ROLE_LABELS: Record<'client' | 'prestataire' | 'admin', string> = {
+    client: 'Client',
+    prestataire: 'Prestataire',
+    admin: 'Administrateur'
+  };
+
+getRoleLabel(role?: string): string {
+    if (!role) return 'Chargement...';
+    return this.ROLE_LABELS[role as 'client' | 'prestataire' | 'admin'] || 'Utilisateur';
+  }
 
   certificateLottie = { path: 'assets/animations/Files.json', autoplay: true, loop: true };
   documentLottie = { path: 'assets/animations/Document.json', autoplay: true, loop: true };
 
-  constructor(private fb: FormBuilder, private profileService: ProfileService) {}
+  constructor(private fb: FormBuilder, private profileService: ProfileService) {
+    // Initialize form immediately with empty values
+    this.initEmptyForm();
+  }
 
-  ngOnInit() {
-    const userData = localStorage.getItem('user');
-    if (!userData) return;
+  // Get user photo URL
+  getUserPhoto(): string {
+    if (!this.user?.photo) {
+      return 'https://via.placeholder.com/200/025ddd/ffffff?text=User';
+    }
+    if (this.user.photo.startsWith('http')) {
+      return this.user.photo;
+    }
+    if (this.user.photo.startsWith('data:image')) {
+      return this.user.photo;
+    }
+    return `http://localhost:5000${this.user.photo}`;
+  }
 
-    this.user = JSON.parse(userData);
-    this.initForm();
-
-    if (this.user.role === 'prestataire') {
-      this.loadProviderData(this.user._id);
+  // Handle avatar click
+  onAvatarClick(): void {
+    if (this.isEditing) {
+      this.openPhotoInput();
     }
   }
 
-  /** Initialisation dynamique du formulaire selon le rôle */
-  initForm() {
-    const baseFields = {
+  ngOnInit() {
+    this.loadUserData();
+  }
+
+  loadUserData() {
+    const userData = localStorage.getItem('user');
+    if (!userData) {
+      this.isLoading = false;
+      return;
+    }
+
+    const localUser = JSON.parse(userData);
+    console.log("nom",localUser)
+    
+    // Load fresh user data from server
+    this.profileService.getUser(localUser._id).subscribe({
+      next: (freshUser: any) => {
+        console.log('User loaded:', freshUser);
+        this.user = freshUser;
+        // Update localStorage with fresh data
+        localStorage.setItem('user', JSON.stringify(this.user));
+        this.initForm();
+          console.log(this.user)
+        if (this.user.role === 'prestataire') {
+          this.loadProviderData(this.user._id);
+        }
+      },
+      error: (error) => {
+        console.error('Erreur chargement utilisateur:', error);
+        // Fallback to localStorage data
+        this.user = localUser;
+        this.initForm();
+        
+        if (this.user.role === 'prestataire') {
+          this.loadProviderData(this.user._id);
+        }
+      }
+    });
+  }
+
+  /** Initialize empty form to prevent FormGroup errors */
+  initEmptyForm() {
+    this.profileForm = this.fb.group({
       nom: [''],
       prenom: [''],
       email: [''],
       telephone: [''],
       adresse: [''],
-    };
-
-    const providerFields = {
       metier: [''],
       description: [''],
       experience: [''],
-    };
-
-    this.profileForm = this.fb.group(
-      this.user.role === 'prestataire' ? { ...baseFields, ...providerFields } : baseFields
-    );
-
-    this.profileForm.patchValue({
-      nom: this.user.nom,
-      prenom: this.user.prenom,
-      email: this.user.email,
-      telephone: this.user.telephone,
-      adresse: this.user.adresse,
     });
   }
 
+  /** Initialisation dynamique du formulaire selon le rôle */
+  initForm() {
+    if (!this.user) return;
+
+    this.profileForm.patchValue({
+      nom: this.user.nom || '',
+      prenom: this.user.prenom || '',
+      email: this.user.email || '',
+      telephone: this.user.telephone || '',
+      adresse: this.user.adresse || '',
+    });
+
+    this.isLoading = false;
+  }
+
   loadProviderData(userId: string) {
-    this.profileService.getProvider(userId).subscribe((data: any) => {
-      this.provider = data;
+    this.profileService.getProvider(userId).subscribe({
+      next: (data: any) => {
+        this.provider = data;
 
-      // Transformer les documents et certifications existants pour uniformité
-      this.provider.certifications = data.certifications?.map((c: any) => ({ url: c })) || [];
-      this.provider.documents = data.documents?.map((d: any) => ({ url: d })) || [];
+        // Transformer les documents et certifications existants pour uniformité
+        this.provider.certifications = data.certifications?.map((c: any) => ({ url: c })) || [];
+        this.provider.documents = data.documents?.map((d: any) => ({ url: d })) || [];
 
-      this.profileForm.patchValue({
-        metier: data.metier,
-        description: data.description,
-        experience: data.experience,
-      });
+        this.profileForm.patchValue({
+          metier: data.metier,
+          description: data.description,
+          experience: data.experience,
+        });
+      },
+      error: (error) => {
+        console.error('Erreur chargement prestataire:', error);
+      }
     });
   }
 
@@ -93,7 +165,8 @@ export class ProfileComponent implements OnInit {
   }
 
   onPhotoSelected(event: any) {
-    const file = event.target.files[0];
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
@@ -103,13 +176,22 @@ export class ProfileComponent implements OnInit {
     this.uploadPhoto(file);
   }
 
- uploadPhoto(file: File) {
-  this.profileService.updatePhoto(this.user._id, file).subscribe((res: any) => {
-    console.log('Photo mise à jour !');
-  this.user.photo = res.photo; // <-- utiliser la vraie URL
-  localStorage.setItem('user', JSON.stringify(this.user));
-  });
-}
+  uploadPhoto(file: File) {
+    this.profileService.updatePhoto(this.user._id, file).subscribe({
+      next: (res: any) => {
+        console.log('Photo mise à jour !');
+        // Update user photo with the new URL from backend
+        this.user.photo = res.photo;
+        // Update localStorage
+        localStorage.setItem('user', JSON.stringify(this.user));
+        // Force view update by triggering change detection
+        this.user = { ...this.user };
+      },
+      error: (error) => {
+        console.error('Erreur mise à jour photo:', error);
+      }
+    });
+  }
 
 
   // ===================== Documents & Certifications =====================
@@ -120,20 +202,36 @@ export class ProfileComponent implements OnInit {
 }
 
 
- onFileSelected(event: any, type: 'documents' | 'certifications') {
-  const files: FileList = event.target.files;
-  if (!files || files.length === 0) return;
+  onFileSelected(event: any, type: 'documents' | 'certifications') {
+    const input = event.target as HTMLInputElement;
+    const files = input.files;
+    if (!files || files.length === 0) return;
 
-  const formData = new FormData();
-  for (let i = 0; i < files.length; i++) {
-    formData.append(type, files[i]);
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      formData.append(type, files[i]);
+    }
+
+    this.profileService.uploadFiles(this.user._id, type, formData).subscribe({
+      next: (res: any) => {
+        // Update the local provider data with response from backend
+        this.provider[type] = res[type];
+        console.log(`${type} uploadés avec succès`);
+        // Force view update
+        this.provider = { ...this.provider };
+      },
+      error: (error) => {
+        console.error(`Erreur upload ${type}:`, error);
+      }
+    });
   }
 
-  this.profileService.uploadFiles(this.user._id, type, formData).subscribe((res: any) => {
-    // mettre à jour le tableau local avec la réponse du backend
-    this.provider[type] = res[type];
-    console.log(`${type} uploadés avec succès`);
-  });
+onCertFileSelected(event: any) {
+  this.onFileSelected(event, 'certifications');
+}
+
+onDocFileSelected(event: any) {
+  this.onFileSelected(event, 'documents');
 }
 
 
@@ -162,23 +260,48 @@ export class ProfileComponent implements OnInit {
       adresse: formData.adresse,
     };
 
-    this.profileService.updateUser(this.user._id, userUpdate).subscribe(() => {
+    this.profileService.updateUser(this.user._id, userUpdate).subscribe({
+      next: (updatedUser: any) => {
+        // Update local user object with new data
+        this.user.nom = updatedUser.nom;
+        this.user.prenom = updatedUser.prenom;
+        this.user.email = updatedUser.email;
+        this.user.telephone = updatedUser.telephone;
+        this.user.adresse = updatedUser.adresse;
+        
+        // Update localStorage
+        localStorage.setItem('user', JSON.stringify(this.user));
 
-      if (this.user.role === 'prestataire' && this.provider) {
-  const providerUpdate = {
-    metier: formData.metier,
-    description: formData.description,
-    experience: formData.experience
-  };
+        if (this.user.role === 'prestataire' && this.provider) {
+          const providerUpdate = {
+            metier: formData.metier,
+            description: formData.description,
+            experience: formData.experience
+          };
 
-  this.profileService.updateProvider(this.user._id, providerUpdate).subscribe(() => {
-    console.log('Prestataire mis à jour');
-  });
-}
+          this.profileService.updateProvider(this.user._id, providerUpdate).subscribe({
+            next: (updatedProvider: any) => {
+              // Update local provider object with new data
+              this.provider.metier = updatedProvider.metier;
+              this.provider.description = updatedProvider.description;
+              this.provider.experience = updatedProvider.experience;
+              
+              console.log('Prestataire mis à jour');
+              this.isEditing = false;
+            },
+            error: (error) => {
+              console.error('Erreur mise à jour prestataire:', error);
+            }
+          });
+        } else {
+          this.isEditing = false;
+        }
 
-
-      console.log('Profil enregistré');
-      this.isEditing = false;
+        console.log('Profil enregistré');
+      },
+      error: (error) => {
+        console.error('Erreur mise à jour utilisateur:', error);
+      }
     });
   }
 }

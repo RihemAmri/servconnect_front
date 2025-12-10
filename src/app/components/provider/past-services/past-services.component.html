@@ -1,36 +1,193 @@
-<div class="services-page">
-  <div class="header-row">
-    <button class="btn back" (click)="goBack()">
-      <i class="fas fa-arrow-left"></i>
-    </button>
-    <h2><i class="fas fa-calendar-check"></i> Services terminés</h2>
+<div class="past-services-container">
+  
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Chargement de l'historique...</p>
   </div>
 
-  <div class="service-card" *ngFor="let service of pastServices">
-    <div class="card-content">
-      <div class="info">
-        <h3><i class="fas fa-tools"></i> {{ service.title }}</h3>
-        <p>
-          <i class="fas fa-calendar-day"></i>
-          <strong>Date :</strong> {{ service.date | date : "fullDate" }}
-        </p>
-        <p>
-          <i class="fas fa-user"></i>
-          <strong>Client :</strong> {{ service.client }}
-        </p>
-        <p *ngIf="service.duration">
-          <i class="fas fa-clock"></i>
-          <strong>Durée :</strong> {{ service.duration }}
-        </p>
-        <p *ngIf="service.location">
-          <i class="fas fa-map-marker-alt"></i>
-          <strong>Lieu :</strong> {{ service.location }}
-        </p>
+  <!-- Content -->
+  <div *ngIf="!loading" class="content">
+    
+    <!-- Header Section -->
+    <div class="header-section">
+      <div class="header-top">
+        <button class="btn-back" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          Retour
+        </button>
+      </div>
+      
+      <h1 class="page-title">
+        <i class="fas fa-history"></i>
+        Services Terminés
+      </h1>
+      <p class="page-subtitle">Historique complet de vos prestations réalisées</p>
+    </div>
+
+    <!-- Stats Dashboard -->
+    <div class="stats-dashboard">
+      <div class="stat-card total">
+        <div class="stat-icon">
+          <i class="fas fa-check-double"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ stats.totalCompleted }}</h3>
+          <p>Services terminés</p>
+        </div>
       </div>
 
-      <div class="image">
-        <img [src]="service.image" alt="Service image" />
+      <div class="stat-card revenue">
+        <div class="stat-icon">
+          <i class="fas fa-coins"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ stats.totalRevenue }} DT</h3>
+          <p>Revenus totaux</p>
+        </div>
+      </div>
+
+      <div class="stat-card duration">
+        <div class="stat-icon">
+          <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ formatDuration(stats.totalDuration) }}</h3>
+          <p>Temps total</p>
+        </div>
+      </div>
+
+      <div class="stat-card month">
+        <div class="stat-icon">
+          <i class="fas fa-calendar-check"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ stats.thisMonthCompleted }}</h3>
+          <p>Ce mois-ci</p>
+        </div>
       </div>
     </div>
+
+    <!-- Filters Section -->
+    <div class="filters-card">
+      <div class="filters-header">
+        <h2>
+          <i class="fas fa-filter"></i>
+          Filtres
+        </h2>
+        <button class="btn-clear" (click)="clearFilters()" *ngIf="searchTerm || selectedMonth">
+          <i class="fas fa-times"></i>
+          Effacer
+        </button>
+      </div>
+      
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label>Rechercher</label>
+          <div class="search-input">
+            <i class="fas fa-search"></i>
+            <input 
+              type="text" 
+              [(ngModel)]="searchTerm" 
+              (input)="applyFilters()"
+              placeholder="Client, service, adresse...">
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label>Période</label>
+          <select [(ngModel)]="selectedMonth" (change)="applyFilters()">
+            <option value="">Tous les mois</option>
+            <option *ngFor="let month of getMonthOptions()" [value]="month.value">
+              {{ month.label }}
+            </option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Trier par</label>
+          <select [(ngModel)]="sortBy" (change)="applyFilters()">
+            <option value="date-desc">Plus récent</option>
+            <option value="date-asc">Plus ancien</option>
+            <option value="price-desc">Prix décroissant</option>
+            <option value="price-asc">Prix croissant</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Count -->
+    <div class="results-info" *ngIf="filteredBookings.length > 0">
+      <span>{{ filteredBookings.length }} service(s) trouvé(s)</span>
+    </div>
+
+    <!-- Services Grid -->
+    <div class="services-grid" *ngIf="filteredBookings.length > 0">
+      <div class="service-card" *ngFor="let booking of filteredBookings; let i = index"
+           [style.animation-delay.ms]="i * 50">
+        
+        <!-- Card Header -->
+        <div class="card-header">
+          <div class="status-badge">
+            <i class="fas fa-check-circle"></i>
+            Terminé
+          </div>
+          <div class="service-date">
+            {{ booking.completedAt | date:'d MMM yyyy':'':'fr' }}
+          </div>
+        </div>
+
+        <!-- Client Info -->
+        <div class="client-section">
+          <img 
+            [src]="booking.client?.photo || '/assets/images/default-avatar.png'" 
+            [alt]="booking.client?.nom"
+            class="client-avatar">
+          <div class="client-info">
+            <h3>{{ booking.client?.nom }} {{ booking.client?.prenom }}</h3>
+            <p class="service-type">{{ booking.service }}</p>
+          </div>
+        </div>
+
+        <!-- Service Details -->
+        <div class="service-details">
+          <div class="detail-item">
+            <i class="fas fa-coins"></i>
+            <span class="detail-value">{{ booking.proposedPrice }} DT</span>
+          </div>
+          <div class="detail-item">
+            <i class="fas fa-clock"></i>
+            <span class="detail-value">{{ formatDuration(booking.estimatedDuration) }}</span>
+          </div>
+          <div class="detail-item" *ngIf="booking.location">
+            <i class="fas fa-map-marker-alt"></i>
+            <span class="detail-value location">{{ booking.location.address | slice:0:25 }}...</span>
+          </div>
+        </div>
+
+        <!-- Card Actions -->
+        <div class="card-actions">
+          <button class="btn-details" (click)="viewDetails(booking._id)">
+            <i class="fas fa-eye"></i>
+            Voir détails
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="filteredBookings.length === 0 && !loading">
+      <div class="empty-icon">
+        <i class="fas fa-inbox"></i>
+      </div>
+      <h3>Aucun service terminé</h3>
+      <p *ngIf="searchTerm || selectedMonth">Aucun résultat pour vos critères de recherche</p>
+      <p *ngIf="!searchTerm && !selectedMonth">Vous n'avez pas encore de services complétés</p>
+      <button class="btn-back-home" (click)="goBack()">
+        <i class="fas fa-calendar"></i>
+        Voir mes réservations
+      </button>
+    </div>
+
   </div>
 </div>

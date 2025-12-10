@@ -1,4 +1,4 @@
-<nav class="navbar" [class.scrolled]="isScrolled">
+<nav class="navbar" [class.scrolled]="isScrolled()">
   <div class="navbar-container">
     <!-- Logo -->
     <a routerLink="/" class="navbar-brand">
@@ -42,14 +42,41 @@
       </li>
 
       <!-- Explorer - Pour visiteurs et clients uniquement -->
-      <li class="nav-item" *ngIf="!isLoggedIn || userRole === 'client'">
+      <li class="nav-item" *ngIf="!isLoggedIn() || userRole() === 'client'">
         <a routerLink="/explore" class="nav-link" routerLinkActive="active">
           <i class="pi pi-search nav-icon"></i> Explorer
         </a>
       </li>
+      <li class="nav-item" *ngIf="isLoggedIn() && userRole() === 'client'">
+        <a
+          routerLink="/mes-reservations"
+          class="nav-link"
+          routerLinkActive="active"
+        >
+          <i class="pi pi-calendar nav-icon"></i>Mes reservations
+        </a>
+      </li>
+      <li class="nav-item" *ngIf="isLoggedIn() && userRole() === 'client'">
+        <a
+          routerLink="/mes-reclamations"
+          class="nav-link"
+          routerLinkActive="active"
+        >
+          <i class="pi pi-envelope nav-icon"></i>Mes reclamation
+        </a>
+      </li>
 
       <!-- MENU PRESTATAIRE -->
-      <ng-container *ngIf="isLoggedIn && userRole === 'prestataire'">
+      <ng-container *ngIf="isLoggedIn() && userRole() === 'prestataire'">
+        <li class="nav-item">
+          <a
+            routerLink="/provider/dashboard"
+            class="nav-link"
+            routerLinkActive="active"
+          >
+            <i class="pi pi-calendar-plus nav-icon"></i> Dashboard
+          </a>
+        </li>
         <li class="nav-item">
           <a
             routerLink="/my-services"
@@ -62,16 +89,6 @@
 
         <li class="nav-item">
           <a
-            routerLink="/manage-bookings"
-            class="nav-link"
-            routerLinkActive="active"
-          >
-            <i class="pi pi-calendar-plus nav-icon"></i> Réservations
-          </a>
-        </li>
-
-        <li class="nav-item">
-          <a
             routerLink="/past-services"
             class="nav-link"
             routerLinkActive="active"
@@ -79,23 +96,23 @@
             <i class="pi pi-history nav-icon"></i> Historique
           </a>
         </li>
+        <!--      <li class="nav-item">
+          <a
+            routerLink="/provider/my-documents"
+            class="nav-link"
+            (click)="closeDropdown()"
+          >
+            <i class="pi pi-file"></i> Mes Documents
+          </a>
+        </li> -->
 
         <!-- Dropdown "Plus" pour les actions secondaires -->
         <li class="nav-item nav-dropdown">
           <button class="nav-link dropdown-toggle" (click)="toggleDropdown()">
             <i class="pi pi-ellipsis-v nav-icon"></i> Plus
           </button>
-          <ul class="dropdown-menu" [class.show]="isDropdownOpen">
-            <li>
-              <a
-                routerLink="/add-service"
-                class="dropdown-item"
-                (click)="closeDropdown()"
-              >
-                <i class="pi pi-plus"></i> Ajouter un service
-              </a>
-            </li>
-            <li>
+          <ul class="dropdown-menu" [class.show]="isDropdownOpen()">
+            <!-- <li>
               <a
                 routerLink="/upcoming-services"
                 class="dropdown-item"
@@ -103,30 +120,24 @@
               >
                 <i class="pi pi-calendar"></i> Services à venir
               </a>
-            </li>
+            </li> -->
+
             <li>
-              <!-- Dans votre menu de navigation prestataire -->
-              <a routerLink="/provider/my-documents" class="nav-link">
-                <i class="pi pi-file"></i>
-                <span>Mes Documents</span>
+              <a
+                routerLink="/provider/my-documents"
+                class="dropdown-item"
+                (click)="closeDropdown()"
+              >
+                <i class="pi pi-file"></i> Mes Documents
               </a>
             </li>
             <li>
               <a
-                routerLink="/pricing"
+                routerLink="/mes-reclamations"
                 class="dropdown-item"
-                (click)="closeDropdown()"
+                routerLinkActive="active"
               >
-                <i class="pi pi-dollar"></i> Tarifs
-              </a>
-            </li>
-            <li>
-              <a
-                routerLink="/contact"
-                class="dropdown-item"
-                (click)="closeDropdown()"
-              >
-                <i class="pi pi-phone"></i> Contact
+                <i class="pi pi-envelope"></i>Mes reclamation
               </a>
             </li>
           </ul>
@@ -134,8 +145,8 @@
       </ng-container>
 
       <!-- MENU ADMIN avec dropdown -->
-      <ng-container *ngIf="isLoggedIn && userRole === 'admin'">
-        <li class="nav-item">
+      <ng-container *ngIf="isLoggedIn() && userRole() === 'admin'">
+        <!--    <li class="nav-item">
           <a
             routerLink="/admin"
             class="nav-link"
@@ -144,14 +155,14 @@
           >
             <i class="pi pi-shield nav-icon"></i> Dashboard
           </a>
-        </li>
+        </li> -->
 
         <!-- Dropdown Admin "Gestion" -->
         <li class="nav-item nav-dropdown">
           <button class="nav-link dropdown-toggle" (click)="toggleDropdown()">
             <i class="pi pi-cog nav-icon"></i> Gestion
           </button>
-          <ul class="dropdown-menu" [class.show]="isDropdownOpen">
+          <ul class="dropdown-menu" [class.show]="isDropdownOpen()">
             <li>
               <a
                 routerLink="/admin/users"
@@ -172,54 +183,35 @@
             </li>
             <li>
               <a
+                routerLink="/admin/reclamation"
+                class="dropdown-item"
+                (click)="closeDropdown()"
+              >
+                <i class="pi pi-briefcase"></i> Reclamation
+              </a>
+            </li>
+            <!--  <li>
+              <a
                 routerLink="/admin/reservations"
                 class="dropdown-item"
                 (click)="closeDropdown()"
               >
                 <i class="pi pi-calendar"></i> Réservations
               </a>
-            </li>
+            </li> -->
           </ul>
-        </li>
-      </ng-container>
-
-      <!-- Tarifs et Contact - Pour visiteurs, clients et admin (pas prestataire car dans dropdown) -->
-      <ng-container
-        *ngIf="!isLoggedIn || userRole === 'client' || userRole === 'admin'"
-      >
-        <li class="nav-item">
-          <a routerLink="/pricing" class="nav-link" routerLinkActive="active">
-            <i class="pi pi-dollar nav-icon"></i> Tarifs
-          </a>
-        </li>
-
-        <li class="nav-item">
-          <a routerLink="/contact" class="nav-link" routerLinkActive="active">
-            <i class="pi pi-phone nav-icon"></i> Contact
-          </a>
         </li>
       </ng-container>
     </ul>
 
     <div class="navbar-actions">
-      <ng-container *ngIf="!isClientInitialized; else initializedContent">
+      <ng-container *ngIf="!isClientInitialized(); else initializedContent">
         <div class="placeholder-actions"></div>
       </ng-container>
 
       <ng-template #initializedContent>
-        <button
-          class="btn-notification"
-          *ngIf="isLoggedIn"
-          title="Notifications"
-          (click)="navigateAndClose('/notifications')"
-        >
-          <i class="pi pi-bell"></i>
-          <span class="notification-badge" *ngIf="notificationsCount > 0">{{
-            notificationsCount
-          }}</span>
-        </button>
-
-        <ng-container *ngIf="!isLoggedIn">
+        <!-- Notifications: supprimé car /notifications n'est pas présent dans app.routes -->
+        <ng-container *ngIf="!isLoggedIn()">
           <button class="btn-secondary" routerLink="/login">
             <i class="pi pi-user"></i> Connexion
           </button>
@@ -228,24 +220,24 @@
           </button>
         </ng-container>
 
-        <ng-container *ngIf="isLoggedIn">
+        <ng-container *ngIf="isLoggedIn()">
           <div class="user-menu">
             <button class="user-profile" (click)="toggleUserMenu()">
               <div
                 class="user-avatar"
                 [style.background-color]="getAvatarColor()"
-                [title]="userRole | titlecase"
+                [title]="userRole() | titlecase"
               >
                 {{ getUserInitial() }}
               </div>
-              <span class="user-name">{{ userName }}</span>
+              <span class="user-name">{{ userName() }}</span>
               <i
                 class="pi pi-chevron-down dropdown-icon"
-                [class.rotate]="isUserMenuOpen"
+                [class.rotate]="isUserMenuOpen()"
               ></i>
             </button>
 
-            <div class="user-dropdown" [class.show]="isUserMenuOpen">
+            <div class="user-dropdown" [class.show]="isUserMenuOpen()">
               <div class="user-dropdown-header">
                 <div
                   class="user-avatar-large"
@@ -254,8 +246,94 @@
                   {{ getUserInitial() }}
                 </div>
                 <div class="user-info">
-                  <p class="user-fullname">{{ userName }}</p>
-                  <p class="user-role">{{ userRole | titlecase }}</p>
+                  <p class="user-fullname">{{ userName() }}</p>
+                  <p class="user-role">{{ userRole() | titlecase }}</p>
+                </div>
+              </div>
+
+              <div class="user-dropdown-divider"></div>
+
+              <ul class="user-dropdown-menu">
+                <li>
+                  <a
+                    routerLink="/profile"
+                    class="user-dropdown-item"
+                    (click)="closeUserMenu()"
+                  >
+                    <i class="pi pi-user"></i> Mon profil
+                  </a>
+                </li>
+                <!-- /settings n'existe pas dans l'app.routes fourni : on pointe vers /profile -->
+                <li>
+                  <a
+                    routerLink="/profile"
+                    class="user-dropdown-item"
+                    (click)="closeUserMenu()"
+                  >
+                    <i class="pi pi-cog"></i> Paramètres
+                  </a>
+                </li>
+              </ul>
+
+              <div class="user-dropdown-divider"></div>
+
+              <button class="btn-logout-dropdown" (click)="logout()">
+                <i class="pi pi-sign-out"></i> Déconnexion
+              </button>
+            </div>
+          </div>
+        </ng-container>
+      </ng-template>
+      <ng-template #initializedContent>
+        <button
+          class="btn-notification"
+          *ngIf="isLoggedIn()"
+          title="Notifications"
+          (click)="navigateAndClose('/notifications')"
+        >
+          <i class="pi pi-bell"></i>
+          <span class="notification-badge" *ngIf="notificationsCount() > 0">{{
+            notificationsCount()
+          }}</span>
+        </button>
+
+        <ng-container *ngIf="!isLoggedIn()">
+          <button class="btn-secondary" routerLink="/login">
+            <i class="pi pi-user"></i> Connexion
+          </button>
+          <button class="btn-primary" routerLink="/register">
+            <i class="pi pi-sparkles"></i> S'inscrire
+          </button>
+        </ng-container>
+
+        <ng-container *ngIf="isLoggedIn()">
+          <div class="user-menu">
+            <button class="user-profile" (click)="toggleUserMenu()">
+              <div
+                class="user-avatar"
+                [style.background-color]="getAvatarColor()"
+                [title]="userRole() | titlecase"
+              >
+                {{ getUserInitial() }}
+              </div>
+              <span class="user-name">{{ userName() }}</span>
+              <i
+                class="pi pi-chevron-down dropdown-icon"
+                [class.rotate]="isUserMenuOpen()"
+              ></i>
+            </button>
+
+            <div class="user-dropdown" [class.show]="isUserMenuOpen()">
+              <div class="user-dropdown-header">
+                <div
+                  class="user-avatar-large"
+                  [style.background-color]="getAvatarColor()"
+                >
+                  {{ getUserInitial() }}
+                </div>
+                <div class="user-info">
+                  <p class="user-fullname">{{ userName() }}</p>
+                  <p class="user-role">{{ userRole() | titlecase }}</p>
                 </div>
               </div>
 
@@ -297,7 +375,7 @@
         (click)="toggleMobileMenu()"
         aria-label="Menu mobile"
       >
-        <span class="hamburger" [class.active]="isMobileMenuOpen">
+        <span class="hamburger" [class.active]="isMobileMenuOpen()">
           <span></span><span></span><span></span>
         </span>
       </button>
@@ -305,7 +383,7 @@
   </div>
 
   <!-- MENU MOBILE -->
-  <div class="mobile-menu" [class.open]="isMobileMenuOpen">
+  <div class="mobile-menu" [class.open]="isMobileMenuOpen()">
     <ul class="mobile-nav-menu">
       <!-- Accueil - Toujours visible -->
       <li class="mobile-nav-item">
@@ -314,8 +392,11 @@
         </a>
       </li>
 
-      <!-- Explorer - Pour visiteurs et clients -->
-      <li class="mobile-nav-item" *ngIf="!isLoggedIn || userRole === 'client'">
+      <!-- Explorer - Pour visiteurs et clients uniquement -->
+      <li
+        class="mobile-nav-item"
+        *ngIf="!isLoggedIn() || userRole() === 'client'"
+      >
         <a
           routerLink="/explore"
           class="mobile-nav-link"
@@ -325,10 +406,42 @@
         </a>
       </li>
 
+      <!-- Liens réservés aux clients -->
+      <ng-container *ngIf="isLoggedIn() && userRole() === 'client'">
+        <li class="mobile-nav-item">
+          <a
+            routerLink="/mes-reservations"
+            class="mobile-nav-link"
+            (click)="closeMobileMenu()"
+          >
+            <i class="pi pi-calendar"></i> Mes réservations
+          </a>
+        </li>
+        <li class="mobile-nav-item">
+          <a
+            routerLink="/mes-reclamations"
+            class="mobile-nav-link"
+            (click)="closeMobileMenu()"
+          >
+            <i class="pi pi-envelope"></i> Mes réclamations
+          </a>
+        </li>
+      </ng-container>
+
       <!-- MENU PRESTATAIRE -->
-      <ng-container *ngIf="isLoggedIn && userRole === 'prestataire'">
+      <ng-container *ngIf="isLoggedIn() && userRole() === 'prestataire'">
         <li class="mobile-nav-section-title">
           <span>Navigation principale</span>
+        </li>
+
+        <li class="mobile-nav-item">
+          <a
+            routerLink="/provider/dashboard"
+            class="mobile-nav-link"
+            (click)="closeMobileMenu()"
+          >
+            <i class="pi pi-calendar-plus"></i> Dashboard
+          </a>
         </li>
 
         <li class="mobile-nav-item">
@@ -338,16 +451,6 @@
             (click)="closeMobileMenu()"
           >
             <i class="pi pi-briefcase"></i> Mes services
-          </a>
-        </li>
-
-        <li class="mobile-nav-item">
-          <a
-            routerLink="/manage-bookings"
-            class="mobile-nav-link"
-            (click)="closeMobileMenu()"
-          >
-            <i class="pi pi-calendar-plus"></i> Réservations
           </a>
         </li>
 
@@ -367,31 +470,26 @@
 
         <li class="mobile-nav-item">
           <a
-            routerLink="/add-service"
-            class="mobile-nav-link highlight-link"
-            (click)="closeMobileMenu()"
-          >
-            <i class="pi pi-plus"></i> Ajouter un service
-          </a>
-        </li>
-
-        <li class="mobile-nav-item">
-          <a
-            routerLink="/upcoming-services"
+            routerLink="/provider/my-documents"
             class="mobile-nav-link"
             (click)="closeMobileMenu()"
           >
-            <i class="pi pi-calendar"></i> Services à venir
+            <i class="pi pi-file"></i> Mes documents
           </a>
         </li>
 
-        <li class="mobile-nav-section-title">
-          <span>Informations</span>
-        </li>
+        <!-- Tu peux remettre ces liens si tu veux, ils sont commentés dans le desktop -->
+        <!--
+      <li class="mobile-nav-item">
+        <a routerLink="/upcoming-services" class="mobile-nav-link" (click)="closeMobileMenu()">
+          <i class="pi pi-calendar"></i> Services à venir
+        </a>
+      </li>
+      -->
       </ng-container>
 
       <!-- MENU ADMIN -->
-      <ng-container *ngIf="isLoggedIn && userRole === 'admin'">
+      <ng-container *ngIf="isLoggedIn() && userRole() === 'admin'">
         <li class="mobile-nav-section-title">
           <span>Administration</span>
         </li>
@@ -428,43 +526,24 @@
 
         <li class="mobile-nav-item">
           <a
-            routerLink="/admin/reservations"
+            routerLink="/admin/reclamation"
             class="mobile-nav-link"
             (click)="closeMobileMenu()"
           >
-            <i class="pi pi-calendar"></i> Réservations
+            <i class="pi pi-briefcase"></i> Réclamations
           </a>
         </li>
 
-        <li class="mobile-nav-section-title">
-          <span>Informations</span>
-        </li>
+        <!-- <li class="mobile-nav-item">
+        <a routerLink="/admin/reservations" class="mobile-nav-link" (click)="closeMobileMenu()">
+          <i class="pi pi-calendar"></i> Réservations
+        </a>
+      </li> -->
       </ng-container>
-
-      <!-- Tarifs et Contact - Toujours visibles -->
-      <li class="mobile-nav-item">
-        <a
-          routerLink="/pricing"
-          class="mobile-nav-link"
-          (click)="closeMobileMenu()"
-        >
-          <i class="pi pi-dollar"></i> Tarifs
-        </a>
-      </li>
-
-      <li class="mobile-nav-item">
-        <a
-          routerLink="/contact"
-          class="mobile-nav-link"
-          (click)="closeMobileMenu()"
-        >
-          <i class="pi pi-phone"></i> Contact
-        </a>
-      </li>
 
       <!-- Auth buttons -->
       <div class="mobile-auth-buttons">
-        <ng-container *ngIf="!isLoggedIn">
+        <ng-container *ngIf="!isLoggedIn()">
           <button
             class="btn-secondary-mobile"
             routerLink="/login"
@@ -481,14 +560,14 @@
           </button>
         </ng-container>
 
-        <ng-container *ngIf="isLoggedIn">
+        <ng-container *ngIf="isLoggedIn()">
           <div class="mobile-user-info">
             <div class="mobile-user-avatar">
               <i class="pi pi-user"></i>
             </div>
             <div>
-              <p class="mobile-user-name">{{ userName }}</p>
-              <p class="mobile-user-role">{{ userRole | titlecase }}</p>
+              <p class="mobile-user-name">{{ userName() }}</p>
+              <p class="mobile-user-role">{{ userRole() | titlecase }}</p>
             </div>
           </div>
           <button class="btn-logout-mobile" (click)="logout()">
