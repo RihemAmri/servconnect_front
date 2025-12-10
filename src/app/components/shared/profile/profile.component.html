@@ -219,7 +219,7 @@
             />
           </div>
 
-          <div class="form-group-premium full-width">
+          <div class="form-group-premium full-width" formGroupName="adresse">
             <label class="form-label-premium">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
@@ -227,12 +227,66 @@
               </svg>
               Adresse complète
             </label>
-            <input 
-              formControlName="adresse" 
-              [readonly]="!isEditing"
-              class="form-input-premium"
-              placeholder="Rue, Ville, Code postal"
-            />
+            
+            <!-- Display mode: show address text -->
+            <div class="address-display" *ngIf="!isEditing">
+              <input 
+                formControlName="street"
+                readonly
+                class="form-input-premium"
+                placeholder="Rue, Ville, Code postal"
+              />
+            </div>
+            
+            <!-- Edit mode: show map toggle button and input -->
+            <div class="address-edit-section" *ngIf="isEditing">
+              <div class="address-input-row">
+                <input 
+                  formControlName="street"
+                  readonly
+                  class="form-input-premium"
+                  placeholder="Cliquez sur la carte pour sélectionner une adresse"
+                />
+                <button type="button" class="map-toggle-btn" (click)="toggleAddressMap()" [class.active]="showAddressMap">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                  </svg>
+                </button>
+              </div>
+              
+              <!-- Map Section -->
+              <div class="profile-map-section" *ngIf="showAddressMap">
+                <div class="map-search-row">
+                  <input 
+                    type="text" 
+                    placeholder="Rechercher une adresse…" 
+                    #addressSearchInput 
+                    class="map-search-input"
+                    (keyup.enter)="searchAddress(addressSearchInput.value)"
+                  />
+                  <button type="button" class="map-icon-btn" (click)="searchAddress(addressSearchInput.value)" title="Rechercher">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="11" cy="11" r="8"/>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                  </button>
+                </div>
+                
+                <div id="profile-map"></div>
+                
+                <button type="button" class="map-icon-btn map-gps-btn" (click)="locateUser()" title="Ma position">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <circle cx="12" cy="12" r="3"/>
+                    <line x1="12" y1="2" x2="12" y2="6"/>
+                    <line x1="12" y1="18" x2="12" y2="22"/>
+                    <line x1="2" y1="12" x2="6" y2="12"/>
+                    <line x1="18" y1="12" x2="22" y2="12"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </section>

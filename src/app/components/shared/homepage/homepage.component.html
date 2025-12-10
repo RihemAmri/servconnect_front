@@ -14,14 +14,40 @@
       </p>
       <div class="hero-actions">
         <button class="btn btn-primary" (click)="scrollToServices()">
-          🚀 Commencer Maintenant
+          <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 2L11 13"/>
+            <path d="M22 2L15 22L11 13L2 9L22 2Z"/>
+          </svg>
+          Commencer Maintenant
         </button>
-        <button class="btn btn-secondary">📱 En Savoir Plus</button>
+        <button class="btn btn-secondary">
+          <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polygon points="10 8 16 12 10 16 10 8" fill="currentColor"/>
+          </svg>
+          En Savoir Plus
+        </button>
       </div>
       <div class="hero-badges">
-        <span class="badge">✅ Vérifiés</span>
-        <span class="badge">⭐ Notés</span>
-        <span class="badge">🚀 Rapide</span>
+        <span class="badge">
+          <svg class="badge-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          Vérifiés
+        </span>
+        <span class="badge">
+          <svg class="badge-icon" width="18" height="18" viewBox="0 0 24 24" fill="#fbbf24">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+          </svg>
+          Notés
+        </span>
+        <span class="badge">
+          <svg class="badge-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          Rapide
+        </span>
       </div>
     </div>
 
@@ -49,10 +75,45 @@
 <section class="stats">
   <div class="container">
     <div class="stats-grid" @staggerAnimation>
-      <div class="stat-card" *ngFor="let stat of stats">
-        <div class="stat-icon">{{ stat.icon }}</div>
-        <h3 class="stat-value">{{ stat.value }}</h3>
-        <p class="stat-label">{{ stat.label }}</p>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5d5fef" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <h3 class="stat-value">500+</h3>
+        <p class="stat-label">Prestataires Inscrits</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="#10b981" stroke="#10b981" stroke-width="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </div>
+        <h3 class="stat-value">1K+</h3>
+        <p class="stat-label">Clients Satisfaits</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="#fbbf24">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+          </svg>
+        </div>
+        <h3 class="stat-value">4.8★</h3>
+        <p class="stat-label">Note Moyenne</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2">
+            <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
+            <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
+          </svg>
+        </div>
+        <h3 class="stat-value">24/7</h3>
+        <p class="stat-label">Support & Assistance</p>
       </div>
     </div>
   </div>
@@ -69,16 +130,66 @@
     </div>
 
     <div class="services-grid" @staggerAnimation>
-      <div
-        class="service-card"
-        *ngFor="let service of services"
-        [style.border-color]="service.color"
-      >
-        <div class="service-icon" [style.background]="service.color + '20'">
-          {{ service.icon }}
+      <div class="service-card" style="border-color: #3B82F6">
+        <div class="service-icon" style="background: rgba(59, 130, 246, 0.15)">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+          </svg>
         </div>
-        <h3 class="service-name">{{ service.name }}</h3>
-        <p class="service-count">{{ service.count }}</p>
+        <h3 class="service-name">Plomberie</h3>
+        <p class="service-count">120+ pros</p>
+      </div>
+      <div class="service-card" style="border-color: #FBBF24">
+        <div class="service-icon" style="background: rgba(251, 191, 36, 0.15)">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="2">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+          </svg>
+        </div>
+        <h3 class="service-name">Électricité</h3>
+        <p class="service-count">95+ pros</p>
+      </div>
+      <div class="service-card" style="border-color: #10B981">
+        <div class="service-icon" style="background: rgba(16, 185, 129, 0.15)">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <h3 class="service-name">Ménage</h3>
+        <p class="service-count">200+ pros</p>
+      </div>
+      <div class="service-card" style="border-color: #EC4899">
+        <div class="service-icon" style="background: rgba(236, 72, 153, 0.15)">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#EC4899" stroke-width="2">
+            <circle cx="6" cy="6" r="3"/>
+            <path d="M6 9v12"/>
+            <path d="M13 6l-4 6h6l-4 6"/>
+          </svg>
+        </div>
+        <h3 class="service-name">Coiffure</h3>
+        <p class="service-count">85+ pros</p>
+      </div>
+      <div class="service-card" style="border-color: #8B5CF6">
+        <div class="service-icon" style="background: rgba(139, 92, 246, 0.15)">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          </svg>
+        </div>
+        <h3 class="service-name">Cours particuliers</h3>
+        <p class="service-count">150+ pros</p>
+      </div>
+      <div class="service-card" style="border-color: #F59E0B">
+        <div class="service-icon" style="background: rgba(245, 158, 11, 0.15)">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2">
+            <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+            <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+            <path d="M2 2l7.586 7.586"/>
+            <circle cx="11" cy="11" r="2"/>
+          </svg>
+        </div>
+        <h3 class="service-name">Peinture</h3>
+        <p class="service-count">70+ pros</p>
       </div>
     </div>
   </div>
@@ -95,10 +206,65 @@
     </div>
 
     <div class="features-grid" @staggerAnimation>
-      <div class="feature-card" *ngFor="let feature of features">
-        <div class="feature-icon">{{ feature.icon }}</div>
-        <h3 class="feature-title">{{ feature.title }}</h3>
-        <p class="feature-description">{{ feature.description }}</p>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.35-4.35"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">Recherche Intelligente</h3>
+        <p class="feature-description">Trouvez le professionnel parfait par localisation, service et prix</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">Professionnels Vérifiés</h3>
+        <p class="feature-description">Tous nos prestataires sont vérifiés avec badge de confiance</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">Avis Authentiques</h3>
+        <p class="feature-description">Consultez les notes et commentaires de vrais clients</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">Chat Intégré</h3>
+        <p class="feature-description">Communiquez directement avec votre prestataire</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">Réservation Simple</h3>
+        <p class="feature-description">Réservez en un clic, immédiatement ou plus tard</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">Géolocalisation</h3>
+        <p class="feature-description">Trouvez les professionnels les plus proches de vous</p>
       </div>
     </div>
   </div>
@@ -113,16 +279,63 @@
     </div>
 
     <div class="testimonials-grid" @staggerAnimation>
-      <div class="testimonial-card" *ngFor="let testimonial of testimonials">
+      <div class="testimonial-card">
         <div class="testimonial-rating">
-          <span *ngFor="let star of [1, 2, 3, 4, 5]">⭐</span>
+          <svg *ngFor="let star of [1,2,3,4,5]" width="18" height="18" viewBox="0 0 24 24" fill="#fbbf24">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+          </svg>
         </div>
-        <p class="testimonial-comment">"{{ testimonial.comment }}"</p>
+        <p class="testimonial-comment">"Service excellent ! J'ai trouvé un plombier en 5 minutes. Professionnel et rapide."</p>
         <div class="testimonial-author">
-          <div class="author-avatar">{{ testimonial.avatar }}</div>
+          <div class="author-avatar">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
           <div class="author-info">
-            <h4>{{ testimonial.name }}</h4>
-            <p>{{ testimonial.role }}</p>
+            <h4>Sarah Ben Ali</h4>
+            <p>Cliente</p>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-rating">
+          <svg *ngFor="let star of [1,2,3,4,5]" width="18" height="18" viewBox="0 0 24 24" fill="#fbbf24">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+          </svg>
+        </div>
+        <p class="testimonial-comment">"ServConnect m'a permis de trouver plus de clients. Interface simple et efficace !"</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <div class="author-info">
+            <h4>Mohamed Trabelsi</h4>
+            <p>Électricien</p>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-rating">
+          <svg *ngFor="let star of [1,2,3,4,5]" width="18" height="18" viewBox="0 0 24 24" fill="#fbbf24">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+          </svg>
+        </div>
+        <p class="testimonial-comment">"Très pratique pour trouver des services de qualité près de chez moi."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <div class="author-info">
+            <h4>Leila Mansour</h4>
+            <p>Cliente</p>
           </div>
         </div>
       </div>
@@ -139,8 +352,22 @@
         Rejoignez des milliers d'utilisateurs satisfaits
       </p>
       <div class="cta-buttons">
-        <button class="btn btn-primary btn-lg">Chercher un Pro</button>
-        <button class="btn btn-outline btn-lg">Devenir Pro</button>
+        <button class="btn btn-primary btn-lg">
+          <svg class="btn-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.35-4.35"/>
+          </svg>
+          Chercher un Pro
+        </button>
+        <button class="btn btn-outline btn-lg">
+          <svg class="btn-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="8.5" cy="7" r="4"/>
+            <line x1="20" y1="8" x2="20" y2="14"/>
+            <line x1="23" y1="11" x2="17" y2="11"/>
+          </svg>
+          Devenir Pro
+        </button>
       </div>
     </div>
   </div>

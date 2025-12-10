@@ -1,8 +1,11 @@
-import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, OnInit, AfterViewInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ProfileService } from '../../../services/profile.service';
+import { MapService } from '../../../services/map.service';
 import { LottieComponent } from 'ngx-lottie';
+
+declare var L: any;
 
 @Component({
   selector: 'app-profile',
@@ -12,18 +15,27 @@ import { LottieComponent } from 'ngx-lottie';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [CommonModule, ReactiveFormsModule, FormsModule, LottieComponent]
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, AfterViewInit {
 
   user: any = null;
   provider: any = null;
   isEditing = false;
   profileForm!: FormGroup;
   isLoading = true;
+  
+  // Map properties
+  map!: any;
+  marker!: any;
+  showAddressMap = false;
 
   certificateLottie = { path: 'assets/animations/Files.json', autoplay: true, loop: true };
   documentLottie = { path: 'assets/animations/Document.json', autoplay: true, loop: true };
 
-  constructor(private fb: FormBuilder, private profileService: ProfileService) {
+  constructor(
+    private fb: FormBuilder, 
+    private profileService: ProfileService,
+    private mapService: MapService
+  ) {
     // Initialize form immediately with empty values
     this.initEmptyForm();
   }
@@ -95,7 +107,11 @@ export class ProfileComponent implements OnInit {
       prenom: [''],
       email: [''],
       telephone: [''],
-      adresse: [''],
+      adresse: this.fb.group({
+        street: [''],
+        lat: [''],
+        lng: ['']
+      }),
       metier: [''],
       description: [''],
       experience: [''],
@@ -106,15 +122,136 @@ export class ProfileComponent implements OnInit {
   initForm() {
     if (!this.user) return;
 
+    // Handle address - can be string or object
+    let adresseValue = { street: '', lat: '', lng: '' };
+    if (this.user.adresse) {
+      if (typeof this.user.adresse === 'string') {
+        adresseValue = { street: this.user.adresse, lat: '', lng: '' };
+      } else if (typeof this.user.adresse === 'object') {
+        adresseValue = {
+          street: this.user.adresse.street || '',
+          lat: this.user.adresse.lat || '',
+          lng: this.user.adresse.lng || ''
+        };
+      }
+    }
+
     this.profileForm.patchValue({
       nom: this.user.nom || '',
       prenom: this.user.prenom || '',
       email: this.user.email || '',
       telephone: this.user.telephone || '',
-      adresse: this.user.adresse || '',
+      adresse: adresseValue,
     });
 
     this.isLoading = false;
+  }
+
+  // ===================== Map Methods =====================
+  ngAfterViewInit() {
+    // Map will be initialized when user clicks to edit address
+  }
+
+  async initMap() {
+    if (typeof window === 'undefined' || this.map) return;
+    
+    const L = await import('leaflet');
+    
+    // Get initial coordinates from user address or default to Tunisia
+    let lat = 36.8065;
+    let lng = 10.1815;
+    
+    if (this.user?.adresse?.lat && this.user?.adresse?.lng) {
+      lat = parseFloat(this.user.adresse.lat);
+      lng = parseFloat(this.user.adresse.lng);
+    }
+    
+    this.map = L.map('profile-map').setView([lat, lng], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 })
+      .addTo(this.map);
+    this.mapService.setMap(this.map);
+    
+    // Add marker if coordinates exist
+    if (this.user?.adresse?.lat && this.user?.adresse?.lng) {
+      this.marker = L.marker([lat, lng]).addTo(this.map);
+    }
+    
+    setTimeout(() => {
+      this.map.invalidateSize();
+    }, 200);
+    
+    // Click handler
+    this.map.on('click', async (e: any) => {
+      const clickLat = e.latlng.lat;
+      const clickLng = e.latlng.lng;
+
+      if (this.marker) this.marker.setLatLng(e.latlng);
+      else this.marker = L.marker(e.latlng).addTo(this.map);
+
+      const address = await this.mapService.reverseGeocode(clickLat, clickLng);
+      const label = address?.display_name ?? `${clickLat}, ${clickLng}`;
+
+      this.profileForm.patchValue({
+        adresse: {
+          street: label,
+          lat: clickLat,
+          lng: clickLng
+        }
+      });
+    });
+  }
+
+  toggleAddressMap() {
+    this.showAddressMap = !this.showAddressMap;
+    if (this.showAddressMap) {
+      setTimeout(() => this.initMap(), 100);
+    }
+  }
+
+  async locateUser() {
+    const pos = await this.mapService.locateUser();
+    if (!pos) return;
+
+    const { lat, lon } = pos;
+    const L = await import('leaflet');
+
+    if (this.marker) this.marker.setLatLng([lat, lon]);
+    else this.marker = L.marker([lat, lon]).addTo(this.map);
+    
+    this.map.setView([lat, lon], 15);
+
+    const address = await this.mapService.reverseGeocode(lat, lon);
+    const label = address?.display_name ?? `${lat}, ${lon}`;
+
+    this.profileForm.patchValue({
+      adresse: {
+        street: label,
+        lat: lat,
+        lng: lon
+      }
+    });
+  }
+
+  async searchAddress(query: string) {
+    if (!query) return;
+
+    const result = await this.mapService.searchAndMark(query);
+    if (!result) return;
+    
+    const L = await import('leaflet');
+
+    if (this.marker) this.marker.setLatLng([result.y, result.x]);
+    else this.marker = L.marker([result.y, result.x]).addTo(this.map);
+    
+    this.map.setView([result.y, result.x], 15);
+
+    this.profileForm.patchValue({
+      adresse: {
+        street: result.label,
+        lat: result.y,
+        lng: result.x
+      }
+    });
   }
 
   loadProviderData(userId: string) {
@@ -140,6 +277,16 @@ export class ProfileComponent implements OnInit {
 
   toggleEdit() {
     this.isEditing = !this.isEditing;
+    
+    // Close map and cleanup when exiting edit mode
+    if (!this.isEditing) {
+      this.showAddressMap = false;
+      if (this.map) {
+        this.map.remove();
+        this.map = null;
+        this.marker = null;
+      }
+    }
   }
 
   // ===================== Photo =====================

@@ -741,3 +741,155 @@ $shadow-primary: 0 8px 30px rgba(2, 93, 221, 0.25);
   &:nth-child(3) { animation-delay: 0.3s; }
   &:nth-child(4) { animation-delay: 0.4s; }
 }
+
+// ===== ADDRESS MAP SECTION =====
+.address-display {
+  width: 100%;
+}
+
+.address-edit-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.address-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  
+  .form-input-premium {
+    flex: 1;
+  }
+}
+
+.map-toggle-btn {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 12px;
+  border: 2px solid $gray-200;
+  background: $white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  svg {
+    color: $gray-400;
+    transition: all 0.3s ease;
+  }
+  
+  &:hover {
+    border-color: $primary;
+    background: $primary-light;
+    
+    svg {
+      color: $primary;
+    }
+  }
+  
+  &.active {
+    border-color: $primary;
+    background: $primary;
+    
+    svg {
+      color: $white;
+    }
+  }
+}
+
+.profile-map-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  background: $gray-50;
+  border-radius: 16px;
+  border: 1px solid $gray-200;
+  position: relative;
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.map-search-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 8px;
+}
+
+.map-search-input {
+  flex: 1;
+  padding: 12px 16px;
+  background: $white;
+  border-radius: 10px;
+  border: 1px solid $gray-200;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 4px rgba($primary, 0.1);
+  }
+  
+  &::placeholder {
+    color: $gray-400;
+  }
+}
+
+.map-icon-btn {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 10px;
+  border: none;
+  background: $white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: $shadow-sm;
+  
+  svg {
+    color: $gray-600;
+    transition: all 0.3s ease;
+  }
+  
+  &:hover {
+    background: $primary;
+    box-shadow: $shadow-primary;
+    transform: translateY(-2px);
+    
+    svg {
+      color: $white;
+    }
+  }
+}
+
+#profile-map {
+  height: 280px;
+  width: 100%;
+  border-radius: 12px;
+  background: $gray-100;
+  border: 1px solid $gray-200;
+  overflow: hidden;
+}
+
+.map-gps-btn {
+  align-self: flex-end;
+  background: $primary-gradient;
+  
+  svg {
+    color: $white;
+  }
+  
+  &:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: $shadow-primary;
+  }
+}
