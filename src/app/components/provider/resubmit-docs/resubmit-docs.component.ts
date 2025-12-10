@@ -54,19 +54,22 @@ export class ResubmitDocsComponent implements OnInit {
   uploading = false;
   selectedImage: string | null = null;
 
-  // Upload - Track by document type
-  selectedFiles: { [key: string]: File | null } = {
-    id: null,
-    certificate: null,
-    license: null
-  };
+// Upload - Track by document type
+selectedFiles: { [key: string]: File | null } = {
+  id: null,
+  certificate: null,
+  license: null,
+  other: null  // ✅ Ajout du type "other"
+};
 
   // Document types config
-  documentTypes = [
-    { type: 'id', label: "Pièce d'identité", icon: 'fa-id-card', description: 'CIN, Passeport ou Permis de conduire' },
-    { type: 'certificate', label: 'Certificat', icon: 'fa-certificate', description: 'Diplôme ou certificat professionnel' },
-    { type: 'license', label: 'Licence', icon: 'fa-file-contract', description: 'Licence ou autorisation professionnelle' }
-  ];
+// Document types config
+documentTypes = [
+  { type: 'id', label: "Pièce d'identité", icon: 'fa-id-card', description:  'CIN, Passeport ou Permis de conduire' },
+  { type: 'certificate', label: 'Certificat', icon: 'fa-certificate', description: 'Diplôme ou certificat professionnel' },
+  { type:  'license', label: 'Licence', icon: 'fa-file-contract', description: 'Licence ou autorisation professionnelle' },
+  { type: 'other', label: 'Autre document', icon: 'fa-file-alt', description: 'Tout autre document professionnel' }
+];
 
   ngOnInit() {
     this.loadDocumentsStatus();

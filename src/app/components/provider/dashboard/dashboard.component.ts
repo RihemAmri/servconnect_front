@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Inject, PLATFORM_ID, signal, computed } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -50,11 +50,13 @@ interface RecentBooking {
 })
 export class ProviderDashboardComponent implements OnInit, AfterViewInit {
   isBrowser: boolean;
-  isLoading = true;
-  providerId: string = '';
   
-  // Stats
-  stats: DashboardStats = {
+  // Signals
+  isLoading = signal(true);
+  providerId = signal('');
+  
+  // Stats signal
+  stats = signal<DashboardStats>({
     totalRevenue: 0,
     monthlyRevenue: 0,
     weeklyRevenue: 0,
@@ -70,22 +72,44 @@ export class ProviderDashboardComponent implements OnInit, AfterViewInit {
     totalHours: 0,
     totalMinutes: 0,
     totalDuration: 0
-  };
+  });
 
   // Revenue chart data
-  revenueData: RevenueData[] = [];
-  maxRevenue: number = 0;
+  revenueData = signal<RevenueData[]>([]);
+  maxRevenue = computed(() => Math.max(...this.revenueData().map(d => d.revenue), 1));
 
   // Recent bookings
-  recentBookings: RecentBooking[] = [];
+  recentBookings = signal<RecentBooking[]>([]);
 
   // Time period filter
-  selectedPeriod: 'week' | 'month' | 'year' = 'month';
+  selectedPeriod = signal<'week' | 'month' | 'year'>('month');
 
   // Animation counters
-  animatedRevenue = 0;
-  animatedBookings = 0;
-  animatedRating = 0;
+  animatedRevenue = signal(0);
+  animatedBookings = signal(0);
+  animatedRating = signal(0);
+
+  // Computed values
+  completedPercent = computed(() => {
+    const s = this.stats();
+    return s.totalBookings === 0 ? 0 : (s.completedBookings / s.totalBookings) * 100;
+  });
+
+  pendingPercent = computed(() => {
+    const s = this.stats();
+    return s.totalBookings === 0 ? 0 : (s.pendingBookings / s.totalBookings) * 100;
+  });
+
+  cancelledPercent = computed(() => {
+    const s = this.stats();
+    return s.totalBookings === 0 ? 0 : (s.cancelledBookings / s.totalBookings) * 100;
+  });
+
+  hoursProgress = computed(() => {
+    const totalMinutes = this.stats().totalDuration || 0;
+    const maxMinutes = 6000; // 100 hours
+    return Math.min((totalMinutes / maxMinutes) * 100, 100);
+  });
 
   constructor(
     private http: HttpClient,
@@ -103,24 +127,27 @@ export class ProviderDashboardComponent implements OnInit, AfterViewInit {
         .subscribe({
           next: (response) => {
             if (response.provider && response.provider._id) {
-              this.providerId = response.provider._id;
-              console.log('✅ Provider ID récupéré:', this.providerId);
+              this.providerId.set(response.provider._id);
+              console.log('✅ Provider ID récupéré:', this.providerId());
               
               // Store rating from provider profile
-              this.stats.averageRating = response.provider.noteGenerale || 0;
-              this.stats.totalReviews = response.provider.nombreAvis || 0;
+              this.stats.update(s => ({
+                ...s,
+                averageRating: response.provider.noteGenerale || 0,
+                totalReviews: response.provider.nombreAvis || 0
+              }));
               
               this.loadDashboardData();
             } else {
               // Fallback to user._id
-              this.providerId = user._id;
+              this.providerId.set(user._id);
               this.loadDashboardData();
             }
           },
           error: (err) => {
             console.error('Error getting provider profile:', err);
             // Fallback to user._id
-            this.providerId = user._id;
+            this.providerId.set(user._id);
             this.loadDashboardData();
           }
         });
@@ -134,22 +161,22 @@ export class ProviderDashboardComponent implements OnInit, AfterViewInit {
   }
 
   loadDashboardData() {
-    this.isLoading = true;
-    console.log('📊 Loading dashboard data for provider:', this.providerId);
+    this.isLoading.set(true);
+    console.log('📊 Loading dashboard data for provider:', this.providerId());
     
     // Save rating data that was loaded from provider profile
-    const savedRating = this.stats.averageRating;
-    const savedReviews = this.stats.totalReviews;
+    const savedRating = this.stats().averageRating;
+    const savedReviews = this.stats().totalReviews;
     
     // Load all bookings with stats (same API as myservices)
-    this.http.get<any>(`${environment.apiUrl}/api/bookings/provider/${this.providerId}/all`)
+    this.http.get<any>(`${environment.apiUrl}/api/bookings/provider/${this.providerId()}/all`)
       .subscribe({
         next: (response) => {
           console.log('📊 Bookings API response:', response);
           if (response.success && response.stats) {
             // Map stats from bookings API to dashboard format
             const apiStats = response.stats;
-            this.stats = {
+            this.stats.set({
               totalRevenue: apiStats.totalRevenue || 0,
               monthlyRevenue: apiStats.thisMonth?.revenue || 0,
               weeklyRevenue: 0,
@@ -165,39 +192,38 @@ export class ProviderDashboardComponent implements OnInit, AfterViewInit {
               totalHours: Math.floor((apiStats.totalDuration || 0) / 60),
               totalMinutes: (apiStats.totalDuration || 0) % 60,
               totalDuration: apiStats.totalDuration || 0
-            };
+            });
             
-            console.log('📊 Stats mapped:', this.stats);
+            console.log('📊 Stats mapped:', this.stats());
             
             // Get recent bookings from the response
             const allBookings = response.data?.all || [];
-            this.recentBookings = allBookings.slice(0, 5).map((b: any) => ({
+            this.recentBookings.set(allBookings.slice(0, 5).map((b: any) => ({
               _id: b._id,
               client: b.client,
               service: b.cause || 'Service',
               date: b.date,
               proposedPrice: b.proposedPrice || 0,
               status: b.status
-            }));
+            })));
             
             this.animateNumbers();
           }
-          this.isLoading = false;
+          this.isLoading.set(false);
         },
         error: (err) => {
           console.error('Error loading bookings stats:', err);
           this.loadDemoData();
-          this.isLoading = false;
+          this.isLoading.set(false);
         }
       });
 
     // Load revenue chart data
-    this.http.get<any>(`${environment.apiUrl}/api/providers/${this.providerId}/revenue-chart`)
+    this.http.get<any>(`${environment.apiUrl}/api/providers/${this.providerId()}/revenue-chart`)
       .subscribe({
         next: (response) => {
           if (response.success) {
-            this.revenueData = response.data;
-            this.maxRevenue = Math.max(...this.revenueData.map(d => d.revenue), 1);
+            this.revenueData.set(response.data);
           }
         },
         error: () => {
@@ -207,7 +233,7 @@ export class ProviderDashboardComponent implements OnInit, AfterViewInit {
   }
 
   loadDemoData() {
-    this.stats = {
+    this.stats.set({
       totalRevenue: 15750,
       monthlyRevenue: 3250,
       weeklyRevenue: 890,
@@ -223,12 +249,12 @@ export class ProviderDashboardComponent implements OnInit, AfterViewInit {
       totalHours: 45,
       totalMinutes: 30,
       totalDuration: 2730
-    };
+    });
     this.animateNumbers();
   }
 
   loadDemoChartData() {
-    this.revenueData = [
+    this.revenueData.set([
       { month: 'Jan', revenue: 1200 },
       { month: 'Fév', revenue: 1850 },
       { month: 'Mar', revenue: 2100 },
@@ -236,12 +262,11 @@ export class ProviderDashboardComponent implements OnInit, AfterViewInit {
       { month: 'Mai', revenue: 2400 },
       { month: 'Jun', revenue: 2800 },
       { month: 'Jul', revenue: 3250 }
-    ];
-    this.maxRevenue = Math.max(...this.revenueData.map(d => d.revenue));
+    ]);
   }
 
   loadDemoBookings() {
-    this.recentBookings = [
+    this.recentBookings.set([
       {
         _id: '1',
         client: { nom: 'Ben Ali', prenom: 'Ahmed', photo: '' },
@@ -266,7 +291,7 @@ export class ProviderDashboardComponent implements OnInit, AfterViewInit {
         proposedPrice: 350,
         status: 'accepted'
       }
-    ];
+    ]);
   }
 
   animateNumbers() {
@@ -275,6 +300,7 @@ export class ProviderDashboardComponent implements OnInit, AfterViewInit {
     const duration = 1500;
     const steps = 60;
     const interval = duration / steps;
+    const currentStats = this.stats();
 
     let step = 0;
     const timer = setInterval(() => {
@@ -282,22 +308,23 @@ export class ProviderDashboardComponent implements OnInit, AfterViewInit {
       const progress = step / steps;
       const easeOut = 1 - Math.pow(1 - progress, 3);
 
-      this.animatedRevenue = Math.floor(this.stats.totalRevenue * easeOut);
-      this.animatedBookings = Math.floor(this.stats.totalBookings * easeOut);
-      this.animatedRating = Math.round(this.stats.averageRating * easeOut * 10) / 10;
+      this.animatedRevenue.set(Math.floor(currentStats.totalRevenue * easeOut));
+      this.animatedBookings.set(Math.floor(currentStats.totalBookings * easeOut));
+      this.animatedRating.set(Math.round(currentStats.averageRating * easeOut * 10) / 10);
 
       if (step >= steps) {
         clearInterval(timer);
-        this.animatedRevenue = this.stats.totalRevenue;
-        this.animatedBookings = this.stats.totalBookings;
-        this.animatedRating = this.stats.averageRating;
+        this.animatedRevenue.set(currentStats.totalRevenue);
+        this.animatedBookings.set(currentStats.totalBookings);
+        this.animatedRating.set(currentStats.averageRating);
       }
     }, interval);
   }
 
   getBarHeight(revenue: number): number {
-    if (this.maxRevenue === 0) return 0;
-    return (revenue / this.maxRevenue) * 100;
+    const max = this.maxRevenue();
+    if (max === 0) return 0;
+    return (revenue / max) * 100;
   }
 
   getStatusClass(status: string): string {
@@ -340,7 +367,7 @@ export class ProviderDashboardComponent implements OnInit, AfterViewInit {
   }
 
   selectPeriod(period: 'week' | 'month' | 'year') {
-    this.selectedPeriod = period;
+    this.selectedPeriod.set(period);
     // Could reload data based on period
   }
 
@@ -351,28 +378,5 @@ export class ProviderDashboardComponent implements OnInit, AfterViewInit {
 
   getBookingsChange(): number {
     return 8.3;
-  }
-
-  getHoursProgress(): number {
-    // Calculate progress based on total hours (max 100 hours = 100%)
-    const totalMinutes = this.stats.totalDuration || 0;
-    const maxMinutes = 6000; // 100 hours
-    return Math.min((totalMinutes / maxMinutes) * 100, 100);
-  }
-
-  // Donut chart percentages
-  getCompletedPercent(): number {
-    if (this.stats.totalBookings === 0) return 0;
-    return (this.stats.completedBookings / this.stats.totalBookings) * 100;
-  }
-
-  getPendingPercent(): number {
-    if (this.stats.totalBookings === 0) return 0;
-    return (this.stats.pendingBookings / this.stats.totalBookings) * 100;
-  }
-
-  getCancelledPercent(): number {
-    if (this.stats.totalBookings === 0) return 0;
-    return (this.stats.cancelledBookings / this.stats.totalBookings) * 100;
   }
 }

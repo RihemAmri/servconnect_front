@@ -26,21 +26,21 @@
         <div class="period-selector">
           <button
             class="period-btn"
-            [class.active]="selectedPeriod === 'week'"
+            [class.active]="selectedPeriod() === 'week'"
             (click)="selectPeriod('week')"
           >
             Semaine
           </button>
           <button
             class="period-btn"
-            [class.active]="selectedPeriod === 'month'"
+            [class.active]="selectedPeriod() === 'month'"
             (click)="selectPeriod('month')"
           >
             Mois
           </button>
           <button
             class="period-btn"
-            [class.active]="selectedPeriod === 'year'"
+            [class.active]="selectedPeriod() === 'year'"
             (click)="selectPeriod('year')"
           >
             Année
@@ -51,13 +51,13 @@
   </header>
 
   <!-- Loading State -->
-  <div class="loading-container" *ngIf="isLoading">
+  <div class="loading-container" *ngIf="isLoading()">
     <div class="loading-spinner"></div>
     <p>Chargement des statistiques...</p>
   </div>
 
   <!-- Main Content -->
-  <main class="dashboard-content" *ngIf="!isLoading">
+  <main class="dashboard-content" *ngIf="!isLoading()">
     <!-- Stats Cards Row -->
     <section class="stats-section">
       <div class="stats-grid">
@@ -79,7 +79,7 @@
           <div class="stat-content">
             <span class="stat-label">Revenus Totaux</span>
             <span class="stat-value">{{
-              formatCurrency(animatedRevenue)
+              formatCurrency(animatedRevenue())
             }}</span>
             <div class="stat-change positive">
               <svg
@@ -144,7 +144,7 @@
           </div>
           <div class="stat-content">
             <span class="stat-label">Réservations</span>
-            <span class="stat-value">{{ animatedBookings }}</span>
+            <span class="stat-value">{{ animatedBookings() }}</span>
             <div class="stat-change positive">
               <svg
                 width="14"
@@ -182,17 +182,17 @@
           <div class="stat-content">
             <span class="stat-label">Note Moyenne</span>
             <span class="stat-value"
-              >{{ animatedRating }}<small>/5</small></span
+              >{{ animatedRating() }}<small>/5</small></span
             >
             <div class="stat-reviews">
-              {{ stats.totalReviews }} avis clients
+              {{ stats().totalReviews }} avis clients
             </div>
           </div>
           <div class="rating-stars">
             <span
               class="star filled"
               *ngFor="let star of [1, 2, 3, 4, 5]; let i = index"
-              [class.half]="i === 4 && stats.averageRating < 5"
+              [class.half]="i === 4 && stats().averageRating < 5"
               >★</span
             >
           </div>
@@ -216,11 +216,11 @@
           <div class="stat-content">
             <span class="stat-label">Heures Travaillées</span>
             <span class="stat-value"
-              >{{ stats.totalHours }}<small>h</small> {{ stats.totalMinutes
+              >{{ stats().totalHours }}<small>h</small> {{ stats().totalMinutes
               }}<small>min</small></span
             >
             <div class="stat-sub">
-              {{ stats.completedBookings }} services terminés
+              {{ stats().completedBookings }} services terminés
             </div>
           </div>
           <div class="hours-ring">
@@ -236,7 +236,7 @@
               />
               <path
                 class="ring-progress"
-                [attr.stroke-dasharray]="getHoursProgress() + ', 100'"
+                [attr.stroke-dasharray]="hoursProgress() + ', 100'"
                 d="M18 2.0845
                   a 15.9155 15.9155 0 0 1 0 31.831
                   a 15.9155 15.9155 0 0 1 0 -31.831"
@@ -283,7 +283,7 @@
             <div class="chart-bars">
               <div
                 class="bar-wrapper"
-                *ngFor="let data of revenueData; let i = index"
+                *ngFor="let data of revenueData(); let i = index"
               >
                 <div class="bar-tooltip">
                   {{ formatCurrency(data.revenue) }}
@@ -291,7 +291,7 @@
                 <div
                   class="bar"
                   [style.height.%]="getBarHeight(data.revenue)"
-                  [class.highest]="data.revenue === maxRevenue"
+                  [class.highest]="data.revenue === maxRevenue()"
                   [style.animation-delay.ms]="i * 100"
                 ></div>
                 <span class="bar-label">{{ data.month }}</span>
@@ -300,7 +300,7 @@
             <div class="chart-grid">
               <div class="grid-line" *ngFor="let line of [0, 1, 2, 3, 4]">
                 <span class="grid-value">{{
-                  formatCurrency(maxRevenue - (maxRevenue / 4) * line)
+                  formatCurrency(maxRevenue() - (maxRevenue() / 4) * line)
                 }}</span>
               </div>
             </div>
@@ -348,7 +348,7 @@
                 stroke="#10b981"
                 stroke-width="5"
                 [attr.stroke-dasharray]="
-                  getCompletedPercent() + ' ' + (100 - getCompletedPercent())
+                  completedPercent() + ' ' + (100 - completedPercent())
                 "
                 stroke-dashoffset="25"
               />
@@ -362,9 +362,9 @@
                 stroke="#f59e0b"
                 stroke-width="5"
                 [attr.stroke-dasharray]="
-                  getPendingPercent() + ' ' + (100 - getPendingPercent())
+                  pendingPercent() + ' ' + (100 - pendingPercent())
                 "
-                [attr.stroke-dashoffset]="25 - getCompletedPercent()"
+                [attr.stroke-dashoffset]="25 - completedPercent()"
               />
 
               <!-- Cancelled (Red) - Third segment -->
@@ -376,15 +376,15 @@
                 stroke="#ef4444"
                 stroke-width="5"
                 [attr.stroke-dasharray]="
-                  getCancelledPercent() + ' ' + (100 - getCancelledPercent())
+                  cancelledPercent() + ' ' + (100 - cancelledPercent())
                 "
                 [attr.stroke-dashoffset]="
-                  25 - getCompletedPercent() - getPendingPercent()
+                  25 - completedPercent() - pendingPercent()
                 "
               />
             </svg>
             <div class="donut-center">
-              <span class="donut-value">{{ stats.totalBookings }}</span>
+              <span class="donut-value">{{ stats().totalBookings }}</span>
               <span class="donut-label">Total</span>
             </div>
           </div>
@@ -393,30 +393,30 @@
               <span class="legend-color completed"></span>
               <div class="legend-info">
                 <span class="legend-label">Terminées</span>
-                <span class="legend-value">{{ stats.completedBookings }}</span>
+                <span class="legend-value">{{ stats().completedBookings }}</span>
               </div>
               <span class="legend-percent"
-                >{{ getCompletedPercent().toFixed(0) }}%</span
+                >{{ completedPercent().toFixed(0) }}%</span
               >
             </div>
             <div class="legend-item">
               <span class="legend-color pending"></span>
               <div class="legend-info">
                 <span class="legend-label">En attente</span>
-                <span class="legend-value">{{ stats.pendingBookings }}</span>
+                <span class="legend-value">{{ stats().pendingBookings }}</span>
               </div>
               <span class="legend-percent"
-                >{{ getPendingPercent().toFixed(0) }}%</span
+                >{{ pendingPercent().toFixed(0) }}%</span
               >
             </div>
             <div class="legend-item">
               <span class="legend-color cancelled"></span>
               <div class="legend-info">
                 <span class="legend-label">Annulées</span>
-                <span class="legend-value">{{ stats.cancelledBookings }}</span>
+                <span class="legend-value">{{ stats().cancelledBookings }}</span>
               </div>
               <span class="legend-percent"
-                >{{ getCancelledPercent().toFixed(0) }}%</span
+                >{{ cancelledPercent().toFixed(0) }}%</span
               >
             </div>
           </div>
@@ -458,7 +458,7 @@
           </a>
         </div>
         <div class="bookings-list">
-          <div class="booking-item" *ngFor="let booking of recentBookings">
+          <div class="booking-item" *ngFor="let booking of recentBookings()">
             <div class="booking-client">
               <div class="client-avatar" *ngIf="!booking.client.photo">
                 {{ getClientInitials(booking.client) }}
@@ -489,7 +489,7 @@
               {{ getStatusLabel(booking.status) }}
             </span>
           </div>
-          <div class="empty-bookings" *ngIf="recentBookings.length === 0">
+          <div class="empty-bookings" *ngIf="recentBookings().length === 0">
             <svg
               width="48"
               height="48"
@@ -544,7 +544,7 @@
             <div class="quick-stat-info">
               <span class="quick-stat-label">Aujourd'hui</span>
               <span class="quick-stat-value">{{
-                formatCurrency(stats.todayRevenue)
+                formatCurrency(stats()!.todayRevenue)
               }}</span>
             </div>
           </div>
@@ -567,7 +567,7 @@
             <div class="quick-stat-info">
               <span class="quick-stat-label">Cette semaine</span>
               <span class="quick-stat-value">{{
-                formatCurrency(stats.weeklyRevenue)
+                formatCurrency(stats().weeklyRevenue)
               }}</span>
             </div>
           </div>
@@ -588,7 +588,7 @@
             <div class="quick-stat-info">
               <span class="quick-stat-label">Ce mois</span>
               <span class="quick-stat-value">{{
-                formatCurrency(stats.monthlyRevenue)
+                formatCurrency(stats().monthlyRevenue)
               }}</span>
             </div>
           </div>
