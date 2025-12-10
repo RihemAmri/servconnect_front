@@ -1,10 +1,10 @@
-import { Component, inject, PLATFORM_ID, computed, signal, effect } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { RouterModule, Router, NavigationEnd } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
+import { Subscription, fromEvent } from 'rxjs';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
-import { fromEvent, filter } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -14,168 +14,276 @@ import { fromEvent, filter } from 'rxjs';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit, OnDestroy {
   private messageService = inject(MessageService);
-  private auth = inject(AuthService);
-  private router = inject(Router);
+
+  // États de l'interface
+  isScrolled = false;
+  isMobileMenuOpen = false;
+  isDropdownOpen = false;
+  isUserMenuOpen = false;
+
+  // Authentification
+  isLoggedIn = false;
+  userRole: string | null = null;
+  userName: string | null = null;
+  notificationsCount = 0;
+
+  private subs: Subscription[] = [];
   private platformId = inject(PLATFORM_ID);
 
-  // Signals pour l’état UI
-  isScrolled = signal(false);
-  isMobileMenuOpen = signal(false);
-  isDropdownOpen = signal(false);
-  isUserMenuOpen = signal(false);
-  isClientInitialized = signal(false);
+  private auth = inject(AuthService);
+  private router = inject(Router);
 
-  // Signaux dérivés de l’authentification (réactifs)
-  isLoggedIn = this.auth.isAuthenticated;           // signal<boolean>
-  currentUser = this.auth.currentUser;              // signal<any>
-  userRole = this.auth.userRole;                    // computed signal<string | null>
-  userName = computed(() => {
-    const user = this.currentUser();
-    if (!user) return null;
-    return `${user.prenom || ''} ${user.nom || ''}`.trim() || 'Utilisateur';
-  });
+  isClientInitialized = false;
 
-  // Nombre de notifications (exemple statique, tu peux le rendre dynamique)
-  notificationsCount = computed(() => {
-    const role = this.userRole();
-    if (role === 'prestataire') return 5;
-    if (role === 'client') return 2;
-    if (role === 'admin') return 10;
-    return 0;
-  });
-
-  constructor() {
-    // Auto-login au démarrage (déjà géré dans AuthService, mais on s’assure)
+  ngOnInit(): void {
+    // Auto login
     this.auth.autoLogin();
 
-    // Initialisation côté navigateur uniquement
+    // Auth status (IMPORTANT)
+    this.subs.push(
+      this.auth.getAuthStatus().subscribe(status => {
+        this.isLoggedIn = status;
+        console.log("Login Status:", status);
+      })
+    );
+
+    // Current user
+    this.subs.push(
+      this.auth.currentUser$.subscribe(user => {
+        console.log("User:", user);
+
+        if (!user) {
+          this.userRole = null;
+          this.userName = null;
+          this.notificationsCount = 0;
+          return;
+        }
+
+        this.userRole = user.role;
+        this.userName = `${user.prenom || ''} ${user.nom || ''}`.trim() || 'Utilisateur';
+
+        
+        this.notificationsCount = this.getNotificationsCount(user.role);
+
+        console.log("Nom calculé:", this.userName);
+        console.log("Rôle:", this.userRole);
+      })
+    );
+
+    
     if (isPlatformBrowser(this.platformId)) {
-      this.isClientInitialized.set(true);
+      this.isClientInitialized = true;
+      
+      this.subs.push(
+        fromEvent(window, 'scroll').subscribe(() => {
+          this.isScrolled = window.scrollY > 10;
+        })
+      );
 
-      // Scroll → sticky navbar
-      fromEvent(window, 'scroll').subscribe(() => {
-        this.isScrolled.set(window.scrollY > 10);
-      });
+     
+      this.subs.push(
+        fromEvent(document, 'click').subscribe((event: Event) => {
+          const target = event.target as HTMLElement;
+          
+          
+          if (!target.closest('.nav-dropdown')) {
+            this.isDropdownOpen = false;
+          }
 
-      // Fermeture des menus au clic extérieur
-      fromEvent(document, 'click').subscribe((event: Event) => {
-        const target = event.target as HTMLElement;
-        if (!target.closest('.nav-dropdown')) {
-          this.isDropdownOpen.set(false);
-        }
-        if (!target.closest('.user-menu')) {
-          this.isUserMenuOpen.set(false);
-        }
-      });
-
-      // Fermeture des menus lors de la navigation
-      this.router.events.pipe(filter(event => event instanceof NavigationEnd))
-        .subscribe(() => this.closeAllMenus());
+          
+          if (!target.closest('.user-menu')) {
+            this.isUserMenuOpen = false;
+          }
+        })
+      );
     }
-
-    // Effet optionnel : log pour debug
-    effect(() => {
-      console.log('Utilisateur connecté ?', this.isLoggedIn());
-      console.log('Rôle :', this.userRole());
-      console.log('Nom :', this.userName());
-    });
   }
 
-  // === Méthodes UI ===
+  ngOnDestroy(): void {
+    this.subs.forEach(s => s.unsubscribe());
+    
+    
+    if (isPlatformBrowser(this.platformId)) {
+      document.body.style.overflow = '';
+    }
+  }
+
+  /**
+   * Toggle du menu mobile
+   */
   toggleMobileMenu(): void {
-    this.isMobileMenuOpen.update(v => !v);
-    if (this.isMobileMenuOpen()) {
-      this.isDropdownOpen.set(false);
-      this.isUserMenuOpen.set(false);
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+    
+    // Fermer les autres menus
+    if (this.isMobileMenuOpen) {
+      this.isDropdownOpen = false;
+      this.isUserMenuOpen = false;
     }
+    
+    // Gérer le scroll du body
     this.toggleBodyScroll();
   }
 
+  /**
+   * Fermer le menu mobile
+   */
   closeMobileMenu(): void {
-    this.isMobileMenuOpen.set(false);
-    this.toggleBodyScroll();
+    this.isMobileMenuOpen = false;
+    if (isPlatformBrowser(this.platformId)) {
+      document.body.style.overflow = '';
+    }
   }
 
+  /**
+   * Toggle du dropdown "Plus" (pour prestataire)
+   */
   toggleDropdown(): void {
-    this.isDropdownOpen.update(v => !v);
-    if (this.isDropdownOpen()) {
-      this.isUserMenuOpen.set(false);
-      this.isMobileMenuOpen.set(false);
+    this.isDropdownOpen = !this.isDropdownOpen;
+    
+    // Fermer les autres menus
+    if (this.isDropdownOpen) {
+      this.isUserMenuOpen = false;
+      this.isMobileMenuOpen = false;
     }
   }
 
+  /**
+   * Fermer le dropdown "Plus"
+   */
   closeDropdown(): void {
-    this.isDropdownOpen.set(false);
+    this.isDropdownOpen = false;
   }
 
+  /**
+   * Toggle du menu utilisateur
+   */
   toggleUserMenu(): void {
-    this.isUserMenuOpen.update(v => !v);
-    if (this.isUserMenuOpen()) {
-      this.isDropdownOpen.set(false);
-      this.isMobileMenuOpen.set(false);
+    this.isUserMenuOpen = !this.isUserMenuOpen;
+    
+    // Fermer les autres menus
+    if (this.isUserMenuOpen) {
+      this.isDropdownOpen = false;
+      this.isMobileMenuOpen = false;
     }
   }
 
+  /**
+   * Fermer le menu utilisateur
+   */
   closeUserMenu(): void {
-    this.isUserMenuOpen.set(false);
+    this.isUserMenuOpen = false;
   }
 
+  /**
+   * Fermer tous les menus (appelé par l'overlay)
+   */
   closeAllMenus(): void {
-    this.isMobileMenuOpen.set(false);
-    this.isDropdownOpen.set(false);
-    this.isUserMenuOpen.set(false);
-    this.toggleBodyScroll();
+    this.isMobileMenuOpen = false;
+    this.isDropdownOpen = false;
+    this.isUserMenuOpen = false;
+    
+    if (isPlatformBrowser(this.platformId)) {
+      document.body.style.overflow = '';
+    }
   }
 
+  /**
+   * Gérer le scroll du body (empêcher le scroll quand menu mobile ouvert)
+   */
   private toggleBodyScroll(): void {
     if (isPlatformBrowser(this.platformId)) {
-      document.body.style.overflow = this.isMobileMenuOpen() ? 'hidden' : '';
+      if (this.isMobileMenuOpen) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
     }
   }
 
-  // === Logout ===
+  /**
+   * Obtenir le nombre de notifications selon le rôle
+   * À remplacer par votre logique de notifications
+   */
+  private getNotificationsCount(role: string | null): number {
+    // Exemple de logique
+    if (role === 'prestataire') {
+      // Récupérer les nouvelles réservations, messages, etc.
+      return 5; // Exemple
+    } else if (role === 'client') {
+      // Récupérer les confirmations, rappels, etc.
+      return 2; // Exemple
+    } else if (role === 'admin') {
+      // Récupérer les alertes admin
+      return 10; // Exemple
+    }
+    return 0;
+  }
+
+  /**
+   * Déconnexion
+   */
   logout(): void {
+    // Fermer tous les menus
     this.closeAllMenus();
-
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Déconnexion',
-      detail: 'Vous avez été déconnecté avec succès',
-      life: 2000
-    });
-
-    this.auth.logout(); // met à jour les signals automatiquement
+    
+    // Déconnexion via le service
+    this.auth.logout();
+    
+    // Redirection optionnelle
     this.router.navigate(['/']);
+    
+    console.log("Utilisateur déconnecté");
+    this.messageService.add({
+      severity: 'success', // Type de notification (success, info, warn, error)
+      summary: 'Déconnexion', // Titre du toast
+      detail: 'Utilisateur déconnecté', // Le message souhaité
+      life: 1000 // Durée d'affichage en ms (3 secondes)
+    });
+     window.location.href="/";
   }
 
-  // === Utilitaires ===
-  getUserInitial(): string {
-    const name = this.userName();
-    if (!name) return 'U';
-    const names = name.trim().split(' ');
-    if (names.length > 1) {
-      return (names[0][0] + names[1][0]).toUpperCase();
-    }
-    return name[0].toUpperCase();
-  }
-
-  getAvatarColor(): string {
-    switch (this.userRole()) {
-      case 'admin': return '#dc2626';
-      case 'prestataire': return '#025ddd';
-      case 'client': return '#10b981';
-      default: return '#6b7280';
-    }
-  }
-
+  /**
+   * Navigation vers une page et fermeture des menus
+   */
   navigateAndClose(route: string): void {
     this.closeAllMenus();
     this.router.navigate([route]);
   }
 
+  /**
+   * Vérifier si une route est active
+   */
   isRouteActive(route: string): boolean {
     return this.router.url === route;
+  }
+
+  /**
+   * Obtenir l'initiale du nom pour l'avatar
+   */
+  getUserInitial(): string {
+    if (!this.userName) return 'U';
+    const names = this.userName.trim().split(' ');
+    if (names.length > 1) {
+      return (names[0][0] + names[1][0]).toUpperCase();
+    }
+    return this.userName[0].toUpperCase();
+  }
+
+  /**
+   * Obtenir la couleur de l'avatar selon le rôle
+   */
+  getAvatarColor(): string {
+    switch (this.userRole) {
+      case 'admin':
+        return '#dc2626'; // Rouge
+      case 'prestataire':
+        return '#025ddd'; // Bleu (primary)
+      case 'client':
+        return '#10b981'; // Vert
+      default:
+        return '#6b7280'; // Gris
+    }
   }
 }

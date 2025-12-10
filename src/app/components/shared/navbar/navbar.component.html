@@ -1,4 +1,4 @@
-<nav class="navbar" [class.scrolled]="isScrolled()">
+<nav class="navbar" [class.scrolled]="isScrolled">
   <div class="navbar-container">
     <!-- Logo -->
     <a routerLink="/" class="navbar-brand">
@@ -42,12 +42,12 @@
       </li>
 
       <!-- Explorer - Pour visiteurs et clients uniquement -->
-      <li class="nav-item" *ngIf="!isLoggedIn() || userRole() === 'client'">
+      <li class="nav-item" *ngIf="isLoggedIn && userRole === 'client'">
         <a routerLink="/explore" class="nav-link" routerLinkActive="active">
           <i class="pi pi-search nav-icon"></i> Explorer
         </a>
       </li>
-      <li class="nav-item" *ngIf="isLoggedIn() && userRole() === 'client'">
+      <li class="nav-item" *ngIf="isLoggedIn && userRole === 'client'">
         <a
           routerLink="/mes-reservations"
           class="nav-link"
@@ -56,7 +56,7 @@
           <i class="pi pi-calendar nav-icon"></i>Mes reservations
         </a>
       </li>
-      <li class="nav-item" *ngIf="isLoggedIn() && userRole() === 'client'">
+      <li class="nav-item" *ngIf="isLoggedIn && userRole === 'client'">
         <a
           routerLink="/mes-reclamations"
           class="nav-link"
@@ -67,7 +67,7 @@
       </li>
 
       <!-- MENU PRESTATAIRE -->
-      <ng-container *ngIf="isLoggedIn() && userRole() === 'prestataire'">
+      <ng-container *ngIf="isLoggedIn && userRole === 'prestataire'">
         <li class="nav-item">
           <a
             routerLink="/provider/dashboard"
@@ -111,7 +111,7 @@
           <button class="nav-link dropdown-toggle" (click)="toggleDropdown()">
             <i class="pi pi-ellipsis-v nav-icon"></i> Plus
           </button>
-          <ul class="dropdown-menu" [class.show]="isDropdownOpen()">
+          <ul class="dropdown-menu" [class.show]="isDropdownOpen">
             <!-- <li>
               <a
                 routerLink="/upcoming-services"
@@ -145,7 +145,7 @@
       </ng-container>
 
       <!-- MENU ADMIN avec dropdown -->
-      <ng-container *ngIf="isLoggedIn() && userRole() === 'admin'">
+      <ng-container *ngIf="isLoggedIn && userRole === 'admin'">
         <!--    <li class="nav-item">
           <a
             routerLink="/admin"
@@ -162,7 +162,7 @@
           <button class="nav-link dropdown-toggle" (click)="toggleDropdown()">
             <i class="pi pi-cog nav-icon"></i> Gestion
           </button>
-          <ul class="dropdown-menu" [class.show]="isDropdownOpen()">
+          <ul class="dropdown-menu" [class.show]="isDropdownOpen">
             <li>
               <a
                 routerLink="/admin/users"
@@ -205,13 +205,13 @@
     </ul>
 
     <div class="navbar-actions">
-      <ng-container *ngIf="!isClientInitialized(); else initializedContent">
+      <ng-container *ngIf="!isClientInitialized; else initializedContent">
         <div class="placeholder-actions"></div>
       </ng-container>
 
       <ng-template #initializedContent>
         <!-- Notifications: supprimé car /notifications n'est pas présent dans app.routes -->
-        <ng-container *ngIf="!isLoggedIn()">
+        <ng-container *ngIf="!isLoggedIn">
           <button class="btn-secondary" routerLink="/login">
             <i class="pi pi-user"></i> Connexion
           </button>
@@ -220,24 +220,24 @@
           </button>
         </ng-container>
 
-        <ng-container *ngIf="isLoggedIn()">
+        <ng-container *ngIf="isLoggedIn">
           <div class="user-menu">
             <button class="user-profile" (click)="toggleUserMenu()">
               <div
                 class="user-avatar"
                 [style.background-color]="getAvatarColor()"
-                [title]="userRole() | titlecase"
+                [title]="userRole | titlecase"
               >
                 {{ getUserInitial() }}
               </div>
-              <span class="user-name">{{ userName() }}</span>
+              <span class="user-name">{{ userName }}</span>
               <i
                 class="pi pi-chevron-down dropdown-icon"
-                [class.rotate]="isUserMenuOpen()"
+                [class.rotate]="isUserMenuOpen"
               ></i>
             </button>
 
-            <div class="user-dropdown" [class.show]="isUserMenuOpen()">
+            <div class="user-dropdown" [class.show]="isUserMenuOpen">
               <div class="user-dropdown-header">
                 <div
                   class="user-avatar-large"
@@ -246,8 +246,8 @@
                   {{ getUserInitial() }}
                 </div>
                 <div class="user-info">
-                  <p class="user-fullname">{{ userName() }}</p>
-                  <p class="user-role">{{ userRole() | titlecase }}</p>
+                  <p class="user-fullname">{{ userName }}</p>
+                  <p class="user-role">{{ userRole | titlecase }}</p>
                 </div>
               </div>
 
@@ -287,17 +287,17 @@
       <ng-template #initializedContent>
         <button
           class="btn-notification"
-          *ngIf="isLoggedIn()"
+          *ngIf="isLoggedIn"
           title="Notifications"
           (click)="navigateAndClose('/notifications')"
         >
           <i class="pi pi-bell"></i>
-          <span class="notification-badge" *ngIf="notificationsCount() > 0">{{
-            notificationsCount()
+          <span class="notification-badge" *ngIf="notificationsCount > 0">{{
+            notificationsCount
           }}</span>
         </button>
 
-        <ng-container *ngIf="!isLoggedIn()">
+        <ng-container *ngIf="!isLoggedIn">
           <button class="btn-secondary" routerLink="/login">
             <i class="pi pi-user"></i> Connexion
           </button>
@@ -306,24 +306,24 @@
           </button>
         </ng-container>
 
-        <ng-container *ngIf="isLoggedIn()">
+        <ng-container *ngIf="isLoggedIn">
           <div class="user-menu">
             <button class="user-profile" (click)="toggleUserMenu()">
               <div
                 class="user-avatar"
                 [style.background-color]="getAvatarColor()"
-                [title]="userRole() | titlecase"
+                [title]="userRole | titlecase"
               >
                 {{ getUserInitial() }}
               </div>
-              <span class="user-name">{{ userName() }}</span>
+              <span class="user-name">{{ userName }}</span>
               <i
                 class="pi pi-chevron-down dropdown-icon"
-                [class.rotate]="isUserMenuOpen()"
+                [class.rotate]="isUserMenuOpen"
               ></i>
             </button>
 
-            <div class="user-dropdown" [class.show]="isUserMenuOpen()">
+            <div class="user-dropdown" [class.show]="isUserMenuOpen">
               <div class="user-dropdown-header">
                 <div
                   class="user-avatar-large"
@@ -332,8 +332,8 @@
                   {{ getUserInitial() }}
                 </div>
                 <div class="user-info">
-                  <p class="user-fullname">{{ userName() }}</p>
-                  <p class="user-role">{{ userRole() | titlecase }}</p>
+                  <p class="user-fullname">{{ userName }}</p>
+                  <p class="user-role">{{ userRole | titlecase }}</p>
                 </div>
               </div>
 
@@ -375,7 +375,7 @@
         (click)="toggleMobileMenu()"
         aria-label="Menu mobile"
       >
-        <span class="hamburger" [class.active]="isMobileMenuOpen()">
+        <span class="hamburger" [class.active]="isMobileMenuOpen">
           <span></span><span></span><span></span>
         </span>
       </button>
@@ -383,7 +383,7 @@
   </div>
 
   <!-- MENU MOBILE -->
-  <div class="mobile-menu" [class.open]="isMobileMenuOpen()">
+  <div class="mobile-menu" [class.open]="isMobileMenuOpen">
     <ul class="mobile-nav-menu">
       <!-- Accueil - Toujours visible -->
       <li class="mobile-nav-item">
@@ -395,7 +395,7 @@
       <!-- Explorer - Pour visiteurs et clients uniquement -->
       <li
         class="mobile-nav-item"
-        *ngIf="!isLoggedIn() || userRole() === 'client'"
+        *ngIf="isLoggedIn && userRole === 'client'"
       >
         <a
           routerLink="/explore"
@@ -407,7 +407,7 @@
       </li>
 
       <!-- Liens réservés aux clients -->
-      <ng-container *ngIf="isLoggedIn() && userRole() === 'client'">
+      <ng-container *ngIf="isLoggedIn && userRole === 'client'">
         <li class="mobile-nav-item">
           <a
             routerLink="/mes-reservations"
@@ -429,7 +429,7 @@
       </ng-container>
 
       <!-- MENU PRESTATAIRE -->
-      <ng-container *ngIf="isLoggedIn() && userRole() === 'prestataire'">
+      <ng-container *ngIf="isLoggedIn && userRole === 'prestataire'">
         <li class="mobile-nav-section-title">
           <span>Navigation principale</span>
         </li>
@@ -481,7 +481,7 @@
         <!-- Tu peux remettre ces liens si tu veux, ils sont commentés dans le desktop -->
         <!--
       <li class="mobile-nav-item">
-        <a routerLink="/upcoming-services" class="mobile-nav-link" (click)="closeMobileMenu()">
+        <a routerLink="/upcoming-services" class="mobile-nav-link" (click)="closeMobileMenu">
           <i class="pi pi-calendar"></i> Services à venir
         </a>
       </li>
@@ -489,7 +489,7 @@
       </ng-container>
 
       <!-- MENU ADMIN -->
-      <ng-container *ngIf="isLoggedIn() && userRole() === 'admin'">
+      <ng-container *ngIf="isLoggedIn && userRole === 'admin'">
         <li class="mobile-nav-section-title">
           <span>Administration</span>
         </li>
@@ -543,7 +543,7 @@
 
       <!-- Auth buttons -->
       <div class="mobile-auth-buttons">
-        <ng-container *ngIf="!isLoggedIn()">
+        <ng-container *ngIf="!isLoggedIn">
           <button
             class="btn-secondary-mobile"
             routerLink="/login"
@@ -560,14 +560,14 @@
           </button>
         </ng-container>
 
-        <ng-container *ngIf="isLoggedIn()">
+        <ng-container *ngIf="isLoggedIn">
           <div class="mobile-user-info">
             <div class="mobile-user-avatar">
               <i class="pi pi-user"></i>
             </div>
             <div>
-              <p class="mobile-user-name">{{ userName() }}</p>
-              <p class="mobile-user-role">{{ userRole() | titlecase }}</p>
+              <p class="mobile-user-name">{{ userName }}</p>
+              <p class="mobile-user-role">{{ userRole | titlecase }}</p>
             </div>
           </div>
           <button class="btn-logout-mobile" (click)="logout()">
