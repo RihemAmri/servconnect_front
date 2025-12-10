@@ -93,12 +93,15 @@
     (click)="togglePasswordVisibility()"
   ></i>
 
-  <small
-    *ngIf="showError.password && registerForm.controls['password'].invalid"
-    class="text-danger"
-  >
+  <small *ngIf="showError.password && registerForm.controls['password'].invalid" class="text-danger">
+  <span *ngIf="registerForm.controls['password'].errors?.['required']">
     Mot de passe requis.
-  </small>
+  </span>
+  <span *ngIf="registerForm.controls['password'].errors?.['invalidPassword']">
+    Le mot de passe doit contenir au moins 6 caractères, un chiffre et une lettre.
+  </span>
+</small>
+
 </div>
 
 
