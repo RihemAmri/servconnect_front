@@ -12,6 +12,9 @@ import { LottieComponent } from 'ngx-lottie';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [CommonModule, ReactiveFormsModule, FormsModule, LottieComponent]
 })
+  
+  
+  
 export class ProfileComponent implements OnInit {
 
   user: any = null;
@@ -19,6 +22,17 @@ export class ProfileComponent implements OnInit {
   isEditing = false;
   profileForm!: FormGroup;
   isLoading = true;
+
+  private readonly ROLE_LABELS: Record<'client' | 'prestataire' | 'admin', string> = {
+    client: 'Client',
+    prestataire: 'Prestataire',
+    admin: 'Administrateur'
+  };
+
+getRoleLabel(role?: string): string {
+    if (!role) return 'Chargement...';
+    return this.ROLE_LABELS[role as 'client' | 'prestataire' | 'admin'] || 'Utilisateur';
+  }
 
   certificateLottie = { path: 'assets/animations/Files.json', autoplay: true, loop: true };
   documentLottie = { path: 'assets/animations/Document.json', autoplay: true, loop: true };

@@ -3,7 +3,6 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { Subscription, fromEvent } from 'rxjs';
-
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 

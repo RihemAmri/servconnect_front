@@ -43,7 +43,9 @@ $shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 .dashboard-page {
   min-height: 100vh;
   background: linear-gradient(180deg, $gray-50 0%, $gray-100 100%);
+  padding-top: 76px;
 }
+
 
 // ===== HEADER =====
 .dashboard-header {
@@ -370,11 +372,12 @@ $shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         color: $warning;
       }
       
-      &.half {
-        background: linear-gradient(90deg, $warning 50%, $gray-300 50%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
+                &.half {
+                  background: linear-gradient(90deg, $warning 50%, $gray-300 50%);
+                  -webkit-background-clip: text;
+                  background-clip: text;
+                  -webkit-text-fill-color: transparent;
+                }
     }
   }
 }

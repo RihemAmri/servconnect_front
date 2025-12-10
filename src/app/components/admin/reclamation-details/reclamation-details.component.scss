@@ -1,0 +1,317 @@
+.admin-rec-container {
+  margin-top: 100px;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  background: #f4f7fb;
+}
+
+.admin-rec-card {
+  display: flex;
+  max-width: 900px;
+  width: 100%;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  background: white;
+
+  .left-box {
+    width: 40%;
+    background: #025ddd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 25px;
+
+    ng-lottie {
+      width: 100%;
+      max-width: 280px;
+    }
+  }
+
+  .right-box {
+    width: 60%;
+    padding: 40px;
+    background: #ffffff;
+
+    h2 {
+      color: #003b8b;
+      margin-bottom: 10px;
+      font-size: 26px;
+      font-weight: 600;
+    }
+
+    p {
+      margin-bottom: 10px;
+      /*strong {
+        color: #555;
+      }*/
+    }
+
+    span.en-attente {
+      color: #ff9800;
+      font-weight: bold;
+    }
+
+    span.répondu {
+      color: #4caf50;
+      font-weight: bold;
+    }
+
+    form {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+
+      label {
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+
+      textarea {
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #d3dce6;
+        resize: vertical;
+        font-size: 1rem;
+        margin-bottom: 15px;
+        &:focus {
+          border-color: #025ddd;
+          outline: none;
+          box-shadow: 0 0 4px rgba(0,98,255,0.3);
+        }
+      }
+      .response-textarea[readonly] {
+        background-color: #f0f0f0 !important;
+        color: #555;
+        cursor: not-allowed;
+        border-color: #ccc;
+      }
+
+      button {
+        align-self: flex-start;
+        padding: 10px 20px;
+        background-color: #025ddd;
+        color: white;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: 0.25s;
+
+        &:hover {
+          background-color: #0047a3;
+        }
+      }
+    }
+   .info-line {
+  display: grid;
+  grid-template-columns: 30px 110px 1fr; 
+  /* 30px = icône
+     110px = largeur identique pour tous les labels
+     1fr = le contenu long */
+  
+  gap: 8px;
+  margin-bottom: 14px;
+  line-height: 1.4;
+
+  i {
+    font-size: 18px;
+    color: #113970;
+    margin-top: 3px; // alignement vertical
+  }
+
+  .label {
+    font-weight: 600;
+    color: #113970;
+  }
+
+  .value {
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    color: #333;
+  }
+}
+
+
+  }
+}
+
+/* Chargement */
+.loading {
+  text-align: center;
+  color: #888;
+  margin-top: 50px;
+  font-size: 1.2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-rec-card {
+    flex-direction: column;
+  }
+
+  .left-box, .right-box {
+    width: 100%;
+  }
+}
+.left-box {
+  position: relative; // nécessaire pour positionnement absolu
+
+  .back-btn {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    color: white;
+    font-weight: 500;
+    transition: 0.2s;
+    z-index: 10;
+
+    i {
+      margin-right: 6px;
+      font-size: 16px;
+    }
+
+    &:hover {
+      color: #b0d4ff;
+    }
+  }
+}
+
+/* erreurs */
+.error {
+  color: #d62828; /* rouge plus visible */
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+/* textarea readonly */
+.response-textarea[readonly] {
+  background-color: #f0f0f0 !important;
+  color: #555;
+  cursor: not-allowed;
+  border-color: #ccc;
+}
+.toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ffffff; 
+  border-left: 5px solid #025ddd;
+  padding: 15px 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  z-index: 10000;
+  width: auto;
+  max-width: 280px; 
+  display: inline-block;      /* <- flex remplacé par inline-block */
+  text-align: left;           /* pour que le contenu ne soit pas étiré */
+  position: fixed;            /* fixe au centre */
+}
+
+/* Message avec emoji */
+.toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ffffff; 
+  border-left: 5px solid #025ddd;
+  padding: 15px 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  z-index: 10000;
+  width: auto;
+  //max-width: 280px; 
+  min-width: 300px; 
+  display: inline-block;      /* <- flex remplacé par inline-block */
+  text-align: left;           /* pour que le contenu ne soit pas étiré */
+  position: fixed;            /* fixe au centre */
+}
+
+/* Message avec emoji */
+.toast-message {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  gap: 8px;
+}
+
+.toast-message .emoji-success {
+  font-size: 18px;
+}
+
+/* Actions OK */
+.toast-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+
+  button.ok-btn {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+    transition: 0.2s;
+    &:hover { background-color: #45a049; }
+  }
+}
+
+/* Bouton fermeture */
+.close-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #e53935;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  line-height: 0;
+  z-index: 101;
+  transition: 0.2s;
+  &:hover { background: #d32f2f; }
+}
+
+.loading-alert {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  z-index: 1000;
+  min-width: 200px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(0, 0, 255, 0.3);
+  border-top: 5px solid blue;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

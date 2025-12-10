@@ -10,12 +10,19 @@ export interface User {
   nom: string;
   prenom: string;
   email: string;
-  telephone?: string;
-  adresse?: string;
-  role: 'client' | 'prestataire' | 'admin';
   photo?: string;
-  dateInscription?: string; // ISO string
+  noteGenerale?: number;
+  nombreAvis?: number;
+  telephone?: string;
+  adresse?: {           // ✅ Doit être un objet
+    street: string;
+    lat: number;
+    lng: number;
+  } | null;
+  role: 'client' | 'prestataire' | 'admin';
   isSuspended?: boolean;
+  dateInscription?: string;
+  __v?: number;
 }
 
 /**

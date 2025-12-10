@@ -8,12 +8,13 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { TabViewModule } from 'primeng/tabview';
-import { TabView } from 'primeng/tabview'; // ✅ AJOUT
+import { TabView } from 'primeng/tabview';
 import { ToastModule } from 'primeng/toast';
 import { BadgeModule } from 'primeng/badge';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
+import { TooltipModule } from 'primeng/tooltip';
 import { MessageService, ConfirmationService } from 'primeng/api';
 
 import { ProvidersService, Provider, VerificationDocument } from '../../../services/providers.service';
@@ -33,13 +34,15 @@ import { ProvidersService, Provider, VerificationDocument } from '../../../servi
     ConfirmDialogModule,
     DialogModule,
    
+    TooltipModule
   ],
   providers: [MessageService, ConfirmationService],
-  templateUrl: './provider-details.component.html'
+  templateUrl: './provider-details.component.html',
+  styleUrls: ['./provider-details.component.scss']
 })
 export class ProviderDetailsComponent implements OnInit {
-  @ViewChild('tabView') tabView!: TabView; // ✅ AJOUT pour contrôler les onglets
-constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+  @ViewChild('tabView') tabView!: TabView;
+
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private providersService = inject(ProvidersService);
@@ -48,20 +51,25 @@ constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
   provider: Provider | undefined;
   loading = true;
-  activeTabIndex = 0; // ✅ AJOUT pour mémoriser l'onglet actif
+  activeTabIndex = 0;
 
   // Dialogue de rejet
   showRejectDialog = false;
   rejectMotif = '';
   selectedDocumentId?: string;
-  
-  
+
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.loadProvider(id);
     } else {
-      this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'ID manquant' });
+      this.messageService.add({ 
+        severity: 'error', 
+        summary: 'Erreur', 
+        detail: 'ID manquant' 
+      });
       this.router.navigate(['/admin/providers']);
     }
     if (isPlatformBrowser(this.platformId)) {
@@ -71,17 +79,14 @@ constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
   loadProvider(id: string, preserveTab: boolean = false) {
     this.loading = true;
-    
-    // ✅ Sauvegarder l'onglet actif avant le rechargement
     const currentTab = preserveTab ? this.activeTabIndex : 0;
-    
+
     this.providersService.getProviderById(id).subscribe({
       next: (provider) => {
-        console.log('Provider chargé:', provider);
+        console.log('✅ Provider chargé:', provider);
         this.provider = provider;
         this.loading = false;
-        
-        // ✅ Restaurer l'onglet actif après le rechargement
+
         if (preserveTab) {
           setTimeout(() => {
             this.activeTabIndex = currentTab;
@@ -89,11 +94,11 @@ constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
         }
       },
       error: (error) => {
-        console.error('Erreur chargement provider:', error);
-        this.messageService.add({ 
-          severity: 'error', 
-          summary: 'Erreur', 
-          detail: 'Impossible de charger le prestataire' 
+        console.error('❌ Erreur chargement provider:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erreur',
+          detail: 'Impossible de charger le prestataire'
         });
         this.loading = false;
         this.router.navigate(['/admin/providers']);
@@ -103,7 +108,7 @@ constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
   validateProvider() {
     if (!this.provider) return;
-    
+
     this.confirmationService.confirm({
       message: `Valider le compte de ${this.provider.prenom} ${this.provider.nom} ? Tous les documents seront marqués comme vérifiés.`,
       header: 'Valider le prestataire',
@@ -114,21 +119,46 @@ constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
       accept: () => {
         this.providersService.validateProvider(this.provider!._id).subscribe({
           next: () => {
-            this.messageService.add({ 
-              severity: 'success', 
-              summary: 'Validé', 
-              detail: 'Prestataire validé avec succès' 
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Validé',
+              detail: 'Prestataire validé avec succès'
             });
-            this.loadProvider(this.provider!._id, true); // ✅ Préserver l'onglet
+            this.loadProvider(this.provider!._id, true);
           },
           error: (error) => {
-            console.error('Erreur validation:', error);
-            this.messageService.add({ 
-              severity: 'error', 
-              summary: 'Erreur', 
-              detail: 'Impossible de valider le prestataire' 
+            console.error('❌ Erreur validation:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erreur',
+              detail: 'Impossible de valider le prestataire'
             });
           }
+        });
+      }
+    });
+  }
+
+  validateDocument(documentId: string) {
+    this.providersService.updateDocumentStatus(
+      this.provider!._id,
+      documentId,
+      'verified'
+    ).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Validé',
+          detail: 'Document validé avec succès'
+        });
+        this.loadProvider(this.provider!._id, true);
+      },
+      error: (error) => {
+        console.error('❌ Erreur validation document:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erreur',
+          detail: 'Impossible de valider le document'
         });
       }
     });
@@ -142,16 +172,16 @@ constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
   confirmReject() {
     if (!this.rejectMotif.trim()) {
-      this.messageService.add({ 
-        severity: 'warn', 
-        summary: 'Motif requis', 
-        detail: 'Veuillez saisir un motif de refus' 
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Motif requis',
+        detail: 'Veuillez saisir un motif de refus'
       });
       return;
     }
 
     if (this.selectedDocumentId) {
-      // Rejeter un document spécifique
+      // Rejeter un document spécifique (le prestataire sera automatiquement refusé)
       this.providersService.updateDocumentStatus(
         this.provider!._id,
         this.selectedDocumentId,
@@ -159,20 +189,20 @@ constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
         this.rejectMotif
       ).subscribe({
         next: () => {
-          this.messageService.add({ 
-            severity: 'success', 
-            summary: 'Document refusé', 
-            detail: 'Le document a été rejeté' 
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Document refusé',
+            detail: 'Le document a été rejeté et le prestataire a été automatiquement refusé'
           });
-          this.loadProvider(this.provider!._id, true); // ✅ Préserver l'onglet
+          this.loadProvider(this.provider!._id, true);
           this.showRejectDialog = false;
         },
         error: (error) => {
-          console.error('Erreur rejet document:', error);
-          this.messageService.add({ 
-            severity: 'error', 
-            summary: 'Erreur', 
-            detail: 'Impossible de rejeter le document' 
+          console.error('❌ Erreur rejet document:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erreur',
+            detail: 'Impossible de rejeter le document'
           });
         }
       });
@@ -180,59 +210,29 @@ constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
       // Rejeter tout le prestataire
       this.providersService.rejectProvider(this.provider!._id, this.rejectMotif).subscribe({
         next: () => {
-          this.messageService.add({ 
-            severity: 'success', 
-            summary: 'Refusé', 
-            detail: 'Prestataire refusé' 
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Refusé',
+            detail: 'Prestataire refusé'
           });
-          this.loadProvider(this.provider!._id, true); // ✅ Préserver l'onglet
+          this.loadProvider(this.provider!._id, true);
           this.showRejectDialog = false;
         },
         error: (error) => {
-          console.error('Erreur rejet prestataire:', error);
-          this.messageService.add({ 
-            severity: 'error', 
-            summary: 'Erreur', 
-            detail: 'Impossible de rejeter le prestataire' 
+          console.error('❌ Erreur rejet prestataire:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erreur',
+            detail: 'Impossible de rejeter le prestataire'
           });
         }
       });
     }
   }
 
-  validateDocument(documentId: string) {
-    this.providersService.updateDocumentStatus(
-      this.provider!._id,
-      documentId,
-      'verified'
-    ).subscribe({
-      next: () => {
-        this.messageService.add({ 
-          severity: 'success', 
-          summary: 'Validé', 
-          detail: 'Document validé' 
-        });
-        this.loadProvider(this.provider!._id, true); // ✅ Préserver l'onglet
-      },
-      error: (error) => {
-        console.error('Erreur validation document:', error);
-        this.messageService.add({ 
-          severity: 'error', 
-          summary: 'Erreur', 
-          detail: 'Impossible de valider le document' 
-        });
-      }
-    });
-  }
-
-  // ✅ Méthode pour changer d'onglet manuellement
-  onTabChange(event: any) {
-    this.activeTabIndex = event.index;
-  }
-
   deleteProvider() {
     if (!this.provider) return;
-    
+
     this.confirmationService.confirm({
       message: `Supprimer définitivement ${this.provider.prenom} ${this.provider.nom} ? Cette action est irréversible.`,
       header: 'Supprimer prestataire',
@@ -243,24 +243,28 @@ constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
       accept: () => {
         this.providersService.deleteProvider(this.provider!._id).subscribe({
           next: () => {
-            this.messageService.add({ 
-              severity: 'success', 
-              summary: 'Supprimé', 
-              detail: 'Prestataire supprimé' 
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Supprimé',
+              detail: 'Prestataire supprimé'
             });
             this.router.navigate(['/admin/providers']);
           },
           error: (error) => {
-            console.error('Erreur suppression:', error);
-            this.messageService.add({ 
-              severity: 'error', 
-              summary: 'Erreur', 
-              detail: 'Impossible de supprimer le prestataire' 
+            console.error('❌ Erreur suppression:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erreur',
+              detail: 'Impossible de supprimer le prestataire'
             });
           }
         });
       }
     });
+  }
+
+  onTabChange(event: any) {
+    this.activeTabIndex = event.index;
   }
 
   openImage(imageUrl: string) {
@@ -270,6 +274,41 @@ constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
   back() {
     this.router.navigate(['/admin/providers']);
   }
+
+  // ==========================================
+  // 🔍 MÉTHODES DE VÉRIFICATION
+  // ==========================================
+
+  hasRejectedDocuments(): boolean {
+    return this.provider?.verificationDocuments?.some(doc => doc.status === 'rejected') || false;
+  }
+
+  allDocumentsVerified(): boolean {
+    if (!this.provider?.verificationDocuments || this.provider.verificationDocuments.length === 0) {
+      return false;
+    }
+    return this.provider.verificationDocuments.every(doc => doc.status === 'verified');
+  }
+
+  getNumberOfRejectedDocs(): number {
+    return this.provider?.verificationDocuments?.filter(doc => doc.status === 'rejected').length || 0;
+  }
+
+  getNumberOfPendingDocs(): number {
+    return this.provider?.verificationDocuments?.filter(doc => doc.status === 'pending').length || 0;
+  }
+
+  getNumberOfVerifiedDocs(): number {
+    return this.provider?.verificationDocuments?.filter(doc => doc.status === 'verified').length || 0;
+  }
+
+  getTotalDocs(): number {
+    return this.provider?.verificationDocuments?.length || 0;
+  }
+
+  // ==========================================
+  // 🎨 MÉTHODES D'AFFICHAGE
+  // ==========================================
 
   getDocumentStatusSeverity(status: string): 'success' | 'warn' | 'danger' {
     switch (status) {

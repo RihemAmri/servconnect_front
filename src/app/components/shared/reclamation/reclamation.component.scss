@@ -1,0 +1,280 @@
+.reclamation-container {
+  margin-top: 100px;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  background: #f8faff;
+}
+
+.reclamation-card {
+  display: flex;
+  max-width: 900px;
+  width: 100%;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  background: white;
+}
+
+/* ---- LEFT BOX ---- */
+.left-box {
+  width: 40%;
+  background: #025ddd; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 25px;
+}
+
+.left-box ng-lottie {
+  width: 100%;
+  max-width: 280px;
+}
+
+/* ---- RIGHT BOX ---- */
+.right-box {
+  width: 60%;
+  padding: 40px;
+  background: #ffffff;
+
+  h2 {
+    color: #003b8b;
+    margin-bottom: 5px;
+    font-size: 26px;
+    font-weight: 600;
+  }
+
+  .subtitle {
+    color: #6b7a8f;
+    margin-bottom: 25px;
+    font-size: 15px;
+  }
+}
+
+/* ---- FORM ---- */
+.form-group {
+  margin-bottom: 18px;
+
+  .form-control {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #d3dce6;
+    font-size: 15px;
+    background: #f6f8fc;
+    transition: 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: #025ddd;
+      background: white;
+      box-shadow: 0 0 4px rgba(0, 98, 255, 0.3);
+    }
+  }
+
+  .textarea {
+    resize: none;
+  }
+
+  .error {
+    margin-top: 5px;
+    color: #d62828;
+  }
+}
+
+/* ---- BUTTON ---- */
+.btn-submit {
+  width: 100%;
+  padding: 12px;
+  background: #025ddd;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.25s;
+
+  &:hover {
+    background: #0047a3;
+  }
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .reclamation-card {
+    flex-direction: column;
+  }
+
+  .left-box {
+    width: 100%;
+  }
+
+  .right-box {
+    width: 100%;
+  }
+}
+.left-box {
+  position: relative; // nécessaire pour positionnement absolu
+
+  .back-btn {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    color: white;
+    font-weight: 500;
+    transition: 0.2s;
+    z-index: 10;
+
+    i {
+      margin-right: 6px;
+      font-size: 16px;
+    }
+
+    &:hover {
+      color: #b0d4ff;
+    }
+  }
+}
+
+//toast design
+.toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ffffff; 
+  border-left: 5px solid #025ddd;
+  padding: 15px 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  z-index: 10000;
+  width: auto;
+  min-width: 400px; 
+  text-align: left;
+}
+
+.toast-message {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  gap: 8px;
+}
+
+.toast-message .emoji-success { font-size: 18px; }
+
+.toast-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+
+  button.ok-btn {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+    transition: 0.2s;
+    &:hover { background-color: #45a049; }
+  }
+}
+
+.close-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #e53935;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  line-height: 0;
+  z-index: 101;
+  transition: 0.2s;
+  &:hover { background: #d32f2f; }
+}
+/* --- Loader Global Overlay --- 
+.loading-alert {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.75);  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(3px);
+  z-index: 999999;
+  animation: fadeIn 0.2s ease-out;
+  text-align: center;
+
+  p {
+    margin-top: 12px;
+    color: #003b8b;
+    font-weight: 600;
+    font-size: 16px;
+  }
+}
+
+/* --- Spinner élégant bleu doux --- 
+.loader-spinner {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  border: 4px solid rgba(2, 93, 221, 0.2);
+  border-top-color: #025ddd;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0 }
+  to { opacity: 1 }
+}
+*/
+
+.loading-alert {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  z-index: 1000;
+  min-width: 200px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(0, 0, 255, 0.3);
+  border-top: 5px solid blue;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

@@ -1,0 +1,176 @@
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 25px 20px;
+  margin-top: 100px;
+}
+
+/* -------- HEADER -------- */
+.page-header {
+  margin-bottom: 20px;
+
+  h1 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  p {
+    color: #6b7280;
+    font-size: 0.95rem;
+  }
+}
+
+/* -------- STAT CARDS -------- */
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 25px;
+
+  .stat-card {
+    padding: 18px;
+    border-radius: 12px;
+    color: white;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+
+    .stat-value {
+      font-size: 1.7rem;
+      font-weight: 700;
+    }
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+  }
+
+  .blue { background: #0056b3; }
+  .orange { background: #f59e0b; }
+  .green { background: #16a34a; }
+}
+
+
+/* -------- TABLE -------- */
+.table-container {
+  background: white;
+  border-radius: 12px;
+  padding: 0 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    padding: 15px 10px;
+    color: #6b7280;
+    font-weight: 600;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  td {
+    padding: 14px 10px;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: 0.95rem;
+  }
+
+  tr:hover {
+    background: #f9fafb;
+  }
+}
+.sujet-cell {
+  max-width: 300px; // tu peux ajuster selon ton design
+  white-space: nowrap; // empêche le texte de passer à la ligne
+  overflow: hidden;    // cache le texte qui dépasse
+  text-overflow: ellipsis; // ajoute "..." si le texte dépasse
+}
+
+/* STATUS BADGES */
+.status-badge {
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-weight: 600;
+  text-transform: capitalize;
+  font-size: 0.85rem;
+
+  &.pending {
+    background: #fff7e6;
+    color: #d97706;
+  }
+  &.done {
+    background: #e7fbe9;
+    color: #16a34a;
+  }
+}
+
+/* -------- ACTION BUTTON -------- */
+.action-btn {
+  background: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #0056b3;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+/* -------- PAGINATION -------- */
+/* ======== NEW PAGINATION STYLE ======== */
+/* ---------- PAGINATION ENCADRÉE ---------- */
+.pagination-box {
+  margin-top: 5px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 5px 18px;
+  //box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: center;
+}
+
+.pagination-inner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Boutons */
+.pag-number,
+.pag-arrow {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.pag-number:hover,
+.pag-arrow:hover:not(:disabled) {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.pag-arrow:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Active */
+.pag-number.active {
+  background: #007bff22;
+  border-color: #007bff;
+  color: #007bff;
+  font-weight: 700;
+  border-radius: 999px;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
+}

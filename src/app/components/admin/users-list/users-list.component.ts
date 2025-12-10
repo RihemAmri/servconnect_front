@@ -292,7 +292,7 @@ export class UsersListComponent implements OnInit {
         user.prenom.toLowerCase().includes(search) ||
         user.email.toLowerCase().includes(search) ||
         (user.telephone || '').toLowerCase().includes(search) ||
-        (user.adresse || '').toLowerCase().includes(search)
+        (user.adresse?.street || '').toLowerCase().includes(search)
       );
     }
 

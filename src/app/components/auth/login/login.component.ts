@@ -110,8 +110,10 @@ export class LoginComponent {
     this.authService.login(email, password).subscribe({
       next: (res: any) => {
         this.loading = false;
-        localStorage.removeItem("loginAttempts");
-        localStorage.removeItem("lockUntil");
+        
+         this.errorMessage = null;
+    localStorage.removeItem("loginAttempts");
+    localStorage.removeItem("lockUntil");
 
         this.successMessage = 'Connexion réussie ! 🎉';
 
