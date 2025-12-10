@@ -7,7 +7,6 @@ import { ProfileComponent } from './components/shared/profile/profile.component'
 
 // Provider Components
 import { MyservicesComponent } from './components/provider/myservices/myservices.component';
-import { AddservicesComponent } from './components/provider/addservices/addservices.component';
 import { UpcomingServicesComponent } from './components/provider/upcoming-services/upcoming-services.component';
 import { PastServicesComponent } from './components/provider/past-services/past-services.component';
 import { GestionbookComponent } from './components/provider/gestionbook/gestionbook.component';
@@ -62,12 +61,6 @@ export const routes: Routes = [
   {
     path: 'manage-bookings/:id',
     component: GestionbookComponent,
-    canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['prestataire'] }
-  },
-  {
-    path: 'add-service',
-    component: AddservicesComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['prestataire'] }
   },

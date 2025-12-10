@@ -151,7 +151,7 @@ async ngAfterViewInit() {
     role: ['client', Validators.required],
     name: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required],
+    password: ['', [Validators.required, this.passwordValidator]],
     telephone: ['', Validators.required],
     adresse: this.fb.group({
       street: ['', Validators.required],
@@ -241,6 +241,22 @@ async ngAfterViewInit() {
     this.showError['certifications'] = false; // 
   }
   }
+  passwordValidator(control: AbstractControl) {
+  const value = control.value;
+
+  if (!value) return { required: true };
+
+  const hasLetter = /[A-Za-z]/.test(value);
+  const hasNumber = /[0-9]/.test(value);
+  const minLength = value.length >= 6;
+
+  if (!hasLetter || !hasNumber || !minLength) {
+    return { invalidPassword: true };
+  }
+
+  return null;
+}
+
 
   onDocumentsSelected(event: any) {
     this.documentsFiles = Array.from(event.target.files);

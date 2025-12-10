@@ -25,7 +25,7 @@
         <div class="filter-dropdown">
           <select [(ngModel)]="selectedCategory" class="custom-select">
             <option *ngFor="let category of categories" [value]="category.name">
-              {{ category.icon }} {{ category.name }}
+              {{ category.name }}
             </option>
           </select>
         </div>
@@ -147,12 +147,17 @@
         <button class="remove-badge" (click)="selectCategory('Tous')">×</button>
       </span>
       <span class="filter-badge" *ngIf="selectedRating !== 'all'">
-        <span class="badge-icon">⭐</span>
+        <svg class="badge-icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+        </svg>
         {{ selectedRating }}+ étoiles
         <button class="remove-badge" (click)="selectedRating='all'">×</button>
       </span>
       <span class="filter-badge" *ngIf="selectedPrice !== 'all'">
-        <span class="badge-icon">💰</span>
+        <svg class="badge-icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="1" x2="12" y2="23"/>
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        </svg>
         {{ selectedPrice === 'low' ? 'Économique' : selectedPrice === 'medium' ? 'Standard' : 'Premium' }}
         <button class="remove-badge" (click)="selectedPrice='all'">×</button>
       </span>
@@ -167,7 +172,13 @@
 
   <!-- Error State -->
   <div class="error-container" *ngIf="error && !loading">
-    <div class="error-icon">⚠️</div>
+    <div class="error-icon">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+    </div>
     <h3>Erreur de chargement</h3>
     <p>{{ error }}</p>
     <button class="retry-btn" (click)="loadProviders()">Réessayer</button>
@@ -216,43 +227,27 @@
               <circle cx="12" cy="12" r="10"/>
               <polyline points="12 6 12 12 16 14"/>
             </svg>
-            {{ provider.experience || 0 }} ans
+            {{ provider.experience || 0 }} ans d'expérience
           </span>
           <span class="meta-item-premium">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-              <circle cx="12" cy="10" r="3"/>
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
             </svg>
-            {{ getAddressString(provider) }}
+            {{ provider.nombreAvis }} avis clients
           </span>
         </div>
 
-        <p class="service-description-premium">
-          {{ provider.description || 'Professionnel expérimenté et qualifié dans le domaine. Services de haute qualité garantis.' }}
+        <!-- Provider Description -->
+        <p class="provider-description" *ngIf="provider.description">
+          {{ provider.description.length > 80 ? (provider.description | slice:0:80) + '...' : provider.description }}
         </p>
 
-        <!-- Small Map for Provider Location -->
+        <!-- Compact Map for Provider Location -->
         <div class="card-map-container" *ngIf="hasValidCoordinates(provider)">
           <div [id]="'map-' + provider._id" class="card-map"></div>
-        </div>
-
-        <!-- Stats Row -->
-        <div class="stats-row">
-          <div class="stat-item">
-            <span class="stat-icon">📋</span>
-            <div class="stat-content">
-              <span class="stat-number">{{ provider.nombreAvis }}</span>
-              <span class="stat-label">Avis</span>
-            </div>
-          </div>
-          <div class="stat-divider"></div>
-          <div class="stat-item">
-            <span class="stat-icon">✅</span>
-            <div class="stat-content">
-              <span class="stat-number">{{ (provider.experience || 0) * 20 || 10 }}+</span>
-              <span class="stat-label">Services</span>
-            </div>
-          </div>
         </div>
       </div>
       
@@ -281,8 +276,10 @@
   <!-- Empty State -->
   <div class="empty-state" *ngIf="filteredProviders.length === 0 && !loading">
     <div class="empty-illustration">
-      <div class="empty-icon">🔍</div>
-      <div class="empty-circle"></div>
+      <svg class="empty-icon-svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.5">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="M21 21l-4.35-4.35"/>
+      </svg>
     </div>
     <h3 class="empty-title">Aucun service trouvé</h3>
     <p class="empty-text">

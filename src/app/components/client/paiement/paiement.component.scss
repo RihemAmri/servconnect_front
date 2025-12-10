@@ -609,31 +609,45 @@ $shadow-primary: 0 10px 25px rgba(2, 93, 221, 0.2);
 
 .service-item {
   display: flex;
+  align-items: center;
   gap: 16px;
-  padding: 20px;
+  padding: 16px;
   background: $gray-50;
   border-radius: 16px;
   margin-bottom: 20px;
+  border: 1px solid $gray-200;
   
-  .service-icon {
-    font-size: 3rem;
+  .provider-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    object-fit: cover;
     flex-shrink: 0;
+    border: 2px solid $white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
   
   .service-details {
     flex: 1;
+    min-width: 0;
     
     .service-name {
-      font-size: 1.15rem;
+      font-size: 1rem;
       font-weight: 700;
       color: $black;
       margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     
     .service-provider {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: $gray-600;
       font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 }
