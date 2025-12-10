@@ -6,29 +6,42 @@
 
 <!-- Main Container -->
 <div class="reservation-container" *ngIf="!loading && provider">
-  
   <!-- Header with Provider Info -->
   <div class="reservation-header">
     <div class="header-gradient"></div>
     <div class="header-content">
-      <button class="back-button" (click)="router.navigate(['/explore'])">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M19 12H5M12 19l-7-7 7-7"/>
+      <button class="back-button pt-3" (click)="router.navigate(['/explore'])">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
         Retour
       </button>
-      
+
       <div class="provider-card-header">
         <div class="provider-avatar">
-          <img [src]="getProviderPhoto()" [alt]="provider.user?.nom || 'Provider'">
+          <img
+            [src]="getProviderPhoto()"
+            [alt]="provider.user?.nom || 'Provider'"
+          />
         </div>
         <div class="provider-info">
-          <h1 class="provider-name">{{ provider.user?.prenom }} {{ provider.user?.nom }}</h1>
+          <h1 class="provider-name">
+            {{ provider.user?.prenom }} {{ provider.user?.nom }}
+          </h1>
           <p class="provider-service">{{ provider.metier }}</p>
           <div class="provider-rating">
             <span class="star">⭐</span>
             <span class="rating-value">{{ provider.noteGenerale || 0 }}</span>
-            <span class="rating-count">({{ provider.nombreAvis || 0 }} avis)</span>
+            <span class="rating-count"
+              >({{ provider.nombreAvis || 0 }} avis)</span
+            >
           </div>
         </div>
       </div>
@@ -38,13 +51,23 @@
   <!-- Progress Steps -->
   <div class="steps-container">
     <div class="steps-wrapper">
-      <div class="step" 
-           [class.active]="currentStep === 1"
-           [class.completed]="currentStep > 1"
-           (click)="goToStep(1)">
+      <div
+        class="step"
+        [class.active]="currentStep === 1"
+        [class.completed]="currentStep > 1"
+        (click)="goToStep(1)"
+      >
         <div class="step-icon">
-          <svg *ngIf="currentStep > 1" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-            <polyline points="20 6 9 17 4 12"/>
+          <svg
+            *ngIf="currentStep > 1"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+          >
+            <polyline points="20 6 9 17 4 12" />
           </svg>
           <span *ngIf="currentStep <= 1">1</span>
         </div>
@@ -56,13 +79,23 @@
 
       <div class="step-connector" [class.active]="currentStep > 1"></div>
 
-      <div class="step" 
-           [class.active]="currentStep === 2"
-           [class.completed]="currentStep > 2"
-           (click)="goToStep(2)">
+      <div
+        class="step"
+        [class.active]="currentStep === 2"
+        [class.completed]="currentStep > 2"
+        (click)="goToStep(2)"
+      >
         <div class="step-icon">
-          <svg *ngIf="currentStep > 2" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-            <polyline points="20 6 9 17 4 12"/>
+          <svg
+            *ngIf="currentStep > 2"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+          >
+            <polyline points="20 6 9 17 4 12" />
           </svg>
           <span *ngIf="currentStep <= 2">2</span>
         </div>
@@ -74,13 +107,23 @@
 
       <div class="step-connector" [class.active]="currentStep > 2"></div>
 
-      <div class="step" 
-           [class.active]="currentStep === 3"
-           [class.completed]="currentStep > 3"
-           (click)="goToStep(3)">
+      <div
+        class="step"
+        [class.active]="currentStep === 3"
+        [class.completed]="currentStep > 3"
+        (click)="goToStep(3)"
+      >
         <div class="step-icon">
-          <svg *ngIf="currentStep > 3" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-            <polyline points="20 6 9 17 4 12"/>
+          <svg
+            *ngIf="currentStep > 3"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+          >
+            <polyline points="20 6 9 17 4 12" />
           </svg>
           <span *ngIf="currentStep <= 3">3</span>
         </div>
@@ -92,12 +135,22 @@
 
       <div class="step-connector" [class.active]="currentStep > 3"></div>
 
-      <div class="step" 
-           [class.active]="currentStep === 4"
-           [class.completed]="currentStep > 4">
+      <div
+        class="step"
+        [class.active]="currentStep === 4"
+        [class.completed]="currentStep > 4"
+      >
         <div class="step-icon">
-          <svg *ngIf="currentStep > 4" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-            <polyline points="20 6 9 17 4 12"/>
+          <svg
+            *ngIf="currentStep > 4"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+          >
+            <polyline points="20 6 9 17 4 12" />
           </svg>
           <span *ngIf="currentStep <= 4">4</span>
         </div>
@@ -112,13 +165,15 @@
   <!-- Form Content -->
   <div class="form-container">
     <form [formGroup]="reservationForm">
-      
       <!-- STEP 1: Date & Time -->
       <div class="step-content" *ngIf="currentStep === 1">
         <div class="step-header">
           <div class="step-icon-large">📆</div>
           <h2>Choisissez votre rendez-vous</h2>
-          <p>Sélectionnez la date et l'heure parmi les disponibilités du prestataire</p>
+          <p>
+            Sélectionnez la date et l'heure parmi les disponibilités du
+            prestataire
+          </p>
         </div>
 
         <!-- Premium Calendar -->
@@ -126,14 +181,28 @@
           <!-- Calendar Header -->
           <div class="calendar-header">
             <button type="button" class="month-nav" (click)="previousMonth()">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M15 18l-6-6 6-6"/>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M15 18l-6-6 6-6" />
               </svg>
             </button>
             <h3 class="month-title">{{ getMonthName() }}</h3>
             <button type="button" class="month-nav" (click)="nextMonth()">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M9 18l6-6-6-6"/>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M9 18l6-6-6-6" />
               </svg>
             </button>
           </div>
@@ -151,15 +220,20 @@
 
           <!-- Calendar Days -->
           <div class="calendar-grid">
-            <div 
-              *ngFor="let calDay of calendarDays" 
+            <div
+              *ngFor="let calDay of calendarDays"
               class="calendar-day"
               [class.empty]="!calDay.day"
               [class.available]="calDay.isAvailable"
               [class.unavailable]="!calDay.isAvailable && calDay.day"
-              [class.selected]="calDay.date && selectedDate === formatDate(calDay.date)"
-              (click)="selectDate(calDay)">
-              <span class="day-number" *ngIf="calDay.day">{{ calDay.day }}</span>
+              [class.selected]="
+                calDay.date && selectedDate === formatDate(calDay.date)
+              "
+              (click)="selectDate(calDay)"
+            >
+              <span class="day-number" *ngIf="calDay.day">{{
+                calDay.day
+              }}</span>
             </div>
           </div>
         </div>
@@ -167,19 +241,29 @@
         <!-- Time Slots -->
         <div class="time-slots-section" *ngIf="selectedDate">
           <h4 class="time-slots-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <polyline points="12 6 12 12 16 14"/>
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
             </svg>
             Créneaux horaires disponibles
           </h4>
           <div class="time-slots-grid">
-            <button 
-              *ngFor="let time of availableTimeSlots" 
+            <button
+              *ngFor="let time of availableTimeSlots"
               type="button"
               class="time-slot"
-              [class.selected]="reservationForm.get('selectedTime')?.value === time"
-              (click)="selectTime(time)">
+              [class.selected]="
+                reservationForm.get('selectedTime')?.value === time
+              "
+              (click)="selectTime(time)"
+            >
               {{ time }}
             </button>
           </div>
@@ -191,15 +275,29 @@
         <div class="step-header">
           <div class="step-icon-large">📝</div>
           <h2>Décrivez votre besoin</h2>
-          <p>Plus vous donnez de détails, mieux le prestataire pourra vous aider</p>
+          <p>
+            Plus vous donnez de détails, mieux le prestataire pourra vous aider
+          </p>
         </div>
 
         <!-- Service Info Card -->
-        <div class="service-info-card" *ngIf="selectedDate && reservationForm.get('selectedTime')?.value">
+        <div
+          class="service-info-card"
+          *ngIf="selectedDate && reservationForm.get('selectedTime')?.value"
+        >
           <div class="service-info-header">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M9 11l3 3L22 4"/>
-              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M9 11l3 3L22 4" />
+              <path
+                d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"
+              />
             </svg>
             <strong>Récapitulatif du rendez-vous</strong>
           </div>
@@ -207,44 +305,72 @@
             <div class="info-row">
               <span class="info-icon">👤</span>
               <span class="info-label">Prestataire:</span>
-              <span class="info-value">{{ provider.user?.prenom }} {{ provider.user?.nom }}</span>
+              <span class="info-value"
+                >{{ provider.user?.prenom }} {{ provider.user?.nom }}</span
+              >
             </div>
             <div class="info-row">
               <span class="info-icon">🔧</span>
               <span class="info-label">Service:</span>
-              <span class="info-value service-tag">{{ reservationForm.get('serviceType')?.value }}</span>
+              <span class="info-value service-tag">{{
+                reservationForm.get("serviceType")?.value
+              }}</span>
             </div>
             <div class="info-row">
               <span class="info-icon">📅</span>
               <span class="info-label">Date:</span>
-              <span class="info-value">{{ formatDisplayDate(selectedDate) }}</span>
+              <span class="info-value">{{
+                formatDisplayDate(selectedDate)
+              }}</span>
             </div>
             <div class="info-row">
               <span class="info-icon">🕐</span>
               <span class="info-label">Heure:</span>
-              <span class="info-value">{{ reservationForm.get('selectedTime')?.value }}</span>
+              <span class="info-value">{{
+                reservationForm.get("selectedTime")?.value
+              }}</span>
             </div>
           </div>
         </div>
 
         <div class="form-group full-width">
           <label class="form-label">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+              />
             </svg>
             Description du problème / besoin
             <span class="required">*</span>
           </label>
-          <textarea 
+          <textarea
             formControlName="description"
             class="form-textarea"
             rows="8"
-            placeholder="Exemple : Fuite d'eau sous l'évier de la cuisine. L'eau coule en continu depuis hier soir. Il semble que ce soit au niveau du tuyau de raccordement..."></textarea>
+            placeholder="Exemple : Fuite d'eau sous l'évier de la cuisine. L'eau coule en continu depuis hier soir. Il semble que ce soit au niveau du tuyau de raccordement..."
+          ></textarea>
           <div class="char-counter">
-            <span [class.valid]="reservationForm.get('description')?.value?.length >= 10">
-              {{ reservationForm.get('description')?.value?.length || 0 }} / 500 caractères
+            <span
+              [class.valid]="
+                reservationForm.get('description')?.value?.length >= 10
+              "
+            >
+              {{ reservationForm.get("description")?.value?.length || 0 }} / 500
+              caractères
             </span>
-            <span class="minimum-text" *ngIf="(reservationForm.get('description')?.value?.length || 0) < 10">
+            <span
+              class="minimum-text"
+              *ngIf="
+                (reservationForm.get('description')?.value?.length || 0) < 10
+              "
+            >
               (minimum 10 caractères)
             </span>
           </div>
@@ -252,38 +378,67 @@
 
         <div class="form-group full-width">
           <label class="form-label">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-              <circle cx="8.5" cy="8.5" r="1.5"/>
-              <polyline points="21 15 16 10 5 21"/>
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
             </svg>
             Photos du problème (optionnel)
           </label>
           <div class="file-upload-zone" (click)="fileInput.click()">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-              <polyline points="17 8 12 3 7 8"/>
-              <line x1="12" y1="3" x2="12" y2="15"/>
+            <svg
+              width="48"
+              height="48"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+            >
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
             </svg>
             <p class="upload-text">Cliquez pour ajouter des photos</p>
             <p class="upload-hint">PNG, JPG jusqu'à 5MB (max 5 photos)</p>
           </div>
-          <input 
+          <input
             #fileInput
-            type="file" 
+            type="file"
             accept="image/*"
             multiple
             (change)="onFileSelect($event)"
-            style="display: none">
-          
+            style="display: none"
+          />
+
           <!-- File Previews -->
           <div class="file-previews" *ngIf="selectedFiles.length > 0">
-            <div class="preview-item" *ngFor="let url of previewUrls; let i = index">
-              <img [src]="url" alt="Preview">
-              <button type="button" class="remove-preview" (click)="removeFile(i)">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="18" y1="6" x2="6" y2="18"/>
-                  <line x1="6" y1="6" x2="18" y2="18"/>
+            <div
+              class="preview-item"
+              *ngFor="let url of previewUrls; let i = index"
+            >
+              <img [src]="url" alt="Preview" />
+              <button
+                type="button"
+                class="remove-preview"
+                (click)="removeFile(i)"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
               </button>
             </div>
@@ -296,7 +451,10 @@
         <div class="step-header">
           <div class="step-icon-large">📍</div>
           <h2>Où se trouve le problème ?</h2>
-          <p>Cliquez sur la carte pour indiquer l'emplacement précis de l'intervention</p>
+          <p>
+            Cliquez sur la carte pour indiquer l'emplacement précis de
+            l'intervention
+          </p>
         </div>
 
         <div class="map-section">
@@ -306,42 +464,67 @@
                 <span class="instruction-icon provider-marker">🔵</span>
                 <div class="instruction-text">
                   <strong>Marqueur Bleu</strong>
-                  <span>Position du prestataire {{ provider.user?.prenom }}</span>
+                  <span
+                    >Position du prestataire {{ provider.user?.prenom }}</span
+                  >
                 </div>
               </div>
               <div class="instruction-item">
                 <span class="instruction-icon client-marker">🔴</span>
                 <div class="instruction-text">
                   <strong>Marqueur Rouge</strong>
-                  <span>Votre emplacement (cliquez sur la carte pour le placer)</span>
+                  <span
+                    >Votre emplacement (cliquez sur la carte pour le
+                    placer)</span
+                  >
                 </div>
               </div>
             </div>
           </div>
-          
+
           <div id="reservation-map" class="reservation-map"></div>
 
           <div class="selected-location-card" *ngIf="selectedLocation">
             <div class="location-header">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                <circle cx="12" cy="10" r="3"/>
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                <circle cx="12" cy="10" r="3" />
               </svg>
               <strong>Emplacement de l'intervention confirmé</strong>
             </div>
             <div class="location-info">
               <p class="location-address">📍 {{ selectedLocation.address }}</p>
-              <p class="location-coords">Coordonnées GPS: {{ selectedLocation.lat.toFixed(6) }}, {{ selectedLocation.lng.toFixed(6) }}</p>
+              <p class="location-coords">
+                Coordonnées GPS: {{ selectedLocation.lat.toFixed(6) }},
+                {{ selectedLocation.lng.toFixed(6) }}
+              </p>
             </div>
           </div>
 
           <div class="location-help" *ngIf="!selectedLocation">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
             </svg>
-            <span>Cliquez n'importe où sur la carte pour définir l'emplacement exact de l'intervention</span>
+            <span
+              >Cliquez n'importe où sur la carte pour définir l'emplacement
+              exact de l'intervention</span
+            >
           </div>
         </div>
       </div>
@@ -358,22 +541,39 @@
           <!-- Provider Info Section -->
           <div class="summary-section provider-summary">
             <h3 class="summary-title">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
               </svg>
               Prestataire
             </h3>
             <div class="summary-content">
               <div class="provider-summary-card">
-                <img [src]="getProviderPhoto()" [alt]="provider.user?.nom" class="provider-summary-avatar">
+                <img
+                  [src]="getProviderPhoto()"
+                  [alt]="provider.user?.nom"
+                  class="provider-summary-avatar"
+                />
                 <div class="provider-summary-info">
                   <h4>{{ provider.user?.prenom }} {{ provider.user?.nom }}</h4>
                   <p class="provider-profession">{{ provider.metier }}</p>
                   <div class="provider-stats">
-                    <span class="stat">⭐ {{ provider.noteGenerale || 0 }}</span>
-                    <span class="stat">📝 {{ provider.nombreAvis || 0 }} avis</span>
-                    <span class="stat" *ngIf="provider.experience">🎯 {{ provider.experience }} ans d'expérience</span>
+                    <span class="stat"
+                      >⭐ {{ provider.noteGenerale || 0 }}</span
+                    >
+                    <span class="stat"
+                      >📝 {{ provider.nombreAvis || 0 }} avis</span
+                    >
+                    <span class="stat" *ngIf="provider.experience"
+                      >🎯 {{ provider.experience }} ans d'expérience</span
+                    >
                   </div>
                 </div>
               </div>
@@ -383,11 +583,18 @@
           <!-- Date & Time Section -->
           <div class="summary-section">
             <h3 class="summary-title">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                <line x1="16" y1="2" x2="16" y2="6"/>
-                <line x1="8" y1="2" x2="8" y2="6"/>
-                <line x1="3" y1="10" x2="21" y2="10"/>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
               </svg>
               Rendez-vous
             </h3>
@@ -398,11 +605,15 @@
               </div>
               <div class="summary-item">
                 <span class="label">🕐 Heure :</span>
-                <span class="value">{{ reservationForm.get('selectedTime')?.value }}</span>
+                <span class="value">{{
+                  reservationForm.get("selectedTime")?.value
+                }}</span>
               </div>
               <div class="summary-item">
                 <span class="label">� Service :</span>
-                <span class="value service-badge">{{ reservationForm.get('serviceType')?.value }}</span>
+                <span class="value service-badge">{{
+                  reservationForm.get("serviceType")?.value
+                }}</span>
               </div>
             </div>
           </div>
@@ -410,29 +621,47 @@
           <!-- Description Section -->
           <div class="summary-section">
             <h3 class="summary-title">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                />
               </svg>
               Description du besoin
             </h3>
             <div class="summary-content">
-              <p class="description-text">{{ reservationForm.get('description')?.value }}</p>
+              <p class="description-text">
+                {{ reservationForm.get("description")?.value }}
+              </p>
             </div>
           </div>
 
           <!-- Photos Section -->
           <div class="summary-section" *ngIf="selectedFiles.length > 0">
             <h3 class="summary-title">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5"/>
-                <polyline points="21 15 16 10 5 21"/>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <polyline points="21 15 16 10 5 21" />
               </svg>
               Photos jointes ({{ selectedFiles.length }})
             </h3>
             <div class="summary-content">
               <div class="summary-photos">
-                <img *ngFor="let url of previewUrls" [src]="url" alt="Photo">
+                <img *ngFor="let url of previewUrls" [src]="url" alt="Photo" />
               </div>
             </div>
           </div>
@@ -440,9 +669,16 @@
           <!-- Location Section -->
           <div class="summary-section" *ngIf="selectedLocation">
             <h3 class="summary-title">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                <circle cx="12" cy="10" r="3"/>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                <circle cx="12" cy="10" r="3" />
               </svg>
               Localisation de l'intervention
             </h3>
@@ -450,8 +686,13 @@
               <div class="location-display">
                 <div class="location-icon">📍</div>
                 <div class="location-details">
-                  <p class="location-address">{{ selectedLocation.address }}</p>
-                  <p class="location-coords">Coordonnées: {{ selectedLocation.lat.toFixed(6) }}, {{ selectedLocation.lng.toFixed(6) }}</p>
+                  <p class="location-address">
+                    {{ selectedLocation.address }}
+                  </p>
+                  <p class="location-coords">
+                    Coordonnées: {{ selectedLocation.lat.toFixed(6) }},
+                    {{ selectedLocation.lng.toFixed(6) }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -459,14 +700,24 @@
         </div>
 
         <div class="info-banner">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="12" y1="16" x2="12" y2="12"/>
-            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="16" x2="12" y2="12" />
+            <line x1="12" y1="8" x2="12.01" y2="8" />
           </svg>
           <div class="banner-content">
             <strong>Note importante</strong>
-            <p>Le prestataire examinera votre demande et vous proposera un devis. Aucun paiement ne sera effectué pour le moment.</p>
+            <p>
+              Le prestataire examinera votre demande et vous proposera un devis.
+              Aucun paiement ne sera effectué pour le moment.
+            </p>
           </div>
         </div>
       </div>
@@ -474,38 +725,62 @@
 
     <!-- Navigation Buttons -->
     <div class="form-actions">
-      <button 
-        type="button" 
+      <button
+        type="button"
         class="btn-secondary"
         *ngIf="currentStep > 1"
-        (click)="prevStep()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        (click)="prevStep()"
+      >
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
         Précédent
       </button>
 
-      <button 
-        type="button" 
+      <button
+        type="button"
         class="btn-primary"
         *ngIf="currentStep < totalSteps"
         (click)="nextStep()"
-        [disabled]="!validateCurrentStep()">
+        [disabled]="!validateCurrentStep()"
+      >
         Suivant
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M5 12h14M12 5l7 7-7 7"/>
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M5 12h14M12 5l7 7-7 7" />
         </svg>
       </button>
 
-      <button 
-        type="button" 
+      <button
+        type="button"
         class="btn-submit"
         *ngIf="currentStep === totalSteps"
         (click)="submitReservation()"
-        [disabled]="!reservationForm.valid || !selectedLocation || submitting">
+        [disabled]="!reservationForm.valid || !selectedLocation || submitting"
+      >
         <span *ngIf="!submitting">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
           </svg>
           Envoyer la demande
         </span>

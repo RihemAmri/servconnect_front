@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+/* import { Injectable } from '@angular/core';
 import { inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
@@ -68,7 +68,10 @@ this.currentUserSubject.next(res.user); // on émet l'utilisateur
     this.router.navigate(['/login']);
   }
 
-
+// Ajoute cette méthode dans AuthService
+setAuthStatus(isLoggedIn: boolean): void {
+  this.authStatus.next(isLoggedIn);
+}
   // ==========================
   // 🟢 AUTO LOGIN
   // ==========================
@@ -145,4 +148,166 @@ resetPassword(token: string, motDePasse: string) {
   return this.http.post(`${this.baseUrl}/reset-password/${token}`, { motDePasse });
 }
 
+}
+ */
+
+
+import { Injectable, signal, computed, effect, inject } from '@angular/core';
+import { PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { tap } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthService {
+  private http = inject(HttpClient);
+  private router = inject(Router);
+  private platformId = inject(PLATFORM_ID);
+  private isBrowser = isPlatformBrowser(this.platformId);
+
+  private baseUrl = 'http://localhost:5000/api/users';
+
+  // Signals principaux (remplacent les BehaviorSubject)
+  currentUser = signal<any>(null);                // utilisateur courant
+  isAuthenticated = signal<boolean>(false);       // état de connexion
+
+  // Computed : rôle de l'utilisateur (facile à utiliser dans les templates)
+  userRole = computed(() => this.currentUser()?.role || null);
+
+  // Computed : token (lecture seule)
+  token = computed(() => {
+    if (!this.isBrowser) return null;
+    return localStorage.getItem('token');
+  });
+
+  private tokenTimer: any;
+
+  constructor() {
+    // Auto-login au démarrage du service (exécuté une seule fois)
+    this.autoLogin();
+
+    // Optionnel : effet pour loguer ou réagir à un changement d'utilisateur
+    effect(() => {
+      const user = this.currentUser();
+      if (user) {
+        console.log('Utilisateur connecté :', user.email);
+      }
+    });
+  }
+
+  // ==========================
+  // 🟢 INSCRIPTION
+  // ==========================
+  registerClient(formData: FormData) {
+    return this.http.post(`${this.baseUrl}/register`, formData);
+  }
+
+  registerProvider(formData: FormData) {
+    return this.http.post(`${this.baseUrl}/register-provider`, formData);
+  }
+
+  // ==========================
+  // 🟢 LOGIN
+  // ==========================
+  login(email: string, password: string) {
+    return this.http.post<{ user: any; token: string }>(
+      `${this.baseUrl}/login`,
+      { email, motDePasse: password }
+    ).pipe(
+      tap((res) => {
+        if (!this.isBrowser) return;
+
+        const expiresIn = 24 * 60 * 60 * 1000; // 1 jour
+        const expirationDate = new Date(Date.now() + expiresIn);
+
+        localStorage.setItem('token', res.token);
+        localStorage.setItem('user', JSON.stringify(res.user));
+        localStorage.setItem('expiration', expirationDate.toISOString());
+
+        // Mise à jour des signals → tout le reste suit automatiquement
+        this.currentUser.set(res.user);
+        this.isAuthenticated.set(true);
+
+        this.autoLogout(expiresIn);
+      })
+    );
+  }
+
+  // ==========================
+  // 🟢 LOGOUT
+  // ==========================
+  logout() {
+    if (this.isBrowser) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('expiration');
+    }
+
+    this.currentUser.set(null);
+    this.isAuthenticated.set(false);
+    clearTimeout(this.tokenTimer);
+    this.router.navigate(['/login']);
+  }
+
+  // ==========================
+  // 🟢 AUTO LOGIN
+  // ==========================
+  public autoLogin() {
+    if (!this.isBrowser) return;
+
+    const token = localStorage.getItem('token');
+    const userStr = localStorage.getItem('user');
+    const expirationStr = localStorage.getItem('expiration');
+
+    if (!token || !userStr || !expirationStr) return;
+
+    const expiresIn = new Date(expirationStr).getTime() - Date.now();
+
+    if (expiresIn > 0) {
+      const user = JSON.parse(userStr);
+      this.currentUser.set(user);
+      this.isAuthenticated.set(true);
+      this.autoLogout(expiresIn);
+    } else {
+      this.logout(); // token expiré → déconnexion
+    }
+  }
+
+  // ==========================
+  // 🕒 AUTO LOGOUT
+  // ==========================
+  private autoLogout(duration: number) {
+    this.tokenTimer = setTimeout(() => {
+      this.logout();
+    }, duration);
+  }
+
+  // ==========================
+  // 🟢 MÉTHODES UTILITAIRES (simplifiées grâce aux signals)
+  // ==========================
+  getCurrentUser() {
+    return this.currentUser();
+  }
+
+  getUserRole() {
+    return this.userRole(); // computed, toujours à jour
+  }
+
+  isLoggedIn(): boolean {
+    return this.isAuthenticated();
+  }
+
+  // ==========================
+  // 🟢 MOT DE PASSE OUBLIÉ / RESET
+  // ==========================
+  forgotPassword(email: string) {
+    return this.http.post(`${this.baseUrl}/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, motDePasse: string) {
+    return this.http.post(`${this.baseUrl}/reset-password/${token}`, { motDePasse });
+  }
 }

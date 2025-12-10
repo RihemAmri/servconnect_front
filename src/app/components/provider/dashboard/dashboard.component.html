@@ -1,28 +1,48 @@
 <div class="dashboard-page">
-  
   <!-- Header Section -->
   <header class="dashboard-header">
     <div class="header-content">
       <div class="header-left">
         <div class="welcome-badge">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-            <polyline points="9 22 9 12 15 12 15 22"/>
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
           </svg>
           Tableau de Bord
         </div>
         <h1 class="header-title">Bienvenue sur votre espace</h1>
-        <p class="header-subtitle">Suivez vos performances et gérez vos réservations</p>
+        <p class="header-subtitle">
+          Suivez vos performances et gérez vos réservations
+        </p>
       </div>
       <div class="header-right">
         <div class="period-selector">
-          <button class="period-btn" [class.active]="selectedPeriod === 'week'" (click)="selectPeriod('week')">
+          <button
+            class="period-btn"
+            [class.active]="selectedPeriod === 'week'"
+            (click)="selectPeriod('week')"
+          >
             Semaine
           </button>
-          <button class="period-btn" [class.active]="selectedPeriod === 'month'" (click)="selectPeriod('month')">
+          <button
+            class="period-btn"
+            [class.active]="selectedPeriod === 'month'"
+            (click)="selectPeriod('month')"
+          >
             Mois
           </button>
-          <button class="period-btn" [class.active]="selectedPeriod === 'year'" (click)="selectPeriod('year')">
+          <button
+            class="period-btn"
+            [class.active]="selectedPeriod === 'year'"
+            (click)="selectPeriod('year')"
+          >
             Année
           </button>
         </div>
@@ -38,38 +58,67 @@
 
   <!-- Main Content -->
   <main class="dashboard-content" *ngIf="!isLoading">
-    
     <!-- Stats Cards Row -->
     <section class="stats-section">
       <div class="stats-grid">
-        
         <!-- Total Revenue Card -->
         <div class="stat-card revenue-card">
           <div class="stat-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="12" y1="1" x2="12" y2="23"/>
-              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="12" y1="1" x2="12" y2="23" />
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
             </svg>
           </div>
           <div class="stat-content">
             <span class="stat-label">Revenus Totaux</span>
-            <span class="stat-value">{{ formatCurrency(animatedRevenue) }}</span>
+            <span class="stat-value">{{
+              formatCurrency(animatedRevenue)
+            }}</span>
             <div class="stat-change positive">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-                <polyline points="17 6 23 6 23 12"/>
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                <polyline points="17 6 23 6 23 12" />
               </svg>
               +{{ getRevenueChange() }}% ce mois
             </div>
           </div>
           <div class="stat-sparkline">
             <svg viewBox="0 0 100 40" preserveAspectRatio="none">
-              <path d="M0,35 Q20,25 40,28 T60,20 T80,15 T100,8" fill="none" stroke="rgba(16, 185, 129, 0.5)" stroke-width="2"/>
-              <path d="M0,35 Q20,25 40,28 T60,20 T80,15 T100,8 V40 H0 Z" fill="url(#revenueGradient)" opacity="0.3"/>
+              <path
+                d="M0,35 Q20,25 40,28 T60,20 T80,15 T100,8"
+                fill="none"
+                stroke="rgba(16, 185, 129, 0.5)"
+                stroke-width="2"
+              />
+              <path
+                d="M0,35 Q20,25 40,28 T60,20 T80,15 T100,8 V40 H0 Z"
+                fill="url(#revenueGradient)"
+                opacity="0.3"
+              />
               <defs>
-                <linearGradient id="revenueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stop-color="#10b981"/>
-                  <stop offset="100%" stop-color="transparent"/>
+                <linearGradient
+                  id="revenueGradient"
+                  x1="0%"
+                  y1="0%"
+                  x2="0%"
+                  y2="100%"
+                >
+                  <stop offset="0%" stop-color="#10b981" />
+                  <stop offset="100%" stop-color="transparent" />
                 </linearGradient>
               </defs>
             </svg>
@@ -79,31 +128,45 @@
         <!-- Total Bookings Card -->
         <div class="stat-card bookings-card">
           <div class="stat-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-              <line x1="16" y1="2" x2="16" y2="6"/>
-              <line x1="8" y1="2" x2="8" y2="6"/>
-              <line x1="3" y1="10" x2="21" y2="10"/>
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
             </svg>
           </div>
           <div class="stat-content">
             <span class="stat-label">Réservations</span>
             <span class="stat-value">{{ animatedBookings }}</span>
             <div class="stat-change positive">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-                <polyline points="17 6 23 6 23 12"/>
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                <polyline points="17 6 23 6 23 12" />
               </svg>
               +{{ getBookingsChange() }}% ce mois
             </div>
           </div>
           <div class="stat-mini-chart">
-            <div class="mini-bar" style="height: 40%;"></div>
-            <div class="mini-bar" style="height: 65%;"></div>
-            <div class="mini-bar" style="height: 50%;"></div>
-            <div class="mini-bar" style="height: 80%;"></div>
-            <div class="mini-bar" style="height: 70%;"></div>
-            <div class="mini-bar active" style="height: 95%;"></div>
+            <div class="mini-bar" style="height: 40%"></div>
+            <div class="mini-bar" style="height: 65%"></div>
+            <div class="mini-bar" style="height: 50%"></div>
+            <div class="mini-bar" style="height: 80%"></div>
+            <div class="mini-bar" style="height: 70%"></div>
+            <div class="mini-bar active" style="height: 95%"></div>
           </div>
         </div>
 
@@ -111,40 +174,59 @@
         <div class="stat-card rating-card">
           <div class="stat-icon">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              <polygon
+                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+              />
             </svg>
           </div>
           <div class="stat-content">
             <span class="stat-label">Note Moyenne</span>
-            <span class="stat-value">{{ animatedRating }}<small>/5</small></span>
+            <span class="stat-value"
+              >{{ animatedRating }}<small>/5</small></span
+            >
             <div class="stat-reviews">
               {{ stats.totalReviews }} avis clients
             </div>
           </div>
           <div class="rating-stars">
-            <span class="star filled" *ngFor="let star of [1,2,3,4,5]; let i = index" 
-                  [class.half]="i === 4 && stats.averageRating < 5">★</span>
+            <span
+              class="star filled"
+              *ngFor="let star of [1, 2, 3, 4, 5]; let i = index"
+              [class.half]="i === 4 && stats.averageRating < 5"
+              >★</span
+            >
           </div>
         </div>
 
         <!-- Hours Worked Card -->
         <div class="stat-card hours-card">
           <div class="stat-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <polyline points="12 6 12 12 16 14"/>
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
             </svg>
           </div>
           <div class="stat-content">
             <span class="stat-label">Heures Travaillées</span>
-            <span class="stat-value">{{ stats.totalHours }}<small>h</small> {{ stats.totalMinutes }}<small>min</small></span>
+            <span class="stat-value"
+              >{{ stats.totalHours }}<small>h</small> {{ stats.totalMinutes
+              }}<small>min</small></span
+            >
             <div class="stat-sub">
               {{ stats.completedBookings }} services terminés
             </div>
           </div>
           <div class="hours-ring">
             <svg viewBox="0 0 36 36">
-              <path class="ring-bg"
+              <path
+                class="ring-bg"
                 d="M18 2.0845
                   a 15.9155 15.9155 0 0 1 0 31.831
                   a 15.9155 15.9155 0 0 1 0 -31.831"
@@ -152,7 +234,8 @@
                 stroke="#e5e7eb"
                 stroke-width="3"
               />
-              <path class="ring-progress"
+              <path
+                class="ring-progress"
                 [attr.stroke-dasharray]="getHoursProgress() + ', 100'"
                 d="M18 2.0845
                   a 15.9155 15.9155 0 0 1 0 31.831
@@ -165,21 +248,26 @@
             </svg>
           </div>
         </div>
-
       </div>
     </section>
 
     <!-- Charts & Details Row -->
     <section class="charts-section">
-      
       <!-- Revenue Chart -->
       <div class="chart-card revenue-chart-card">
         <div class="card-header">
           <h2 class="card-title">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="18" y1="20" x2="18" y2="10"/>
-              <line x1="12" y1="20" x2="12" y2="4"/>
-              <line x1="6" y1="20" x2="6" y2="14"/>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="18" y1="20" x2="18" y2="10" />
+              <line x1="12" y1="20" x2="12" y2="4" />
+              <line x1="6" y1="20" x2="6" y2="14" />
             </svg>
             Évolution des Revenus
           </h2>
@@ -193,19 +281,27 @@
         <div class="chart-container">
           <div class="bar-chart">
             <div class="chart-bars">
-              <div class="bar-wrapper" *ngFor="let data of revenueData; let i = index">
-                <div class="bar-tooltip">{{ formatCurrency(data.revenue) }}</div>
-                <div class="bar" 
-                     [style.height.%]="getBarHeight(data.revenue)"
-                     [class.highest]="data.revenue === maxRevenue"
-                     [style.animation-delay.ms]="i * 100">
+              <div
+                class="bar-wrapper"
+                *ngFor="let data of revenueData; let i = index"
+              >
+                <div class="bar-tooltip">
+                  {{ formatCurrency(data.revenue) }}
                 </div>
+                <div
+                  class="bar"
+                  [style.height.%]="getBarHeight(data.revenue)"
+                  [class.highest]="data.revenue === maxRevenue"
+                  [style.animation-delay.ms]="i * 100"
+                ></div>
                 <span class="bar-label">{{ data.month }}</span>
               </div>
             </div>
             <div class="chart-grid">
-              <div class="grid-line" *ngFor="let line of [0,1,2,3,4]">
-                <span class="grid-value">{{ formatCurrency(maxRevenue - (maxRevenue / 4 * line)) }}</span>
+              <div class="grid-line" *ngFor="let line of [0, 1, 2, 3, 4]">
+                <span class="grid-value">{{
+                  formatCurrency(maxRevenue - (maxRevenue / 4) * line)
+                }}</span>
               </div>
             </div>
           </div>
@@ -216,9 +312,16 @@
       <div class="chart-card breakdown-card">
         <div class="card-header">
           <h2 class="card-title">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>
-              <path d="M22 12A10 10 0 0 0 12 2v10z"/>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
+              <path d="M22 12A10 10 0 0 0 12 2v10z" />
             </svg>
             Répartition des Réservations
           </h2>
@@ -227,28 +330,58 @@
           <div class="donut-chart">
             <svg viewBox="0 0 42 42">
               <!-- Background circle -->
-              <circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#e5e7eb" stroke-width="5"/>
-              
+              <circle
+                cx="21"
+                cy="21"
+                r="15.91549430918954"
+                fill="transparent"
+                stroke="#e5e7eb"
+                stroke-width="5"
+              />
+
               <!-- Completed (Green) - First segment -->
-              <circle cx="21" cy="21" r="15.91549430918954" fill="transparent"
-                      stroke="#10b981"
-                      stroke-width="5"
-                      [attr.stroke-dasharray]="getCompletedPercent() + ' ' + (100 - getCompletedPercent())"
-                      stroke-dashoffset="25"/>
-              
+              <circle
+                cx="21"
+                cy="21"
+                r="15.91549430918954"
+                fill="transparent"
+                stroke="#10b981"
+                stroke-width="5"
+                [attr.stroke-dasharray]="
+                  getCompletedPercent() + ' ' + (100 - getCompletedPercent())
+                "
+                stroke-dashoffset="25"
+              />
+
               <!-- Pending (Orange) - Second segment -->
-              <circle cx="21" cy="21" r="15.91549430918954" fill="transparent"
-                      stroke="#f59e0b"
-                      stroke-width="5"
-                      [attr.stroke-dasharray]="getPendingPercent() + ' ' + (100 - getPendingPercent())"
-                      [attr.stroke-dashoffset]="25 - getCompletedPercent()"/>
-              
+              <circle
+                cx="21"
+                cy="21"
+                r="15.91549430918954"
+                fill="transparent"
+                stroke="#f59e0b"
+                stroke-width="5"
+                [attr.stroke-dasharray]="
+                  getPendingPercent() + ' ' + (100 - getPendingPercent())
+                "
+                [attr.stroke-dashoffset]="25 - getCompletedPercent()"
+              />
+
               <!-- Cancelled (Red) - Third segment -->
-              <circle cx="21" cy="21" r="15.91549430918954" fill="transparent"
-                      stroke="#ef4444"
-                      stroke-width="5"
-                      [attr.stroke-dasharray]="getCancelledPercent() + ' ' + (100 - getCancelledPercent())"
-                      [attr.stroke-dashoffset]="25 - getCompletedPercent() - getPendingPercent()"/>
+              <circle
+                cx="21"
+                cy="21"
+                r="15.91549430918954"
+                fill="transparent"
+                stroke="#ef4444"
+                stroke-width="5"
+                [attr.stroke-dasharray]="
+                  getCancelledPercent() + ' ' + (100 - getCancelledPercent())
+                "
+                [attr.stroke-dashoffset]="
+                  25 - getCompletedPercent() - getPendingPercent()
+                "
+              />
             </svg>
             <div class="donut-center">
               <span class="donut-value">{{ stats.totalBookings }}</span>
@@ -262,7 +395,9 @@
                 <span class="legend-label">Terminées</span>
                 <span class="legend-value">{{ stats.completedBookings }}</span>
               </div>
-              <span class="legend-percent">{{ getCompletedPercent().toFixed(0) }}%</span>
+              <span class="legend-percent"
+                >{{ getCompletedPercent().toFixed(0) }}%</span
+              >
             </div>
             <div class="legend-item">
               <span class="legend-color pending"></span>
@@ -270,7 +405,9 @@
                 <span class="legend-label">En attente</span>
                 <span class="legend-value">{{ stats.pendingBookings }}</span>
               </div>
-              <span class="legend-percent">{{ getPendingPercent().toFixed(0) }}%</span>
+              <span class="legend-percent"
+                >{{ getPendingPercent().toFixed(0) }}%</span
+              >
             </div>
             <div class="legend-item">
               <span class="legend-color cancelled"></span>
@@ -278,31 +415,45 @@
                 <span class="legend-label">Annulées</span>
                 <span class="legend-value">{{ stats.cancelledBookings }}</span>
               </div>
-              <span class="legend-percent">{{ getCancelledPercent().toFixed(0) }}%</span>
+              <span class="legend-percent"
+                >{{ getCancelledPercent().toFixed(0) }}%</span
+              >
             </div>
           </div>
         </div>
       </div>
-
     </section>
 
     <!-- Bottom Row -->
     <section class="bottom-section">
-      
       <!-- Recent Bookings -->
       <div class="recent-card">
         <div class="card-header">
           <h2 class="card-title">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <polyline points="12 6 12 12 16 14"/>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
             </svg>
             Réservations Récentes
           </h2>
           <a routerLink="/provider/gestionbook" class="view-all">
             Voir tout
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="9 18 15 12 9 6"/>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="9 18 15 12 9 6" />
             </svg>
           </a>
         </div>
@@ -312,26 +463,45 @@
               <div class="client-avatar" *ngIf="!booking.client.photo">
                 {{ getClientInitials(booking.client) }}
               </div>
-              <img [src]="booking.client.photo" *ngIf="booking.client.photo" class="client-photo" alt="">
+              <img
+                [src]="booking.client.photo"
+                *ngIf="booking.client.photo"
+                class="client-photo"
+                alt=""
+              />
               <div class="client-info">
-                <span class="client-name">{{ booking.client.prenom }} {{ booking.client.nom }}</span>
+                <span class="client-name"
+                  >{{ booking.client.prenom }} {{ booking.client.nom }}</span
+                >
                 <span class="booking-service">{{ booking.service }}</span>
               </div>
             </div>
             <div class="booking-details">
               <span class="booking-date">{{ formatDate(booking.date) }}</span>
-              <span class="booking-price">{{ formatCurrency(booking.proposedPrice) }}</span>
+              <span class="booking-price">{{
+                formatCurrency(booking.proposedPrice)
+              }}</span>
             </div>
-            <span class="booking-status" [ngClass]="getStatusClass(booking.status)">
+            <span
+              class="booking-status"
+              [ngClass]="getStatusClass(booking.status)"
+            >
               {{ getStatusLabel(booking.status) }}
             </span>
           </div>
           <div class="empty-bookings" *ngIf="recentBookings.length === 0">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-              <line x1="16" y1="2" x2="16" y2="6"/>
-              <line x1="8" y1="2" x2="8" y2="6"/>
-              <line x1="3" y1="10" x2="21" y2="10"/>
+            <svg
+              width="48"
+              height="48"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+            >
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
             </svg>
             <p>Aucune réservation récente</p>
           </div>
@@ -342,8 +512,15 @@
       <div class="quick-stats-card">
         <div class="card-header">
           <h2 class="card-title">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
             </svg>
             Statistiques Rapides
           </h2>
@@ -351,59 +528,93 @@
         <div class="quick-stats-list">
           <div class="quick-stat">
             <div class="quick-stat-icon today">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="8" x2="12" y2="12"/>
-                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
               </svg>
             </div>
             <div class="quick-stat-info">
               <span class="quick-stat-label">Aujourd'hui</span>
-              <span class="quick-stat-value">{{ formatCurrency(stats.todayRevenue) }}</span>
+              <span class="quick-stat-value">{{
+                formatCurrency(stats.todayRevenue)
+              }}</span>
             </div>
           </div>
           <div class="quick-stat">
             <div class="quick-stat-icon week">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                <line x1="16" y1="2" x2="16" y2="6"/>
-                <line x1="8" y1="2" x2="8" y2="6"/>
-                <line x1="3" y1="10" x2="21" y2="10"/>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
               </svg>
             </div>
             <div class="quick-stat-info">
               <span class="quick-stat-label">Cette semaine</span>
-              <span class="quick-stat-value">{{ formatCurrency(stats.weeklyRevenue) }}</span>
+              <span class="quick-stat-value">{{
+                formatCurrency(stats.weeklyRevenue)
+              }}</span>
             </div>
           </div>
           <div class="quick-stat">
             <div class="quick-stat-icon month">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="12" y1="1" x2="12" y2="23"/>
-                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="12" y1="1" x2="12" y2="23" />
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
               </svg>
             </div>
             <div class="quick-stat-info">
               <span class="quick-stat-label">Ce mois</span>
-              <span class="quick-stat-value">{{ formatCurrency(stats.monthlyRevenue) }}</span>
+              <span class="quick-stat-value">{{
+                formatCurrency(stats.monthlyRevenue)
+              }}</span>
             </div>
           </div>
           <div class="quick-stat">
             <div class="quick-stat-icon total">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-                <polyline points="17 6 23 6 23 12"/>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                <polyline points="17 6 23 6 23 12" />
               </svg>
             </div>
             <div class="quick-stat-info">
               <span class="quick-stat-label">Croissance</span>
-              <span class="quick-stat-value positive">+{{ getRevenueChange() }}%</span>
+              <span class="quick-stat-value positive"
+                >+{{ getRevenueChange() }}%</span
+              >
             </div>
           </div>
         </div>
       </div>
-
     </section>
-
   </main>
 </div>

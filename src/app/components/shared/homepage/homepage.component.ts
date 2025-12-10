@@ -3,12 +3,14 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { trigger, transition, style, animate, stagger, query } from '@angular/animations';
 import { LottieComponent } from 'ngx-lottie';
 import { ButtonModule } from 'primeng/button';
+import { AppRoutingModule } from "../../../app-routing.module";
+import { RouterModule } from '@angular/router';
 
 
 @Component({
   selector: 'app-homepage',
   standalone: true,
-  imports: [CommonModule, LottieComponent,ButtonModule],
+  imports: [CommonModule, LottieComponent, ButtonModule, RouterModule],
   templateUrl: './homepage.component.html',
   styleUrls: ['./homepage.component.scss'],
   animations: [

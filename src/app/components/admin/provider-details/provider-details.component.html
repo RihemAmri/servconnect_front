@@ -33,7 +33,7 @@
                 alt="photo"
                 class="w-24 h-24 rounded-full object-cover border-2 border-gray-200 shadow-sm"
               />
-              <!-- ✅ BADGE VÉRIFIÉ -->
+              <!-- Badge vérifié -->
               <div
                 *ngIf="provider.statut === 'actif'"
                 class="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-1.5 border-2 border-white shadow-lg"
@@ -49,7 +49,7 @@
                 <h2 class="text-2xl font-bold text-gray-900">
                   {{ provider.prenom }} {{ provider.nom }}
                 </h2>
-                <!-- ✅ BADGE VÉRIFIÉ TEXTE (optionnel) -->
+                <!-- Badge vérifié texte -->
                 <span
                   *ngIf="provider.statut === 'actif'"
                   class="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium"
@@ -68,6 +68,20 @@
                   [value]="displayStatut(provider.statut)"
                   [severity]="getStatutSeverity(provider.statut)"
                 ></p-tag>
+
+                <!-- Détails des documents -->
+                <span *ngIf="getTotalDocs() > 0" class="text-xs text-gray-600">
+                  ({{ getNumberOfVerifiedDocs() }}/{{ getTotalDocs() }}
+                  vérifiés)
+                </span>
+
+                <!-- Alerte documents en attente -->
+                <span
+                  *ngIf="getNumberOfPendingDocs() > 0"
+                  class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full"
+                >
+                  {{ getNumberOfPendingDocs() }} en attente
+                </span>
               </div>
 
               <div class="mt-2 text-sm text-gray-600">
@@ -78,6 +92,7 @@
             </div>
           </div>
 
+          <!-- Boutons d'action -->
           <div class="flex flex-wrap items-start gap-2">
             <button
               pButton
@@ -87,21 +102,52 @@
               tooltipPosition="bottom"
               (click)="back()"
             ></button>
+
+            <!-- Bouton Valider (si pas actif ET aucun document rejeté) -->
             <button
               pButton
               label="Valider"
               icon="pi pi-check"
               class="p-button-success"
               (click)="validateProvider()"
-              *ngIf="provider.statut !== 'actif'"
+              *ngIf="provider.statut !== 'actif' && !hasRejectedDocuments()"
+              pTooltip="Valider tous les documents et activer le compte"
+              tooltipPosition="bottom"
             ></button>
+
+            <!-- Bouton Refuser (si pas déjà refusé ET pas de docs rejetés) -->
             <button
               pButton
               label="Refuser"
               icon="pi pi-times"
               class="p-button-danger p-button-outlined"
               (click)="openRejectDialog()"
+              *ngIf="provider.statut !== 'refuse' && !hasRejectedDocuments()"
+              pTooltip="Refuser le prestataire"
+              tooltipPosition="bottom"
             ></button>
+
+            <!-- Message d'information si documents rejetés -->
+            <div
+              *ngIf="hasRejectedDocuments()"
+              class="flex items-center gap-2 px-3 py-2 bg-red-100 text-red-700 rounded-lg text-sm"
+            >
+              <i class="pi pi-info-circle"></i>
+              <span
+                >Prestataire refusé ({{ getNumberOfRejectedDocs() }} doc(s)
+                rejeté(s))</span
+              >
+            </div>
+
+            <!-- Message si tous validés -->
+            <div
+              *ngIf="allDocumentsVerified() && provider.statut === 'actif'"
+              class="flex items-center gap-2 px-3 py-2 bg-green-100 text-green-700 rounded-lg text-sm"
+            >
+              <i class="pi pi-check-circle"></i>
+              <span>Tous les documents sont vérifiés</span>
+            </div>
+
             <button
               pButton
               icon="pi pi-trash"
@@ -118,7 +164,6 @@
       <div
         class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
       >
-        <!-- ✅ Ajout de #tabView et [(activeIndex)] -->
         <p-tabView
           #tabView
           [(activeIndex)]="activeTabIndex"
@@ -247,6 +292,16 @@
                         {{ doc.rejectionReason }}
                       </p>
                     </div>
+
+                    <!-- Badge si document rejeté -->
+                    <div class="mt-2" *ngIf="doc.status === 'rejected'">
+                      <span
+                        class="text-xs text-red-600 bg-red-50 px-2 py-1 rounded-md inline-flex items-center gap-1"
+                      >
+                        <i class="pi pi-info-circle"></i>
+                        Le prestataire a été automatiquement refusé
+                      </span>
+                    </div>
                   </div>
 
                   <!-- Actions -->
@@ -260,6 +315,8 @@
                       icon="pi pi-check"
                       class="p-button-success p-button-sm flex-1 md:flex-none"
                       (click)="validateDocument(doc._id!)"
+                      pTooltip="Valider ce document"
+                      tooltipPosition="left"
                     ></button>
                     <button
                       pButton
@@ -267,6 +324,8 @@
                       icon="pi pi-times"
                       class="p-button-danger p-button-outlined p-button-sm flex-1 md:flex-none"
                       (click)="openRejectDialog(doc._id)"
+                      pTooltip="Rejeter ce document (le prestataire sera automatiquement refusé)"
+                      tooltipPosition="left"
                     ></button>
                   </div>
                 </div>

@@ -11,6 +11,8 @@ import { AddservicesComponent } from './components/provider/addservices/addservi
 import { UpcomingServicesComponent } from './components/provider/upcoming-services/upcoming-services.component';
 import { PastServicesComponent } from './components/provider/past-services/past-services.component';
 import { GestionbookComponent } from './components/provider/gestionbook/gestionbook.component';
+import { ResubmitDocsComponent } from './components/provider/resubmit-docs/resubmit-docs.component';
+
 
 // Client Components
 import { ExploreComponent } from './components/client/explore/explore.component';
@@ -28,7 +30,6 @@ import { ResetPasswordComponent } from './components/auth/reset-password/reset-p
 // Guards
 import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
-import { ResubmitDocsComponent } from './components/provider/resubmit-docs/resubmit-docs.component';
 
 export const routes: Routes = [
   /** PUBLIC ROUTES **/
@@ -117,7 +118,7 @@ export const routes: Routes = [
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['client'] }
   },
-  {
+   {
     path: 'reservation',
     component: ReservationComponent,
     canActivate: [AuthGuard, RoleGuard],
